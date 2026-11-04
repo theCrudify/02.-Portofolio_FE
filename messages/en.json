@@ -171,8 +171,8 @@
       "rateLimited": "Too many messages sent recently. Please try again in an hour."
     },
     "extras": {
-      "details": "Details & attachments",
-      "achievements": "Achievements",
+      "details": "View details",
+      "achievements": "Tasks & achievements",
       "skills": "Tools & skills",
       "attachments": "Attachments",
       "links": "Links",

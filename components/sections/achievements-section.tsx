@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
+import { PortfolioExtras } from '@/components/sections/portfolio-extras';
 import { Badge } from '@/components/ui/badge';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { PublicAchievement, SupportedLocale } from '@/lib/api/types';
@@ -114,17 +115,28 @@ export function AchievementsSection({
                 <CardTitle className="pt-1 text-xl">{ach.title}</CardTitle>
                 {ach.issuer || ach.eventName ? (
                   <p className="text-sm font-semibold text-primary">
-                    {[ach.issuer, ach.eventName].filter(Boolean).join(' · ')}
+                    {[ach.issuer?.name, ach.eventName].filter(Boolean).join(' · ')}
                   </p>
                 ) : null}
               </CardHeader>
               {ach.description ? (
                 <CardContent className="pt-4">
-                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
                     {ach.description}
                   </p>
                 </CardContent>
               ) : null}
+              <PortfolioExtras
+                {...ach}
+                trackId={`achievement-${ach.id}`}
+                cover={ach.certificate}
+                meta={[
+                  ach.issuer?.name,
+                  ach.eventName,
+                  ach.rank,
+                  ach.date ? formatDate(ach.date, locale) : null,
+                ]}
+              />
             </SpotlightCard>
           );
         })}

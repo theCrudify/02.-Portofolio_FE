@@ -403,6 +403,8 @@ export const ADMIN_RESOURCES: Record<AdminResourceKey, AdminResourceMeta> = {
       bi('description', 'Description', { multiline: true }),
       media('certificateMediaId', 'Certificate'),
       { name: 'linkUrl', label: 'Link', type: 'url' },
+      bullets('achievements', 'Tasks & highlights'),
+      ...extras(),
       sortOrder,
     ],
   },

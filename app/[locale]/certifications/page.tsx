@@ -107,7 +107,17 @@ export default async function CertificationsPage({
               ) : null}
               {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
             </CardContent>
-            <PortfolioExtras trackId={`cert-${cert.id}`} {...cert} />
+            <PortfolioExtras
+              {...cert}
+              trackId={`cert-${cert.id}`}
+              title={cert.name}
+              cover={cert.image}
+              meta={[
+                cert.issuer?.name,
+                cert.issueDate ? formatMonthYear(cert.issueDate, typedLocale) : null,
+                cert.credentialId,
+              ]}
+            />
 
             {cert.credentialUrl ? (
               <CardFooter className="border-t border-border pt-3">

@@ -124,8 +124,17 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 </ul>
               ) : null}
             </CardContent>
-            {/* Achievements are already listed above; the clamped description expands here. */}
-            <PortfolioExtras trackId={`activity-${act.id}`} {...act} achievements={[]} />
+            <PortfolioExtras
+              {...act}
+              trackId={`activity-${act.id}`}
+              title={act.role}
+              cover={act.media}
+              meta={[
+                act.organization?.name,
+                act.eventName,
+                act.startDate ? formatPeriod(act.startDate, act.endDate, locale) : null,
+              ]}
+            />
           </SpotlightCard>
         ))}
       </div>

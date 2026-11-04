@@ -242,7 +242,7 @@ export interface PublicActivity extends PublicPortfolioExtras {
   linkUrl: string | null;
 }
 
-export interface PublicAchievement {
+export interface PublicAchievement extends PublicPortfolioExtras {
   id: string;
   title: string;
   issuer: PublicOrganization | null;
