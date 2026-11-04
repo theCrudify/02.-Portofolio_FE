@@ -31,7 +31,6 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
   }
 
   const projectCount = projects.length;
-  const currentProject = projects[activeSlideIndex] ?? projects[0]!;
 
   const handlePrevSlide = () => {
     setActiveSlideIndex((prev) => (prev - 1 + projectCount) % projectCount);
@@ -182,8 +181,6 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
               }
 
               const isCurrent = offset === 0;
-              const isPrev = offset === -1 || (offset < 0 && offset >= -2);
-              const isNext = offset === 1 || (offset > 0 && offset <= 2);
               const isVisible = Math.abs(offset) <= 2;
 
               if (!isVisible && projectCount > 4) {
