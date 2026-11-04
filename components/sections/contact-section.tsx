@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SocialIcon } from '@/components/ui/social-icon';
 import { Textarea } from '@/components/ui/textarea';
 import { api, ApiError } from '@/lib/api/client';
 import type { PublicProfile, SupportedLocale } from '@/lib/api/types';
@@ -139,10 +140,14 @@ export function ContactSection({ profile, locale, muted }: ContactSectionProps) 
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-background/90 px-4 py-2.5 text-xs font-semibold capitalize text-foreground shadow-2xs transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="group inline-flex items-center gap-2 rounded-xl border border-border bg-background/90 px-4 py-2.5 text-xs font-semibold capitalize text-foreground shadow-2xs transition-all hover:border-primary hover:text-primary hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
+                      <SocialIcon
+                        platform={platform}
+                        className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110"
+                      />
                       <span>{platform.label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                     </a>
                   ) : null,
                 )}

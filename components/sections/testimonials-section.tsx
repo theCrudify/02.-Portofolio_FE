@@ -8,6 +8,7 @@ import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SocialIcon } from '@/components/ui/social-icon';
 import type { PublicTestimonial } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
@@ -62,7 +63,20 @@ export function TestimonialsSection({ testimonials, muted }: TestimonialsSection
                 </div>
               ) : null}
               <div>
-                <p className="font-heading text-base font-bold text-foreground">{current.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-heading text-base font-bold text-foreground">{current.name}</p>
+                  {current.linkedinUrl ? (
+                    <a
+                      href={current.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      aria-label={`${current.name} on LinkedIn`}
+                    >
+                      <SocialIcon platform="linkedin" className="h-3.5 w-3.5" />
+                    </a>
+                  ) : null}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   {[current.position, current.organization?.name, current.relationship]
                     .filter(Boolean)

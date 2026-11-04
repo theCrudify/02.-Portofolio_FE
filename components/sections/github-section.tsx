@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SocialIcon } from '@/components/ui/social-icon';
 import type { GithubStats } from '@/lib/api/types';
 
 export interface GithubSectionProps {
@@ -15,7 +16,18 @@ export function GithubSection({ github, muted }: GithubSectionProps) {
   if (!github) return null;
 
   return (
-    <Section id="github" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
+    <Section
+      id="github"
+      eyebrow={t('eyebrow')}
+      title={t('title')}
+      muted={muted}
+      actions={
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/85 px-4 py-1.5 text-xs font-semibold text-foreground shadow-2xs backdrop-blur-xs">
+          <SocialIcon platform="github" className="h-4 w-4 text-primary" />
+          <span>GitHub</span>
+        </div>
+      }
+    >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-5">
           <SpotlightCard className="p-5">

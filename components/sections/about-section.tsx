@@ -1,10 +1,12 @@
 import {
+  ArrowUpRight,
   CheckCircle2,
   Clock,
   Compass,
   Globe2,
   MapPin,
   Radio,
+  Share2,
   Sparkles,
   UserCheck,
 } from 'lucide-react';
@@ -13,6 +15,7 @@ import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
+import { SocialIcon } from '@/components/ui/social-icon';
 import type { PublicProfile } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
@@ -217,6 +220,35 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
                     {interest.label}
                   </Badge>
                 ))}
+              </div>
+            </SpotlightCard>
+          ) : null}
+          {/* Social Profiles & Presence */}
+          {profile.socials && profile.socials.length > 0 ? (
+            <SpotlightCard className="p-5 sm:p-6">
+              <h3 className="mb-3.5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+                <Share2 className="h-4 w-4" />
+                <span>{t('socials')}</span>
+              </h3>
+              <div className="flex flex-wrap gap-2.5">
+                {profile.socials.map(({ platform, url }) =>
+                  url ? (
+                    <a
+                      key={platform.code}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-xl border border-border/80 bg-background/90 px-3.5 py-2 text-xs font-semibold capitalize text-foreground shadow-2xs transition-all hover:border-primary hover:text-primary hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <SocialIcon
+                        platform={platform}
+                        className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110"
+                      />
+                      <span>{platform.label}</span>
+                      <ArrowUpRight className="h-3 w-3 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                    </a>
+                  ) : null,
+                )}
               </div>
             </SpotlightCard>
           ) : null}

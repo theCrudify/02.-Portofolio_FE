@@ -21,6 +21,7 @@ import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Container } from '@/components/layout/container';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
+import { SocialIcon } from '@/components/ui/social-icon';
 import { Link } from '@/i18n/routing';
 import type {
   PublicProfile,
@@ -258,10 +259,14 @@ export function HeroSection({
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-background/70 px-3.5 text-xs font-semibold capitalize text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="group inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-background/80 px-3.5 text-xs font-semibold capitalize text-foreground shadow-2xs backdrop-blur-sm transition-all hover:border-primary hover:text-primary hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
+                      <SocialIcon
+                        platform={platform}
+                        className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110"
+                      />
                       <span>{platform.label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                     </a>
                   ))}
                 </div>

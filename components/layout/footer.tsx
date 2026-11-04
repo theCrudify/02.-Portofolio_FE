@@ -1,6 +1,7 @@
 import { ArrowUpRight, Terminal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/layout/container';
+import { SocialIcon } from '@/components/ui/social-icon';
 import { Link } from '@/i18n/routing';
 import type { PublicProfile } from '@/lib/api/types';
 
@@ -43,10 +44,14 @@ export function Footer({ name, socials = [], updatedAt }: FooterProps) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium capitalize text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium capitalize text-foreground transition-all hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
+              <SocialIcon
+                platform={platform}
+                className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:scale-110"
+              />
               <span>{platform.label}</span>
-              <ArrowUpRight className="h-3 w-3" />
+              <ArrowUpRight className="h-3 w-3 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
             </a>
           ))}
           <Link
