@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { MeAuthPayloadDto, MeAuthQueryDto } from './me.dto';
 import { MeAuthRepository } from './me.repository';
 
 export class MeAuthService extends BaseFrontendService<MeAuthRepository> {

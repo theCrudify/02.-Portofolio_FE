@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ListAuditLogsSystemPayloadDto, ListAuditLogsSystemQueryDto } from './list-audit-logs.dto';
+import type { ListAuditLogsSystemQueryDto } from './list-audit-logs.dto';
 import { ListAuditLogsSystemRepository } from './list-audit-logs.repository';
 
 export class ListAuditLogsSystemService extends BaseFrontendService<ListAuditLogsSystemRepository> {

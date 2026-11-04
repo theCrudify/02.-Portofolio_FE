@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { DeleteDocumentsPayloadDto, DeleteDocumentsQueryDto } from './delete.dto';
 
 export class DeleteDocumentsRepository extends BaseFrontendRepository {
 

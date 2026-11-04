@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { SummaryAnalyticsPayloadDto, SummaryAnalyticsQueryDto } from './summary.dto';
 
 export class SummaryAnalyticsRepository extends BaseFrontendRepository {
 

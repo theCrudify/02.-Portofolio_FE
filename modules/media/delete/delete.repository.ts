@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { DeleteMediaPayloadDto, DeleteMediaQueryDto } from './delete.dto';
 
 export class DeleteMediaRepository extends BaseFrontendRepository {
 

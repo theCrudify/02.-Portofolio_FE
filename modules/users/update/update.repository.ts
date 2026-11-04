@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { UpdateUsersPayloadDto, UpdateUsersQueryDto } from './update.dto';
+import type { UpdateUsersPayloadDto } from './update.dto';
 
 export class UpdateUsersRepository extends BaseFrontendRepository {
 

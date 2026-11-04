@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { Verify2faAuthPayloadDto, Verify2faAuthQueryDto } from './verify-2fa.dto';
+import type { Verify2faAuthPayloadDto } from './verify-2fa.dto';
 import { Verify2faAuthRepository } from './verify-2fa.repository';
 
 export class Verify2faAuthService extends BaseFrontendService<Verify2faAuthRepository> {

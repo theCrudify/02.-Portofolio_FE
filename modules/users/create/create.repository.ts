@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { CreateUsersPayloadDto, CreateUsersQueryDto } from './create.dto';
+import type { CreateUsersPayloadDto } from './create.dto';
 
 export class CreateUsersRepository extends BaseFrontendRepository {
 

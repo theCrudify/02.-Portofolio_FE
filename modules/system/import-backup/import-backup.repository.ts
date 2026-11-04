@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { ImportBackupSystemPayloadDto, ImportBackupSystemQueryDto } from './import-backup.dto';
+import type { ImportBackupSystemPayloadDto } from './import-backup.dto';
 
 export class ImportBackupSystemRepository extends BaseFrontendRepository {
 

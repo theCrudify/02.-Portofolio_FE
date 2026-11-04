@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { SitePublicPayloadDto, SitePublicQueryDto } from './site.dto';
 import { SitePublicRepository } from './site.repository';
 
 export class SitePublicService extends BaseFrontendService<SitePublicRepository> {

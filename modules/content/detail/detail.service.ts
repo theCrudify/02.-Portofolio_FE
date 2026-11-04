@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { DetailContentPayloadDto, DetailContentQueryDto } from './detail.dto';
 import { DetailContentRepository } from './detail.repository';
 
 export class DetailContentService extends BaseFrontendService<DetailContentRepository> {

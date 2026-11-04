@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { Disable2faAuthPayloadDto, Disable2faAuthQueryDto } from './disable-2fa.dto';
+import type { Disable2faAuthPayloadDto } from './disable-2fa.dto';
 
 export class Disable2faAuthRepository extends BaseFrontendRepository {
 

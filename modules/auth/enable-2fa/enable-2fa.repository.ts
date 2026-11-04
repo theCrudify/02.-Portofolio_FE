@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { Enable2faAuthPayloadDto, Enable2faAuthQueryDto } from './enable-2fa.dto';
+import type { Enable2faAuthPayloadDto } from './enable-2fa.dto';
 
 export class Enable2faAuthRepository extends BaseFrontendRepository {
 

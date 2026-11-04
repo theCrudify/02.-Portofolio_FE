@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { UpdateMessageAnalyticsPayloadDto, UpdateMessageAnalyticsQueryDto } from './update-message.dto';
+import type { UpdateMessageAnalyticsPayloadDto } from './update-message.dto';
 import { UpdateMessageAnalyticsRepository } from './update-message.repository';
 
 export class UpdateMessageAnalyticsService extends BaseFrontendService<UpdateMessageAnalyticsRepository> {

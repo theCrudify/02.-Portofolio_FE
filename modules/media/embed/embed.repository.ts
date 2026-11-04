@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { EmbedMediaPayloadDto, EmbedMediaQueryDto } from './embed.dto';
+import type { EmbedMediaPayloadDto } from './embed.dto';
 
 export class EmbedMediaRepository extends BaseFrontendRepository {
 

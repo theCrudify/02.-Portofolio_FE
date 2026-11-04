@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { TransitionContentPayloadDto, TransitionContentQueryDto } from './transition.dto';
 import { TransitionContentRepository } from './transition.repository';
 
 export class TransitionContentService extends BaseFrontendService<TransitionContentRepository> {

@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { CreateContentPayloadDto, CreateContentQueryDto } from './create.dto';
+import type { CreateContentPayloadDto } from './create.dto';
 
 export class CreateContentRepository extends BaseFrontendRepository {
 

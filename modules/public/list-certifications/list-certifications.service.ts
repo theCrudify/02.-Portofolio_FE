@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ListCertificationsPublicPayloadDto, ListCertificationsPublicQueryDto } from './list-certifications.dto';
+import type { ListCertificationsPublicQueryDto } from './list-certifications.dto';
 import { ListCertificationsPublicRepository } from './list-certifications.repository';
 
 export class ListCertificationsPublicService extends BaseFrontendService<ListCertificationsPublicRepository> {

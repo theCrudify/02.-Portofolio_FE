@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { UpdateMediaPayloadDto, UpdateMediaQueryDto } from './update.dto';
+import type { UpdateMediaPayloadDto } from './update.dto';
 import { UpdateMediaRepository } from './update.repository';
 
 export class UpdateMediaService extends BaseFrontendService<UpdateMediaRepository> {

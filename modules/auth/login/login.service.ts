@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { LoginAuthPayloadDto, LoginAuthQueryDto } from './login.dto';
+import type { LoginAuthPayloadDto } from './login.dto';
 import { LoginAuthRepository } from './login.repository';
 
 export class LoginAuthService extends BaseFrontendService<LoginAuthRepository> {

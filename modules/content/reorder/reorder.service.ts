@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ReorderContentPayloadDto, ReorderContentQueryDto } from './reorder.dto';
 import { ReorderContentRepository } from './reorder.repository';
 
 export class ReorderContentService extends BaseFrontendService<ReorderContentRepository> {

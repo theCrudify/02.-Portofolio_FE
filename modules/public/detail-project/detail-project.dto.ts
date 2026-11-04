@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createModuleQuerySchema, flatQueryString } from '@/core/query';
+import { createModuleQuerySchema } from '@/core/query';
 
 export const detail_project_public_QuerySchema = createModuleQuerySchema({
 

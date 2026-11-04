@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { LogoutAuthPayloadDto, LogoutAuthQueryDto } from './logout.dto';
+import type { LogoutAuthPayloadDto } from './logout.dto';
 
 export class LogoutAuthRepository extends BaseFrontendRepository {
 

@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { ReorderContentPayloadDto, ReorderContentQueryDto } from './reorder.dto';
 
 export class ReorderContentRepository extends BaseFrontendRepository {
 

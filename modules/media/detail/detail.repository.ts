@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { DetailMediaPayloadDto, DetailMediaQueryDto } from './detail.dto';
 
 export class DetailMediaRepository extends BaseFrontendRepository {
 

@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ListMediaPayloadDto, ListMediaQueryDto } from './list.dto';
+import type { ListMediaQueryDto } from './list.dto';
 import { ListMediaRepository } from './list.repository';
 
 export class ListMediaService extends BaseFrontendService<ListMediaRepository> {

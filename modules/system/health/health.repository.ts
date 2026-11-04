@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { HealthSystemPayloadDto, HealthSystemQueryDto } from './health.dto';
 
 export class HealthSystemRepository extends BaseFrontendRepository {
 

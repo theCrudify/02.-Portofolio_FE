@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ListMessagesAnalyticsPayloadDto, ListMessagesAnalyticsQueryDto } from './list-messages.dto';
+import type { ListMessagesAnalyticsQueryDto } from './list-messages.dto';
 import { ListMessagesAnalyticsRepository } from './list-messages.repository';
 
 export class ListMessagesAnalyticsService extends BaseFrontendService<ListMessagesAnalyticsRepository> {

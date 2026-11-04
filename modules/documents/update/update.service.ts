@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { UpdateDocumentsPayloadDto, UpdateDocumentsQueryDto } from './update.dto';
 import { UpdateDocumentsRepository } from './update.repository';
 
 export class UpdateDocumentsService extends BaseFrontendService<UpdateDocumentsRepository> {

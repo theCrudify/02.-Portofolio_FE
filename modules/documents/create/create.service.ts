@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { CreateDocumentsPayloadDto, CreateDocumentsQueryDto } from './create.dto';
+import type { CreateDocumentsPayloadDto } from './create.dto';
 import { CreateDocumentsRepository } from './create.repository';
 
 export class CreateDocumentsService extends BaseFrontendService<CreateDocumentsRepository> {

@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { ExportBackupSystemPayloadDto, ExportBackupSystemQueryDto } from './export-backup.dto';
 
 export class ExportBackupSystemRepository extends BaseFrontendRepository {
 

@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ChangePasswordAuthPayloadDto, ChangePasswordAuthQueryDto } from './change-password.dto';
+import type { ChangePasswordAuthPayloadDto } from './change-password.dto';
 import { ChangePasswordAuthRepository } from './change-password.repository';
 
 export class ChangePasswordAuthService extends BaseFrontendService<ChangePasswordAuthRepository> {

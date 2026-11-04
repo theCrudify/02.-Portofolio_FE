@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { SignMediaPayloadDto, SignMediaQueryDto } from './sign.dto';
+import type { SignMediaPayloadDto } from './sign.dto';
 import { SignMediaRepository } from './sign.repository';
 
 export class SignMediaService extends BaseFrontendService<SignMediaRepository> {

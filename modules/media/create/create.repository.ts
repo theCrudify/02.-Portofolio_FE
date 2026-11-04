@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { CreateMediaPayloadDto, CreateMediaQueryDto } from './create.dto';
+import type { CreateMediaPayloadDto } from './create.dto';
 
 export class CreateMediaRepository extends BaseFrontendRepository {
 

@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ListProjectsPublicPayloadDto, ListProjectsPublicQueryDto } from './list-projects.dto';
+import type { ListProjectsPublicQueryDto } from './list-projects.dto';
 import { ListProjectsPublicRepository } from './list-projects.repository';
 
 export class ListProjectsPublicService extends BaseFrontendService<ListProjectsPublicRepository> {

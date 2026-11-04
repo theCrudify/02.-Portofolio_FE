@@ -1,5 +1,4 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { SitePublicPayloadDto, SitePublicQueryDto } from './site.dto';
 
 export class SitePublicRepository extends BaseFrontendRepository {
 

@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { RecordEventAnalyticsPayloadDto, RecordEventAnalyticsQueryDto } from './record-event.dto';
+import type { RecordEventAnalyticsPayloadDto } from './record-event.dto';
 import { RecordEventAnalyticsRepository } from './record-event.repository';
 
 export class RecordEventAnalyticsService extends BaseFrontendService<RecordEventAnalyticsRepository> {

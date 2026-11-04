@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { ChangePasswordAuthPayloadDto, ChangePasswordAuthQueryDto } from './change-password.dto';
+import type { ChangePasswordAuthPayloadDto } from './change-password.dto';
 
 export class ChangePasswordAuthRepository extends BaseFrontendRepository {
 

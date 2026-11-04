@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { CreateContentPayloadDto, CreateContentQueryDto } from './create.dto';
+import type { CreateContentPayloadDto } from './create.dto';
 import { CreateContentRepository } from './create.repository';
 
 export class CreateContentService extends BaseFrontendService<CreateContentRepository> {

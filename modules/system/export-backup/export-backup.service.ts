@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { ExportBackupSystemPayloadDto, ExportBackupSystemQueryDto } from './export-backup.dto';
 import { ExportBackupSystemRepository } from './export-backup.repository';
 
 export class ExportBackupSystemService extends BaseFrontendService<ExportBackupSystemRepository> {

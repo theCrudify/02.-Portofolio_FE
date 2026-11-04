@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { SummaryAnalyticsPayloadDto, SummaryAnalyticsQueryDto } from './summary.dto';
 import { SummaryAnalyticsRepository } from './summary.repository';
 
 export class SummaryAnalyticsService extends BaseFrontendService<SummaryAnalyticsRepository> {

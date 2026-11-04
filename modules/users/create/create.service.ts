@@ -1,5 +1,5 @@
 import { BaseFrontendService } from '@/core/base';
-import type { CreateUsersPayloadDto, CreateUsersQueryDto } from './create.dto';
+import type { CreateUsersPayloadDto } from './create.dto';
 import { CreateUsersRepository } from './create.repository';
 
 export class CreateUsersService extends BaseFrontendService<CreateUsersRepository> {

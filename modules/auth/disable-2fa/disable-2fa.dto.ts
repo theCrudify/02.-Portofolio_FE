@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createModuleQuerySchema, flatQueryString } from '@/core/query';
+import { createModuleQuerySchema } from '@/core/query';
 
 export const disable_2fa_auth_QuerySchema = createModuleQuerySchema({
 

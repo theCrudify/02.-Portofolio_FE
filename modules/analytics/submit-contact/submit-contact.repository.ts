@@ -1,5 +1,5 @@
 import { BaseFrontendRepository } from '@/core/base';
-import type { SubmitContactAnalyticsPayloadDto, SubmitContactAnalyticsQueryDto } from './submit-contact.dto';
+import type { SubmitContactAnalyticsPayloadDto } from './submit-contact.dto';
 
 export class SubmitContactAnalyticsRepository extends BaseFrontendRepository {
 

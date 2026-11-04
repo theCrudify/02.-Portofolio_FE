@@ -1,5 +1,4 @@
 import { BaseFrontendService } from '@/core/base';
-import type { DetailProjectPublicPayloadDto, DetailProjectPublicQueryDto } from './detail-project.dto';
 import { DetailProjectPublicRepository } from './detail-project.repository';
 
 export class DetailProjectPublicService extends BaseFrontendService<DetailProjectPublicRepository> {
