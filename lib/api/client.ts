@@ -28,9 +28,8 @@ export interface ApiListResponse<T> {
 
 export async function api<T>(path: string, init: RequestInit = {}): Promise<ApiListResponse<T>> {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const url = normalizedPath.startsWith('/api/v1')
-    ? normalizedPath
-    : `/api/v1${normalizedPath}`;
+  // Callers pass '/v1/admin/...', '/api/v1/...' or '/admin/...'; all map to '/api/v1/admin/...'.
+  const url = `/api/v1${normalizedPath.replace(/^\/api(?=\/v1(\/|$))/, '').replace(/^\/v1(?=\/|$)/, '')}`;
 
   const headers = new Headers(init.headers);
   if (init.body && !headers.has('Content-Type')) {

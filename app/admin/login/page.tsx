@@ -28,7 +28,9 @@ type LoginValues = z.infer<typeof loginSchema>;
 function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = searchParams.get('next') || '/admin';
+  const rawNext = searchParams.get('next');
+  // Only same-site admin paths; blocks open redirects like ?next=https://evil.com or //evil.com
+  const nextPath = rawNext && /^\/admin(\/|$|\?)/.test(rawNext) ? rawNext : '/admin';
 
   const [step, setStep] = useState<'credentials' | 'totp'>('credentials');
   const [totpCode, setTotpCode] = useState('');
