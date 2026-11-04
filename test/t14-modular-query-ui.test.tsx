@@ -24,7 +24,7 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
       FrontendQueryBuilder.toQueryString({
         search: '{"$gt":1}',
       }),
-    ).toThrow(/JSON strings are strictly forbidden/);
+    ).toThrow(/JSON strings are not allowed in query parameter/);
 
     const parsed = standardQuerySchema.safeParse({
       page: '2',
@@ -74,7 +74,7 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
       ['title'],
     );
     expect(searched.data).toHaveLength(1);
-    expect(searched.data[0].id).toBe('2');
+    expect(searched.data[0]?.id).toBe('2');
 
     // Pagination vs Full Query (all=true)
     const paged = FrontendQueryBuilder.executeClientQuery(
@@ -95,37 +95,42 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
   });
 
   it('exposes all 8 action-sliced Frontend OOP modules with DTO, Repository, and Service layers', () => {
-    expect(authModule.login.service).toBeDefined();
-    expect(authModule.logout.service).toBeDefined();
-    expect(usersModule.list.service).toBeDefined();
-    expect(usersModule.create.service).toBeDefined();
-    expect(usersModule.delete.service).toBeDefined();
-    expect(contentModule.list.service).toBeDefined();
-    expect(contentModule.transition.service).toBeDefined();
-    expect(mediaModule.list.service).toBeDefined();
-    expect(documentsModule.listCv.service).toBeDefined();
-    expect(analyticsModule.overview.service).toBeDefined();
-    expect(systemModule.auditLogs.service).toBeDefined();
-    expect(publicModule.listProjects.service).toBeDefined();
+    expect(authModule.loginAuthService).toBeDefined();
+    expect(authModule.logoutAuthService).toBeDefined();
+    expect(usersModule.listUsersService).toBeDefined();
+    expect(usersModule.createUsersService).toBeDefined();
+    expect(usersModule.deleteUsersService).toBeDefined();
+    expect(contentModule.listContentService).toBeDefined();
+    expect(contentModule.transitionContentService).toBeDefined();
+    expect(mediaModule.listMediaService).toBeDefined();
+    expect(documentsModule.listDocumentsService).toBeDefined();
+    expect(analyticsModule.summaryAnalyticsService).toBeDefined();
+    expect(systemModule.ListAuditLogsSystemService).toBeDefined();
+    expect(publicModule.ListProjectsPublicService).toBeDefined();
   });
 
   it('renders MultiImageShowcase with layout switching, category filters, and search', () => {
     render(<MultiImageShowcase items={PORTFOLIO_SHOWCASE_IMAGES} defaultLayout="bento" />);
 
-    expect(screen.getByText('Distributed Edge Telemetry')).toBeTruthy();
+    expect(screen.getByText('OmniPOS Multi-Branch Dashboard')).toBeTruthy();
 
     // Switch layout to Grid and Filmstrip
-    fireEvent.click(screen.getByText('Grid'));
-    fireEvent.click(screen.getByText('Filmstrip'));
+    fireEvent.click(screen.getByLabelText('Grid layout'));
+    fireEvent.click(screen.getByLabelText('Filmstrip layout'));
+    fireEvent.click(screen.getByLabelText('Bento layout'));
 
     // Filter by category
-    const archButtons = screen.getAllByText('Architecture');
-    fireEvent.click(archButtons[0]);
-    expect(screen.getByText('Multi-Region Event Mesh')).toBeTruthy();
+    const archButtons = screen.getAllByText('architecture');
+    if (archButtons[0]) {
+      fireEvent.click(archButtons[0]);
+    }
+    expect(screen.getByText('Zero-Cold-Start Edge Architecture')).toBeTruthy();
 
-    // Instant search
-    const searchInput = screen.getByLabelText('Search gallery images');
-    fireEvent.change(searchInput, { target: { value: 'Kubernetes' } });
-    expect(screen.getByText('Zero-Downtime Kubernetes Mesh')).toBeTruthy();
+    // Reset filter to all and test instant search
+    const allBtn = screen.getByText('all');
+    fireEvent.click(allBtn);
+    const searchInput = screen.getByLabelText('Search visuals');
+    fireEvent.change(searchInput, { target: { value: 'Copilot' } });
+    expect(screen.getByText('Streaming Semantic PR Analyzer')).toBeTruthy();
   });
 });

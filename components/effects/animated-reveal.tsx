@@ -41,3 +41,4 @@ export function AnimatedReveal({
     </motion.div>
   );
 }
+

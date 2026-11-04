@@ -45,3 +45,4 @@ export function AuroraBackground({ className, children }: AuroraBackgroundProps)
     </div>
   );
 }
+

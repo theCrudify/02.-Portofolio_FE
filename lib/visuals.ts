@@ -313,3 +313,4 @@ export const PORTFOLIO_SHOWCASE_IMAGES: VisualShowcaseItem[] = [
     height: 750,
   },
 ];
+
