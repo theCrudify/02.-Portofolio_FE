@@ -51,7 +51,8 @@
       "workPreference": "Preferensi Kerja",
       "availability": "Ketersediaan",
       "timezone": "Zona Waktu",
-      "verified": "Terverifikasi"
+      "verified": "Terverifikasi",
+      "socials": "Media Sosial & Tautan"
     },
     "projects": {
       "eyebrow": "KARYA PILIHAN",
@@ -115,7 +116,11 @@
     "education": {
       "eyebrow": "AKADEMIK",
       "title": "Pendidikan",
-      "gpa": "IPK"
+      "gpa": "IPK",
+      "present": "Sekarang",
+      "campusActivities": "Kegiatan kampus",
+      "duration": "Lama studi",
+      "degree": "Jenjang"
     },
     "certifications": {
       "eyebrow": "KREDENSIAL",
@@ -125,7 +130,10 @@
       "expired": "Kedaluwarsa",
       "issued": "Diterbitkan",
       "expires": "Berlaku hingga",
-      "all": "Semua"
+      "all": "Semua",
+      "active": "Aktif",
+      "lifetime": "Tanpa masa berlaku",
+      "details": "Lihat detail"
     },
     "activities": {
       "eyebrow": "KOMUNITAS",
@@ -133,7 +141,9 @@
       "all": "Semua",
       "volunteer": "Relawan",
       "committee": "Kepanitiaan",
-      "organization": "Organisasi"
+      "organization": "Organisasi",
+      "roles": "peran",
+      "years": "tahun aktif"
     },
     "achievements": {
       "eyebrow": "PENGHARGAAN",

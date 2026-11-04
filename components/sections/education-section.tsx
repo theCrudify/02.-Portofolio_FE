@@ -1,12 +1,10 @@
-import { Award, CheckCircle2, GraduationCap } from 'lucide-react';
-import Image from 'next/image';
+import { Award, CalendarDays, GraduationCap } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
-import { Badge } from '@/components/ui/badge';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { OrgMark } from '@/components/sections/org-mark';
 import type { PublicEducation, SupportedLocale } from '@/lib/api/types';
-import { formatMonthYear } from '@/lib/format';
+import { formatDuration, formatMonthYear } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export interface EducationSectionProps {
@@ -21,86 +19,114 @@ export function EducationSection({ education, locale, muted }: EducationSectionP
 
   return (
     <Section id="education" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
-      <div
-        className={cn(
-          'grid grid-cols-1 gap-6',
-          education.length === 1 ? 'lg:grid-cols-1' : 'md:grid-cols-2',
-        )}
-      >
-        {education.map((edu) => (
-          <SpotlightCard
-            key={edu.id}
-            className="group flex flex-col justify-between overflow-hidden"
-          >
-            <div>
-              {edu.organization?.logo ? (
-                <div className="relative aspect-16/7 w-full overflow-hidden border-b border-border/80 bg-muted">
-                  <Image
-                    src={edu.organization.logo.url}
-                    alt={edu.organization.logo.alt || edu.organization.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-              ) : null}
+      <div className="space-y-6">
+        {education.map((edu) => {
+          const gpa = Number(edu.gpa);
+          const scale = Number(edu.gpaScale) || 4;
+          const gpaPct = edu.gpa && gpa > 0 ? Math.min(100, (gpa / scale) * 100) : null;
+          const period = edu.startDate
+            ? `${formatMonthYear(edu.startDate, locale)} – ${
+                edu.endDate ? formatMonthYear(edu.endDate, locale) : t('present')
+              }`
+            : null;
+          const duration = edu.startDate ? formatDuration(edu.startDate, edu.endDate, locale) : null;
 
-              <CardHeader className="bg-dot-matrix space-y-2.5 border-b border-border/60 pb-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <Badge variant="secondary" className="gap-1.5 border border-primary/25 bg-primary/10 text-foreground">
-                    <GraduationCap className="h-3.5 w-3.5 text-primary" />
-                    <span>{[edu.degree, edu.field].filter(Boolean).join(' · ')}</span>
-                  </Badge>
-                  {edu.startDate ? (
-                    <span className="rounded-full border border-border bg-background/85 px-3 py-1 font-mono text-xs text-muted-foreground">
-                      {formatMonthYear(edu.startDate, locale)}
-                      {edu.endDate ? ` – ${formatMonthYear(edu.endDate, locale)}` : ''}
-                    </span>
+          return (
+            <SpotlightCard key={edu.id} className="overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px]">
+                {/* Main */}
+                <div className="space-y-6 p-6 sm:p-8">
+                  <div className="flex items-start gap-4">
+                    <OrgMark
+                      organization={edu.organization}
+                      className="h-16 w-16 rounded-2xl text-xl"
+                    />
+                    <div className="min-w-0 space-y-1.5">
+                      <h3 className="font-heading text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+                        {edu.organization?.name}
+                      </h3>
+                      <p className="flex items-center gap-2 text-sm font-semibold text-primary sm:text-base">
+                        <GraduationCap className="h-4 w-4 shrink-0" />
+                        {[edu.degree, edu.field].filter(Boolean).join(' · ')}
+                      </p>
+                      {period ? (
+                        <p className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                          <CalendarDays className="h-3.5 w-3.5" />
+                          {period}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {edu.description ? (
+                    <p className="max-w-[70ch] text-sm leading-relaxed text-muted-foreground sm:text-base">
+                      {edu.description}
+                    </p>
+                  ) : null}
+
+                  {edu.activities.length > 0 ? (
+                    <div className="space-y-3">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                        {t('campusActivities')}
+                      </p>
+                      <ol className="relative space-y-3 border-l-2 border-primary/20 pl-5">
+                        {edu.activities.map((act, i) => (
+                          <li key={i} className="relative text-sm text-foreground">
+                            <span className="absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background" />
+                            {act}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
                   ) : null}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                  <CardTitle className="text-xl sm:text-2xl">{edu.organization?.name}</CardTitle>
-                  {edu.gpa ? (
-                    <Badge variant="default" className="gap-1">
-                      <Award className="h-3 w-3" />
-                      <span>
-                        {t('gpa')}: {edu.gpa}
-                        {edu.gpaScale ? `/${edu.gpaScale}` : ''}
-                      </span>
-                    </Badge>
-                  ) : null}
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4 pt-5">
-                {edu.description ? (
-                  <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {edu.description}
-                  </p>
-                ) : null}
-                {edu.activities.length > 0 ? (
-                  <ul
-                    className={cn(
-                      'grid grid-cols-1 gap-2.5',
-                      education.length === 1 ? 'sm:grid-cols-2' : 'grid-cols-1',
-                    )}
-                  >
-                    {edu.activities.map((act, aIdx) => (
-                      <li
-                        key={aIdx}
-                        className="flex items-start gap-2.5 rounded-xl border border-border/80 bg-background/80 p-3 text-xs font-medium text-foreground sm:text-sm"
+                {/* Stats panel */}
+                <div className="bg-dot-matrix flex flex-col justify-center gap-6 border-t border-border/70 bg-primary/5 p-6 sm:p-8 lg:border-l lg:border-t-0">
+                  {gpaPct !== null ? (
+                    <div className="space-y-3">
+                      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                        <Award className="h-4 w-4 text-primary" />
+                        {t('gpa')}
+                      </p>
+                      <p className="font-heading text-5xl font-bold leading-none text-foreground">
+                        {edu.gpa}
+                        <span className="ml-1 text-lg font-semibold text-muted-foreground">
+                          / {edu.gpaScale ?? '4.00'}
+                        </span>
+                      </p>
+                      <div
+                        className="h-2 w-full overflow-hidden rounded-full bg-primary/15"
+                        role="progressbar"
+                        aria-valuenow={gpa}
+                        aria-valuemin={0}
+                        aria-valuemax={scale}
+                        aria-label={t('gpa')}
                       >
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>{act}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </CardContent>
-            </div>
-          </SpotlightCard>
-        ))}
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${gpaPct}%` }} />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <dl className={cn('grid grid-cols-2 gap-4 text-sm', gpaPct !== null && 'border-t border-border/70 pt-5')}>
+                    {duration ? (
+                      <div>
+                        <dt className="text-xs text-muted-foreground">{t('duration')}</dt>
+                        <dd className="mt-1 font-semibold text-foreground">{duration}</dd>
+                      </div>
+                    ) : null}
+                    {edu.degree ? (
+                      <div>
+                        <dt className="text-xs text-muted-foreground">{t('degree')}</dt>
+                        <dd className="mt-1 font-semibold text-foreground">{edu.degree.split(',')[0]}</dd>
+                      </div>
+                    ) : null}
+                  </dl>
+                </div>
+              </div>
+            </SpotlightCard>
+          );
+        })}
       </div>
     </Section>
   );

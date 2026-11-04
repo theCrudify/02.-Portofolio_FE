@@ -6,7 +6,7 @@ import { neighbours, PortfolioDetailPage } from '@/components/sections/portfolio
 import { buttonVariants } from '@/components/ui/button';
 import { fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
-import { formatPeriod } from '@/lib/format';
+import { activityPeriod } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
 
 type Params = Promise<{ locale: string; id: string }>;
@@ -60,7 +60,7 @@ export default async function ActivityDetailPage({ params }: { params: Params })
         { label: t('event'), value: act.eventName },
         {
           label: t('period'),
-          value: act.startDate ? formatPeriod(act.startDate, act.endDate, typedLocale) : null,
+          value: activityPeriod(act, typedLocale) || null,
         },
         { label: t('type'), value: act.type.label },
       ]}

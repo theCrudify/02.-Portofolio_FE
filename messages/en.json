@@ -51,7 +51,8 @@
       "workPreference": "Work Preference",
       "availability": "Availability",
       "timezone": "Timezone",
-      "verified": "Verified"
+      "verified": "Verified",
+      "socials": "Social Profiles & Links"
     },
     "projects": {
       "eyebrow": "SELECTED WORK",
@@ -115,7 +116,11 @@
     "education": {
       "eyebrow": "ACADEMIC",
       "title": "Education",
-      "gpa": "GPA"
+      "gpa": "GPA",
+      "present": "Present",
+      "campusActivities": "Campus activities",
+      "duration": "Study length",
+      "degree": "Degree"
     },
     "certifications": {
       "eyebrow": "CREDENTIALS",
@@ -125,7 +130,10 @@
       "expired": "Expired",
       "issued": "Issued",
       "expires": "Expires",
-      "all": "All"
+      "all": "All",
+      "active": "Active",
+      "lifetime": "No expiry",
+      "details": "View details"
     },
     "activities": {
       "eyebrow": "COMMUNITY",
@@ -133,7 +141,9 @@
       "all": "All",
       "volunteer": "Volunteer",
       "committee": "Committee",
-      "organization": "Organization"
+      "organization": "Organization",
+      "roles": "roles",
+      "years": "years active"
     },
     "achievements": {
       "eyebrow": "RECOGNITION",

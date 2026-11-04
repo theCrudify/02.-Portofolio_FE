@@ -83,3 +83,13 @@ export function formatPeriod(
   return `${startFormatted} – ${endFormatted} · ${duration}`;
 }
 
+
+/** A committee is a one-off event: without an end date show its month, not "start – Present". */
+export function activityPeriod(
+  act: { startDate: string | null; endDate: string | null; type: { code: string } },
+  locale: SupportedLocale,
+): string {
+  if (!act.startDate) return '';
+  if (!act.endDate && act.type.code === 'committee') return formatMonthYear(act.startDate, locale);
+  return formatPeriod(act.startDate, act.endDate, locale);
+}
