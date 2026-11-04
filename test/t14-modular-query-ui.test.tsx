@@ -11,8 +11,11 @@ import {
   systemModule,
   usersModule,
 } from '@/modules';
-import { MultiImageShowcase } from '@/components/media/multi-image-showcase';
-import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
+import {
+  MultiImageShowcase,
+  type ShowcaseImageEntry,
+} from '@/components/media/multi-image-showcase';
+import { buildAbstractMeshUri } from '@/lib/visuals';
 
 describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Multi-Image UI', () => {
   it('enforces Zero-JSON in query parameters and builds clean flat query strings', () => {
@@ -49,12 +52,11 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
 
   it('executes client-side Pagination, Fast Sort, Fast Filter, Search, and Full Query (all=true)', () => {
     const sample = [
-      { id: '1', title: 'Distributed Tracing', type: 'backend', order: 2 },
-      { id: '2', title: 'Adaptive Design System', type: 'frontend', order: 1 },
-      { id: '3', title: 'Edge Telemetry Gateway', type: 'backend', order: 3 },
+      { id: '1', title: 'Alpha Service', type: 'backend', order: 2 },
+      { id: '2', title: 'Beta Interface', type: 'frontend', order: 1 },
+      { id: '3', title: 'Gamma Worker', type: 'backend', order: 3 },
     ];
 
-    // Fast filter + fast sort
     const filtered = FrontendQueryBuilder.executeClientQuery(
       sample,
       {
@@ -67,16 +69,14 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
     expect(filtered.data.map((i) => i.id)).toEqual(['1', '3']);
     expect(filtered.meta.total).toBe(2);
 
-    // Search
     const searched = FrontendQueryBuilder.executeClientQuery(
       sample,
-      { search: 'Adaptive' },
+      { search: 'Beta' },
       ['title'],
     );
     expect(searched.data).toHaveLength(1);
     expect(searched.data[0]?.id).toBe('2');
 
-    // Pagination vs Full Query (all=true)
     const paged = FrontendQueryBuilder.executeClientQuery(
       sample,
       { page: 1, limit: 2, all: false },
@@ -110,27 +110,59 @@ describe('T14 · Frontend Modular OOP Architecture, Zero-JSON Query Engine & Mul
   });
 
   it('renders MultiImageShowcase with layout switching, category filters, and search', () => {
-    render(<MultiImageShowcase items={PORTFOLIO_SHOWCASE_IMAGES} defaultLayout="bento" />);
+    const testItems: ShowcaseImageEntry[] = [
+      {
+        id: 'img-1',
+        url: buildAbstractMeshUri(0),
+        alt: 'Visual 1',
+        title: 'Visual One',
+        caption: 'First visual item',
+        category: 'ui',
+      },
+      {
+        id: 'img-2',
+        url: buildAbstractMeshUri(1),
+        alt: 'Visual 2',
+        title: 'Visual Two',
+        caption: 'Second visual item',
+        category: 'architecture',
+      },
+      {
+        id: 'img-3',
+        url: buildAbstractMeshUri(2),
+        alt: 'Visual 3',
+        title: 'Visual Three',
+        caption: 'Third visual item',
+        category: 'mobile',
+      },
+      {
+        id: 'img-4',
+        url: buildAbstractMeshUri(3),
+        alt: 'Visual 4',
+        title: 'Visual Four',
+        caption: 'Fourth visual item',
+        category: 'cloud',
+      },
+    ];
 
-    expect(screen.getByText('OmniPOS Multi-Branch Dashboard')).toBeTruthy();
+    render(<MultiImageShowcase items={testItems} defaultLayout="bento" />);
 
-    // Switch layout to Grid and Filmstrip
+    expect(screen.getByText('Visual One')).toBeTruthy();
+
     fireEvent.click(screen.getByLabelText('Grid layout'));
     fireEvent.click(screen.getByLabelText('Filmstrip layout'));
     fireEvent.click(screen.getByLabelText('Bento layout'));
 
-    // Filter by category
     const archButtons = screen.getAllByText('architecture');
     if (archButtons[0]) {
       fireEvent.click(archButtons[0]);
     }
-    expect(screen.getByText('Zero-Cold-Start Edge Architecture')).toBeTruthy();
+    expect(screen.getByText('Visual Two')).toBeTruthy();
 
-    // Reset filter to all and test instant search
     const allBtn = screen.getByText('all');
     fireEvent.click(allBtn);
     const searchInput = screen.getByLabelText('Search visuals');
-    fireEvent.change(searchInput, { target: { value: 'Copilot' } });
-    expect(screen.getByText('Streaming Semantic PR Analyzer')).toBeTruthy();
+    fireEvent.change(searchInput, { target: { value: 'Four' } });
+    expect(screen.getByText('Visual Four')).toBeTruthy();
   });
 });

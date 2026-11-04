@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { ProjectLinks } from '@/components/project/project-links';
@@ -101,8 +101,41 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
     const robotsConfig = robots();
     expect(robotsConfig.sitemap).toContain('/sitemap.xml');
 
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes('/v1/projects')) {
+          return new Response(
+            JSON.stringify({
+              data: [
+                {
+                  slug: 'cashier-app',
+                  title: 'Cashier App',
+                  summary: 'POS',
+                  type: 'freelance',
+                  projectState: 'live',
+                  featured: true,
+                  cover: null,
+                  clip: null,
+                  technologies: [],
+                  primaryLink: null,
+                  periodStart: null,
+                  periodEnd: null,
+                },
+              ],
+              meta: { page: 1, limit: 100, total: 1 },
+            }),
+            { status: 200 },
+          );
+        }
+        return new Response(JSON.stringify({ data: {} }), { status: 200 });
+      }),
+    );
+
     const sitemapEntries = await sitemap();
     expect(sitemapEntries.some((e) => e.url.endsWith('/projects/cashier-app'))).toBe(true);
+    vi.unstubAllGlobals();
   });
 });
 

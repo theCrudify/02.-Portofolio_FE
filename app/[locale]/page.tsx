@@ -87,6 +87,7 @@ export default async function HomePage({
               settings={site.settings}
               stats={site.stats}
               locale={typedLocale}
+              projects={site.featuredProjects}
             />
           );
         }

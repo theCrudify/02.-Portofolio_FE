@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
-import { MultiImageShowcase } from '@/components/media/multi-image-showcase';
+import {
+  MultiImageShowcase,
+  type ShowcaseImageEntry,
+} from '@/components/media/multi-image-showcase';
 import { ProjectGrid } from '@/components/project/project-grid';
 import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
@@ -9,7 +12,6 @@ import { fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { buildMetadata } from '@/lib/seo';
 import { cn } from '@/lib/utils';
-import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
 
 export async function generateMetadata({
   params,
@@ -45,7 +47,6 @@ export default async function ProjectsPage({
   }>;
 }) {
   const { locale } = await params;
-  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
   setRequestLocale(locale);
   const query = await searchParams;
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
@@ -80,6 +81,35 @@ export default async function ProjectsPage({
     'open_source',
     'hackathon',
   ] as const;
+
+  const showcaseItems: ShowcaseImageEntry[] = [];
+  for (const proj of projectsResult.data) {
+    if (proj.images && proj.images.length > 0) {
+      proj.images.forEach((img, idx) => {
+        showcaseItems.push({
+          id: `${proj.slug}-${idx}`,
+          url: img.url,
+          alt: img.alt || proj.title,
+          title: proj.title,
+          caption: img.caption ?? proj.summary,
+          category: proj.type.replace('_', ' '),
+          width: img.width,
+          height: img.height,
+        });
+      });
+    } else if (proj.cover) {
+      showcaseItems.push({
+        id: `${proj.slug}-cover`,
+        url: proj.cover.url,
+        alt: proj.cover.alt || proj.title,
+        title: proj.title,
+        caption: proj.summary,
+        category: proj.type.replace('_', ' '),
+        width: proj.cover.width,
+        height: proj.cover.height,
+      });
+    }
+  }
 
   return (
     <Section eyebrow={t('eyebrow')} title={t('title')}>
@@ -147,17 +177,12 @@ export default async function ProjectsPage({
       <div className="space-y-14">
         <ProjectGrid projects={projectsResult.data} />
 
-        <div className="space-y-4 border-t border-border pt-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
-              Visual Showcase
-            </p>
-            <h2 className="mt-1 font-heading text-2xl font-bold text-foreground">
-              Multi-Image Architecture &amp; Interface Gallery
-            </h2>
+        {showcaseItems.length > 1 ? (
+          <div className="space-y-4 border-t border-border pt-10">
+            <h2 className="font-heading text-2xl font-bold text-foreground">{t('gallery')}</h2>
+            <MultiImageShowcase items={showcaseItems} defaultLayout="bento" />
           </div>
-          <MultiImageShowcase items={PORTFOLIO_SHOWCASE_IMAGES} defaultLayout="bento" />
-        </div>
+        ) : null}
       </div>
     </Section>
   );

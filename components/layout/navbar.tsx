@@ -1,12 +1,12 @@
 'use client';
 
-import { ArrowUpRight, Menu, Terminal, X } from 'lucide-react';
+import { Menu, Terminal, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Container } from '@/components/layout/container';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
@@ -55,22 +55,15 @@ export function Navbar({ brandName }: NavbarProps) {
         )}
       >
         <Container className="flex h-18 items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="group inline-flex items-center gap-2.5 font-heading text-lg font-bold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary transition-transform group-hover:scale-105">
-                <Terminal className="h-4 w-4" />
-              </span>
-              <div className="flex flex-col">
-                <span className="leading-none">{brandName}</span>
-                <span className="mt-1 font-mono text-[10px] font-normal uppercase tracking-widest text-muted-foreground">
-                  ARCHITECT // EDGE.OS
-                </span>
-              </div>
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2.5 font-heading text-lg font-bold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary transition-transform group-hover:scale-105">
+              <Terminal className="h-4 w-4" />
+            </span>
+            <span>{brandName}</span>
+          </Link>
 
           <nav
             aria-label="Main navigation"
@@ -88,22 +81,8 @@ export function Navbar({ brandName }: NavbarProps) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <span className="hidden items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground xl:inline-flex">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-success" />
-              <span>EDGE READY</span>
-            </span>
             <LocaleSwitcher label={t('switchLanguage')} />
             <ThemeToggle label={t('toggleTheme')} />
-            <Link
-              href="/projects"
-              className={cn(
-                buttonVariants({ variant: 'default', size: 'sm' }),
-                'hidden sm:inline-flex',
-              )}
-            >
-              <span>Showcase</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
             <Button
               type="button"
               variant="ghost"

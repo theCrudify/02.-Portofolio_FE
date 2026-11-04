@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { PublicActivity, SupportedLocale } from '@/lib/api/types';
 import { formatPeriod } from '@/lib/format';
-import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
 
 export interface ActivitiesSectionProps {
   activities: PublicActivity[];
@@ -46,53 +45,48 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
       ) : null}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {filtered.map((act, idx) => {
-          const fallbackVisual =
-            PORTFOLIO_SHOWCASE_IMAGES[(idx + 7) % PORTFOLIO_SHOWCASE_IMAGES.length];
-          const mediaUrl = act.media?.url ?? fallbackVisual?.url ?? '';
-          const mediaAlt = act.media?.alt || `${act.role} · ${act.organization}`;
-
-          return (
-            <SpotlightCard key={act.id} className="group overflow-hidden">
+        {filtered.map((act) => (
+          <SpotlightCard key={act.id} className="group overflow-hidden">
+            {act.media ? (
               <div className="relative aspect-16/7 w-full overflow-hidden border-b border-border/60 bg-muted">
                 <Image
-                  src={mediaUrl}
-                  alt={mediaAlt}
+                  src={act.media.url}
+                  alt={act.media.alt || `${act.role} · ${act.organization}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <CardHeader className="space-y-2 pb-3">
-                <div className="flex items-center justify-between gap-2">
-                  <Badge variant="secondary">{t(act.type)}</Badge>
-                  {act.startDate ? (
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {formatPeriod(act.startDate, act.endDate, locale)}
-                    </span>
-                  ) : null}
-                </div>
-                <CardTitle>{act.role}</CardTitle>
-                <p className="text-sm font-medium text-primary">
-                  {act.organization}
-                  {act.eventName ? ` · ${act.eventName}` : ''}
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {act.description ? (
-                  <p className="text-sm text-muted-foreground">{act.description}</p>
+            ) : null}
+            <CardHeader className="space-y-2 pb-3">
+              <div className="flex items-center justify-between gap-2">
+                <Badge variant="secondary">{t(act.type)}</Badge>
+                {act.startDate ? (
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {formatPeriod(act.startDate, act.endDate, locale)}
+                  </span>
                 ) : null}
-                {act.achievements.length > 0 ? (
-                  <ul className="list-disc space-y-1 pl-5 text-sm text-foreground">
-                    {act.achievements.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                ) : null}
-              </CardContent>
-            </SpotlightCard>
-          );
-        })}
+              </div>
+              <CardTitle>{act.role}</CardTitle>
+              <p className="text-sm font-medium text-primary">
+                {act.organization}
+                {act.eventName ? ` · ${act.eventName}` : ''}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {act.description ? (
+                <p className="text-sm text-muted-foreground">{act.description}</p>
+              ) : null}
+              {act.achievements.length > 0 ? (
+                <ul className="list-disc space-y-1 pl-5 text-sm text-foreground">
+                  {act.achievements.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </CardContent>
+          </SpotlightCard>
+        ))}
       </div>
     </Section>
   );

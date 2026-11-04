@@ -9,7 +9,6 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/
 import { Link } from '@/i18n/routing';
 import type { PublicCertification, SupportedLocale } from '@/lib/api/types';
 import { formatMonthYear } from '@/lib/format';
-import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
 
 export interface CertificationsSectionProps {
   certifications: PublicCertification[];
@@ -39,23 +38,27 @@ export function CertificationsSection({
       }
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {certifications.map((cert, idx) => {
-          const fallbackVisual =
-            PORTFOLIO_SHOWCASE_IMAGES[(idx + 6) % PORTFOLIO_SHOWCASE_IMAGES.length];
-          const previewUrl = cert.image?.url ?? fallbackVisual?.url ?? '';
+        {certifications.map((cert) => {
+          const previewUrl = cert.image?.url ?? cert.issuerLogo?.url ?? null;
 
           return (
-            <SpotlightCard key={cert.id} className="group flex flex-col justify-between overflow-hidden">
+            <SpotlightCard
+              key={cert.id}
+              className="group flex flex-col justify-between overflow-hidden"
+            >
               <div>
-                <div className="relative aspect-16/8 w-full overflow-hidden border-b border-border/60 bg-muted">
-                  <Image
-                    src={previewUrl}
-                    alt={cert.image?.alt || cert.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
+                {previewUrl ? (
+                  <div className="relative aspect-16/8 w-full overflow-hidden border-b border-border/60 bg-muted">
+                    <Image
+                      src={previewUrl}
+                      alt={cert.image?.alt || cert.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                ) : null}
+
                 <CardHeader className="space-y-2 pb-3">
                   <div className="flex items-center justify-between gap-2">
                     <Badge variant="secondary" className="capitalize">
@@ -78,7 +81,7 @@ export function CertificationsSection({
                         : ''}
                     </p>
                   ) : null}
-                  {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
+                  {cert.credentialId ? <p className="mt-1 font-mono">{cert.credentialId}</p> : null}
                 </CardContent>
               </div>
 
