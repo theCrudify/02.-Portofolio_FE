@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787';
+const API_BASE = process.env.API_ORIGIN || 'http://localhost:8787';
 
 interface ShareLinkData {
   kind: 'document' | 'preset';

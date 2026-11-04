@@ -26,7 +26,7 @@ import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api/client';
-import { hasRole, type AdminRole, type AdminUser } from '@/lib/auth';
+import { hasRole, type AdminRole, type AdminUser } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 
 export interface AdminShellProps {

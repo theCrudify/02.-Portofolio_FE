@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-import { hasRole, type AdminRole, type AdminUser } from '@/lib/auth';
+import { hasRole, type AdminRole, type AdminUser } from '@/lib/roles';
 
 const UserContext = createContext<AdminUser | null>(null);
 
