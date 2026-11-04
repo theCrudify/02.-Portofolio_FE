@@ -18,13 +18,14 @@ export interface PortfolioExtrasProps extends PublicPortfolioExtras {
  * Long description, achievements, tools/skills, attachments (images + PDFs) and links of a
  * certificate or activity, folded into a native <details> so cards stay compact.
  */
+// Defaults keep the page alive if the web deploys before the API that sends these fields.
 export function PortfolioExtras({
   trackId,
   description,
-  achievements,
-  technologies,
-  attachments,
-  links,
+  achievements = [],
+  technologies = [],
+  attachments = [],
+  links = [],
 }: PortfolioExtrasProps) {
   const t = useTranslations('sections.extras');
   const images = attachments.filter((a) => a.kind === 'image');
