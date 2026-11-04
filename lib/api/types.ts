@@ -93,6 +93,7 @@ export interface PublicProjectCard {
   projectState: 'live' | 'in_development' | 'archived';
   featured: boolean;
   cover: { url: string; width: number | null; height: number | null; alt: string } | null;
+  images?: { url: string; width: number | null; height: number | null; alt: string; caption?: string }[];
   clip: PublicMedia | null;
   technologies: PublicTechChip[];
   primaryLink: PublicProjectLink | null;
