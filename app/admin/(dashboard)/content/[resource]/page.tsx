@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { ADMIN_RESOURCES, type AdminResourceKey } from '@/lib/admin/resources';
 import { DataTable, type DataRow } from '@/components/admin/data-table';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 import { ResourceForm } from '@/components/admin/resource-form';
 
 export default function AdminGenericContentPage() {
@@ -13,18 +14,24 @@ export default function AdminGenericContentPage() {
   const meta = ADMIN_RESOURCES[resourceKey];
 
   const [items, setItems] = React.useState<DataRow[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
   const [editing, setEditing] = React.useState<Record<string, unknown> | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   const loadItems = React.useCallback(async () => {
     if (!meta) return;
     try {
-      const res = await apiFetch<DataRow[]>(`/v1/admin/${meta.key}`);
+      const res = await apiFetch<DataRow[]>(`/v1/admin/${meta.key}?page=${page}&limit=${PAGE_SIZE}`);
       setItems(res.data);
+      setTotal(res.meta?.total ?? res.data.length);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : `Failed to load ${meta.title}.`);
     }
-  }, [meta]);
+  }, [meta, page]);
+
+  // The route segment changes without remounting, so start each resource at page 1.
+  React.useEffect(() => setPage(1), [resourceKey]);
 
   React.useEffect(() => {
     void loadItems();
@@ -99,6 +106,7 @@ export default function AdminGenericContentPage() {
           await loadItems();
         }}
       />
+      <Pager page={page} total={total} onPage={setPage} />
     </div>
   );
 }

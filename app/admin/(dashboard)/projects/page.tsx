@@ -4,20 +4,24 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { DataTable, type DataRow } from '@/components/admin/data-table';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 
 export default function AdminProjectsPage() {
   const router = useRouter();
   const [items, setItems] = React.useState<DataRow[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
   const [error, setError] = React.useState<string | null>(null);
 
   const loadProjects = React.useCallback(async () => {
     try {
-      const res = await apiFetch<DataRow[]>('/v1/admin/projects');
+      const res = await apiFetch<DataRow[]>(`/v1/admin/projects?page=${page}&limit=${PAGE_SIZE}`);
       setItems(res.data);
+      setTotal(res.meta?.total ?? res.data.length);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to load projects.');
     }
-  }, []);
+  }, [page]);
 
   React.useEffect(() => {
     void loadProjects();
@@ -81,6 +85,7 @@ export default function AdminProjectsPage() {
         onSoftDelete={handleSoftDelete}
         onPermanentDelete={handlePermanentDelete}
       />
+      <Pager page={page} total={total} onPage={setPage} />
     </div>
   );
 }

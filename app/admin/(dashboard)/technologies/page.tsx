@@ -4,21 +4,25 @@ import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { ADMIN_RESOURCES } from '@/lib/admin/resources';
 import { DataTable, type DataRow } from '@/components/admin/data-table';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 import { ResourceForm } from '@/components/admin/resource-form';
 
 export default function AdminTechnologiesPage() {
   const [items, setItems] = React.useState<DataRow[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
   const [editing, setEditing] = React.useState<Record<string, unknown> | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   const loadItems = React.useCallback(async () => {
     try {
-      const res = await apiFetch<DataRow[]>('/v1/admin/technologies');
+      const res = await apiFetch<DataRow[]>(`/v1/admin/technologies?page=${page}&limit=${PAGE_SIZE}`);
       setItems(res.data);
+      setTotal(res.meta?.total ?? res.data.length);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to load technologies.');
     }
-  }, []);
+  }, [page]);
 
   React.useEffect(() => {
     void loadItems();
@@ -91,6 +95,7 @@ export default function AdminTechnologiesPage() {
           await loadItems();
         }}
       />
+      <Pager page={page} total={total} onPage={setPage} />
     </div>
   );
 }

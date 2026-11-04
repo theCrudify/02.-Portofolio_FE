@@ -1,11 +1,13 @@
 'use client';
 
+import Image from 'next/image';
 import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 
 export interface MediaAssetItem {
   id: string;
@@ -109,16 +111,22 @@ export function MediaPicker({
 }) {
   const [open, setOpen] = React.useState(false);
   const [library, setLibrary] = React.useState<MediaAssetItem[]>([]);
+  const [libPage, setLibPage] = React.useState(1);
+  const [libTotal, setLibTotal] = React.useState(0);
   const [embedUrl, setEmbedUrl] = React.useState('');
   const [titleEn, setTitleEn] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
   const [selected, setSelected] = React.useState<MediaAssetItem | null>(null);
 
-  const loadLibrary = React.useCallback(async () => {
+  const loadLibrary = React.useCallback(async (page = 1) => {
     try {
-      const res = await apiFetch<MediaAssetItem[]>(`/v1/admin/media?kind=${acceptKind}`);
+      const res = await apiFetch<MediaAssetItem[]>(
+        `/v1/admin/media?kind=${acceptKind}&page=${page}&limit=${PAGE_SIZE}`
+      );
       setLibrary(res.data);
+      setLibPage(page);
+      setLibTotal(res.meta?.total ?? res.data.length);
       return res.data;
     } catch {
       // Ignored if media endpoint not yet populated
@@ -199,11 +207,15 @@ export function MediaPicker({
       {value && (
         <div className="flex items-center gap-3 rounded-md border border-border bg-muted/40 p-2 text-xs text-muted-foreground">
           {selected && (selected.thumbnailUrl || selected.kind === 'image') ? (
-            <img
-              src={selected.thumbnailUrl ?? selected.url}
-              alt={selected.altEn ?? ''}
-              className="h-16 w-28 shrink-0 rounded object-cover"
-            />
+            <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded">
+              <Image
+                src={selected.thumbnailUrl ?? selected.url}
+                alt={selected.altEn ?? ''}
+                fill
+                sizes="112px"
+                className="object-cover"
+              />
+            </div>
           ) : null}
           <span className="line-clamp-2">
             {selected?.titleEn || selected?.altEn || `Selected media ID: ${value}`}
@@ -240,12 +252,15 @@ export function MediaPicker({
                       className="flex flex-col items-start gap-1 rounded border border-border p-2 text-left text-xs hover:border-primary"
                     >
                       {item.thumbnailUrl || item.kind === 'image' ? (
-                        <img
-                          src={item.thumbnailUrl ?? item.url}
-                          alt=""
-                          loading="lazy"
-                          className="aspect-video w-full rounded object-cover"
-                        />
+                        <div className="relative aspect-video w-full overflow-hidden rounded">
+                          <Image
+                            src={item.thumbnailUrl ?? item.url}
+                            alt=""
+                            fill
+                            sizes="(min-width: 640px) 25vw, 50vw"
+                            className="object-cover"
+                          />
+                        </div>
                       ) : null}
                       <span className="line-clamp-1 font-medium">
                         {item.titleEn || item.altEn || item.id.slice(0, 8)}
@@ -255,6 +270,9 @@ export function MediaPicker({
                   ))}
                 </div>
               )}
+              <div className="mt-3">
+                <Pager page={libPage} total={libTotal} onPage={(p) => void loadLibrary(p)} />
+              </div>
             </TabsContent>
 
             <TabsContent value="upload">

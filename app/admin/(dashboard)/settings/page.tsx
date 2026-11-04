@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 
 interface AuditLogEntry {
   id: string;
   action: string;
-  entityType: string;
-  entityId: string | null;
+  resource: string;
+  resourceId: string | null;
+  summary: string | null;
   createdAt: string;
 }
 
@@ -27,6 +29,8 @@ export default function AdminSettingsPage() {
   const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [auditLogs, setAuditLogs] = React.useState<AuditLogEntry[]>([]);
+  const [auditPage, setAuditPage] = React.useState(1);
+  const [auditTotal, setAuditTotal] = React.useState(0);
 
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault();
@@ -99,10 +103,14 @@ export default function AdminSettingsPage() {
     }
   }
 
-  async function loadAuditLogs() {
+  async function loadAuditLogs(page = 1) {
     try {
-      const res = await apiFetch<AuditLogEntry[]>('/v1/admin/audit-logs');
+      const res = await apiFetch<AuditLogEntry[]>(
+        `/v1/admin/audit-logs?page=${page}&limit=${PAGE_SIZE}`
+      );
       setAuditLogs(res.data);
+      setAuditPage(page);
+      setAuditTotal(res.meta?.total ?? res.data.length);
     } catch {
       // Handled when T13 endpoint is mounted
     }
@@ -265,8 +273,8 @@ export default function AdminSettingsPage() {
               <thead className="border-b border-border bg-muted/50 text-xs uppercase text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Action</th>
-                  <th className="px-4 py-3">Entity</th>
-                  <th className="px-4 py-3">Entity ID</th>
+                  <th className="px-4 py-3">Resource</th>
+                  <th className="px-4 py-3">Summary</th>
                   <th className="px-4 py-3">Timestamp</th>
                 </tr>
               </thead>
@@ -274,14 +282,15 @@ export default function AdminSettingsPage() {
                 {auditLogs.map((log) => (
                   <tr key={log.id}>
                     <td className="px-4 py-3 font-medium">{log.action}</td>
-                    <td className="px-4 py-3">{log.entityType}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{log.entityId ?? '—'}</td>
+                    <td className="px-4 py-3">{log.resource}</td>
+                    <td className="px-4 py-3 text-xs">{log.summary ?? log.resourceId ?? '—'}</td>
                     <td className="px-4 py-3 text-muted-foreground">{log.createdAt}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          <Pager page={auditPage} total={auditTotal} onPage={(p) => void loadAuditLogs(p)} />
         </TabsContent>
       </Tabs>
     </div>

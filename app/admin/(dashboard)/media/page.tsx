@@ -7,10 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { RoleGate } from '@/components/admin/role-gate';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 import { UPLOAD_ACCEPT, uploadMedia, type MediaAssetItem } from '@/components/admin/media-picker';
 
 export default function AdminMediaPage() {
   const [items, setItems] = React.useState<MediaAssetItem[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
   const [filterKind, setFilterKind] = React.useState<'all' | 'image' | 'video' | 'document'>('all');
   const [embedUrl, setEmbedUrl] = React.useState('');
   const [embedTitle, setEmbedTitle] = React.useState('');
@@ -19,13 +22,16 @@ export default function AdminMediaPage() {
 
   const loadMedia = React.useCallback(async () => {
     try {
-      const q = filterKind === 'all' ? '' : `?kind=${filterKind}`;
-      const res = await apiFetch<MediaAssetItem[]>(`/v1/admin/media${q}`);
+      const kind = filterKind === 'all' ? '' : `&kind=${filterKind}`;
+      const res = await apiFetch<MediaAssetItem[]>(
+        `/v1/admin/media?page=${page}&limit=${PAGE_SIZE}${kind}`
+      );
       setItems(res.data);
+      setTotal(res.meta?.total ?? res.data.length);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to load media library.');
     }
-  }, [filterKind]);
+  }, [filterKind, page]);
 
   React.useEffect(() => {
     void loadMedia();
@@ -158,7 +164,10 @@ export default function AdminMediaPage() {
             type="button"
             variant={filterKind === k ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setFilterKind(k)}
+            onClick={() => {
+              setFilterKind(k);
+              setPage(1);
+            }}
           >
             {k.toUpperCase()}
           </Button>
@@ -196,6 +205,7 @@ export default function AdminMediaPage() {
           </div>
         ))}
       </div>
+      <Pager page={page} total={total} onPage={setPage} />
     </div>
   );
 }

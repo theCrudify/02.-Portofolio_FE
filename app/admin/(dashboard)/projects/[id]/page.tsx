@@ -41,7 +41,7 @@ export default function AdminEditProjectPage() {
       })
       .catch((err) => setError(err instanceof ApiError ? err.message : 'Project not found.'));
 
-    apiFetch<TechOption[]>('/v1/admin/technologies')
+    apiFetch<TechOption[]>('/v1/admin/technologies?limit=100')
       .then((res) => setTechOptions(res.data))
       .catch(() => null);
   }, [projectId]);

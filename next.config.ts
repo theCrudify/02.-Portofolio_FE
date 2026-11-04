@@ -8,6 +8,9 @@ const apiOrigin = process.env.API_ORIGIN || 'http://localhost:8787';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
+    // Cloudinary resizes its own images (free credits) instead of Vercel's capped optimizer.
+    loader: 'custom',
+    loaderFile: './lib/cloudinary-loader.ts',
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'i.ytimg.com' },

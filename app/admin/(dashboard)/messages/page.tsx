@@ -4,6 +4,7 @@ import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 
 interface ContactMessageRow {
   id: string;
@@ -19,16 +20,21 @@ interface ContactMessageRow {
 
 export default function AdminMessagesPage() {
   const [messages, setMessages] = React.useState<ContactMessageRow[]>([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
   const [error, setError] = React.useState<string | null>(null);
 
   const loadMessages = React.useCallback(async () => {
     try {
-      const res = await apiFetch<ContactMessageRow[]>('/v1/admin/messages');
+      const res = await apiFetch<ContactMessageRow[]>(
+        `/v1/admin/messages?page=${page}&limit=${PAGE_SIZE}`
+      );
       setMessages(res.data);
+      setTotal(res.meta?.total ?? res.data.length);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to load messages.');
     }
-  }, []);
+  }, [page]);
 
   React.useEffect(() => {
     void loadMessages();
@@ -106,6 +112,7 @@ export default function AdminMessagesPage() {
           ))
         )}
       </div>
+      <Pager page={page} total={total} onPage={setPage} />
     </div>
   );
 }
