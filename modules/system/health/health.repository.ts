@@ -1,0 +1,10 @@
+import { BaseFrontendRepository } from '@/core/base';
+import type { HealthSystemPayloadDto, HealthSystemQueryDto } from './health.dto';
+
+export class HealthSystemRepository extends BaseFrontendRepository {
+
+  async execute<T = Record<string, unknown>>(query?: Record<string, unknown>) {
+    return this.get<T>('/v1/health', query);
+  }
+
+}
