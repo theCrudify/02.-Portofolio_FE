@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { VideoClip } from '@/components/media/video-clip';
+import { TechLogo } from '@/components/project/tech-logo';
 import { Badge } from '@/components/ui/badge';
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/i18n/routing';
@@ -31,6 +32,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <SpotlightCard className="group flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+      {/* Browser-window chrome so every preview reads as a product screenshot */}
+      <div
+        aria-hidden="true"
+        className="flex items-center gap-1.5 border-b border-border/60 bg-muted/70 px-3 py-2"
+      >
+        <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
+        <span className="ml-2 min-w-0 flex-1 truncate rounded-md bg-background/80 px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+          /{project.slug}
+        </span>
+      </div>
       <div className="relative aspect-video w-full overflow-hidden border-b border-border/60 bg-muted">
         <Link
           href={`/projects/${project.slug}`}
@@ -55,14 +68,19 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <div className="bg-architectural-grid relative flex h-full w-full items-center justify-center overflow-hidden bg-muted/60">
               <div
                 aria-hidden="true"
-                className="h-36 w-36 rounded-full opacity-25 blur-2xl"
+                className="absolute h-44 w-44 rounded-full opacity-30 blur-2xl"
                 style={{
                   background:
                     'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
                 }}
               />
-              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/35 bg-background/90 shadow-md backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
-                <Layers className="h-6 w-6 text-primary" />
+              <div className="relative z-10 flex flex-col items-center gap-3 px-6 text-center">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/35 bg-background/90 shadow-md backdrop-blur-md transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+                  <Layers className="h-6 w-6 text-primary" />
+                </span>
+                <span className="line-clamp-2 max-w-[22ch] font-heading text-lg font-bold leading-snug text-foreground/80">
+                  {project.title}
+                </span>
               </div>
             </div>
           )}
@@ -157,7 +175,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {project.technologies.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {project.technologies.slice(0, 5).map((tech) => (
-              <Badge key={tech.slug} variant="outline" className="bg-background/80 text-xs font-normal">
+              <Badge
+                key={tech.slug}
+                variant="outline"
+                className="gap-1.5 bg-background/80 text-xs font-normal"
+              >
+                <TechLogo name={tech.name} icon={tech.icon} className="h-4 w-4" />
                 {tech.name}
               </Badge>
             ))}

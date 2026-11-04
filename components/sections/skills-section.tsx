@@ -4,6 +4,7 @@ import { Cpu, Database, Globe, Layers, Sparkles, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
+import { TechLogo } from '@/components/project/tech-logo';
 import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,9 @@ const CATEGORY_ICONS = {
 
 export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
   const t = useTranslations('sections.skills');
-  const [selectedCat, setSelectedCat] = useState<'all' | keyof SiteData['technologies']>('all');
+  const [selectedCat, setSelectedCat] = useState<'all' | keyof SiteData['technologies']>(
+    'all',
+  );
 
   const categories = [
     'frontend',
@@ -106,9 +109,9 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
                     <Badge
                       key={tech.slug}
                       variant="secondary"
-                      className="inline-flex items-center gap-1.5 border border-border/60 bg-background/85 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/40"
+                      className="inline-flex items-center gap-2 border border-border/60 bg-background/85 py-1.5 pr-3 pl-1.5 text-xs font-medium text-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md hover:shadow-primary/10 motion-reduce:hover:translate-y-0"
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                      <TechLogo name={tech.name} icon={tech.icon} />
                       <span>{tech.name}</span>
                     </Badge>
                   ))}

@@ -1,6 +1,7 @@
 'use client';
 
-import { Menu, Terminal, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { motion, useScroll, useSpring } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Container } from '@/components/layout/container';
@@ -18,6 +19,19 @@ export function Navbar({ brandName }: NavbarProps) {
   const t = useTranslations('nav');
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 220,
+    damping: 32,
+    restDelta: 0.001,
+  });
+  const initials = brandName
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 
   useEffect(() => {
     const onScroll = () => {
@@ -59,10 +73,13 @@ export function Navbar({ brandName }: NavbarProps) {
             href="/"
             className="group inline-flex items-center gap-2.5 font-heading text-lg font-bold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary transition-transform group-hover:scale-105">
-              <Terminal className="h-4 w-4" />
+            <span
+              aria-hidden="true"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary font-heading text-sm font-black tracking-tight text-primary-foreground shadow-md shadow-primary/30 transition-transform group-hover:scale-105 group-hover:-rotate-6"
+            >
+              {initials}
             </span>
-            <span>{brandName}</span>
+            <span className="sr-only sm:not-sr-only">{brandName}</span>
           </Link>
 
           <nav
@@ -96,6 +113,12 @@ export function Navbar({ brandName }: NavbarProps) {
             </Button>
           </div>
         </Container>
+
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-primary"
+          style={{ scaleX: progress }}
+        />
 
         {mobileOpen ? (
           <div className="border-b border-border bg-background/95 px-4 py-4 backdrop-blur-xl lg:hidden">

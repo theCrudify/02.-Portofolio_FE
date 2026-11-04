@@ -88,6 +88,9 @@ export default async function HomePage({
               stats={site.stats}
               locale={typedLocale}
               projects={site.featuredProjects}
+              stack={[...site.technologies.backend, ...site.technologies.frontend]
+                .slice(0, 6)
+                .map((tech) => tech.name)}
             />
           );
         }

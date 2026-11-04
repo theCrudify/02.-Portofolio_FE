@@ -21,18 +21,25 @@ export interface ActivitiesSectionProps {
 
 export function ActivitiesSection({ activities, locale, muted }: ActivitiesSectionProps) {
   const t = useTranslations('sections.activities');
-  const [filter, setFilter] = useState<'all' | 'volunteer' | 'committee' | 'organization'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'volunteer' | 'committee' | 'organization'
+  >('all');
 
   if (!activities || activities.length === 0) return null;
+
+  // Only offer filters that actually have entries.
+  const types = (['volunteer', 'committee', 'organization'] as const).filter((type) =>
+    activities.some((a) => a.type === type),
+  );
 
   const filtered =
     filter === 'all' ? activities : activities.filter((a) => a.type === filter);
 
   return (
     <Section id="activities" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
-      {activities.length > 3 ? (
+      {activities.length > 3 && types.length > 1 ? (
         <div className="mb-6 flex flex-wrap gap-2">
-          {(['all', 'volunteer', 'committee', 'organization'] as const).map((tab) => (
+          {(['all', ...types] as const).map((tab) => (
             <Button
               key={tab}
               type="button"
@@ -48,12 +55,19 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
 
       <div
         className={cn(
-          'grid grid-cols-1 gap-6',
-          filtered.length === 1 ? 'lg:grid-cols-1' : 'md:grid-cols-2',
+          'grid grid-cols-1 gap-4',
+          filtered.length === 1
+            ? 'lg:grid-cols-1'
+            : filtered.length === 2
+              ? 'md:grid-cols-2'
+              : 'md:grid-cols-2 xl:grid-cols-3',
         )}
       >
         {filtered.map((act) => (
-          <SpotlightCard key={act.id} className="group overflow-hidden">
+          <SpotlightCard
+            key={act.id}
+            className="group overflow-hidden transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0"
+          >
             {act.media ? (
               <div className="relative aspect-16/7 w-full overflow-hidden border-b border-border/60 bg-muted">
                 <Image
@@ -65,29 +79,31 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 />
               </div>
             ) : null}
-            <CardHeader className="bg-dot-matrix space-y-2 border-b border-border/60 pb-4">
+            <CardHeader className="space-y-1.5 p-5 pb-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
-                    <Users className="h-4 w-4" />
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
+                    <Users className="h-3.5 w-3.5" />
                   </span>
                   <Badge variant="secondary">{t(act.type)}</Badge>
                 </div>
                 {act.startDate ? (
-                  <span className="rounded-full border border-border bg-background/85 px-3 py-1 font-mono text-xs text-muted-foreground">
+                  <span className="font-mono text-[11px] text-muted-foreground">
                     {formatPeriod(act.startDate, act.endDate, locale)}
                   </span>
                 ) : null}
               </div>
-              <CardTitle className="pt-1 text-xl">{act.role}</CardTitle>
-              <p className="text-sm font-semibold text-primary">
+              <CardTitle className="pt-1 text-base leading-snug sm:text-lg">
+                {act.role}
+              </CardTitle>
+              <p className="line-clamp-2 text-xs font-semibold text-primary">
                 {act.organization}
                 {act.eventName ? ` · ${act.eventName}` : ''}
               </p>
             </CardHeader>
-            <CardContent className="space-y-4 pt-5">
+            <CardContent className="space-y-3 p-5 pt-0">
               {act.description ? (
-                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
                   {act.description}
                 </p>
               ) : null}

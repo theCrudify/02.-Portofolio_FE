@@ -33,7 +33,9 @@
     "contactMe": "Hubungi Saya",
     "slidePrev": "Slide Sebelumnya",
     "slideNext": "Slide Berikutnya",
-    "slidePointer": "Slide"
+    "slidePointer": "Slide",
+    "laptopLabel": "Laptop 3D yang menampilkan profil {name} sebagai kode",
+    "laptopScreen": "Tampilkan layar {n}"
   },
   "sections": {
     "about": {
@@ -41,7 +43,12 @@
       "title": "Tentang Saya",
       "languages": "Bahasa",
       "interests": "Minat",
-      "location": "Lokasi"
+      "location": "Lokasi",
+      "operationalStatus": "Status Operasional",
+      "workPreference": "Preferensi Kerja",
+      "availability": "Ketersediaan",
+      "timezone": "Zona Waktu",
+      "verified": "Terverifikasi"
     },
     "projects": {
       "eyebrow": "KARYA PILIHAN",

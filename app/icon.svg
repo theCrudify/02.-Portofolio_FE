@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Colour = --primary (oklch(0.5 0.18 255)) in sRGB; favicons can't read CSS tokens. -->
+  <rect width="64" height="64" rx="16" fill="#005fc6"/>
+  <text x="32" y="43" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="900" letter-spacing="-1.5" fill="#ffffff">JF</text>
+</svg>

@@ -33,7 +33,9 @@
     "contactMe": "Get in Touch",
     "slidePrev": "Previous Slide",
     "slideNext": "Next Slide",
-    "slidePointer": "Slide"
+    "slidePointer": "Slide",
+    "laptopLabel": "3D laptop showing {name}’s profile as code",
+    "laptopScreen": "Show screen {n}"
   },
   "sections": {
     "about": {
@@ -41,7 +43,12 @@
       "title": "About Me",
       "languages": "Languages",
       "interests": "Interests",
-      "location": "Location"
+      "location": "Location",
+      "operationalStatus": "Operational Status",
+      "workPreference": "Work Preference",
+      "availability": "Availability",
+      "timezone": "Timezone",
+      "verified": "Verified"
     },
     "projects": {
       "eyebrow": "SELECTED WORK",

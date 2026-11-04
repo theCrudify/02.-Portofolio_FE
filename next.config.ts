@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com https://i.vimeocdn.com https://cdn.loom.com",
+      "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.simpleicons.org https://i.ytimg.com https://i.vimeocdn.com https://cdn.loom.com",
       "media-src 'self' https://res.cloudinary.com",
       "frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.loom.com https://challenges.cloudflare.com",
       "connect-src 'self' https://api.cloudinary.com https://challenges.cloudflare.com https://*.ingest.sentry.io",

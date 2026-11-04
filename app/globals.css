@@ -17,6 +17,7 @@
   --radius: 0.75rem;
   --success: oklch(0.52 0.15 150);
   --warning: oklch(0.65 0.15 70);
+  --bronze: oklch(0.58 0.11 50);
   --destructive: oklch(0.52 0.2 27);
   --destructive-foreground: oklch(0.99 0 0);
   --primary: oklch(0.5 0.18 255);
@@ -61,6 +62,7 @@
   --foreground: oklch(0.97 0 0);
   --muted: oklch(0.21 0.01 265);
   --muted-foreground: oklch(0.71 0.013 286);
+  --bronze: oklch(0.72 0.11 50);
   --card: oklch(0.165 0.009 265);
   --card-foreground: oklch(0.97 0 0);
   --popover: oklch(0.165 0.009 265);
@@ -122,6 +124,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-bronze: var(--bronze);
   --color-ring: var(--ring);
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -246,7 +249,35 @@ body {
   animation: chibi-bubble-in 0.22s ease-out both;
 }
 
+/* Hero name: a slow light sweep across the gradient. */
+.text-gradient-hero {
+  background-image: linear-gradient(
+    100deg,
+    var(--foreground) 0%,
+    var(--foreground) 35%,
+    var(--primary) 50%,
+    var(--foreground) 65%,
+    var(--foreground) 100%
+  );
+  background-size: 250% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: hero-shine 7s ease-in-out infinite;
+}
+
+@keyframes hero-shine {
+  0%,
+  100% {
+    background-position: 100% center;
+  }
+  50% {
+    background-position: 0% center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .text-gradient-hero,
   .chibi-breathing,
   .chibi-walking,
   .chibi-bubble {
