@@ -30,7 +30,10 @@
     "certifications": "Sertifikat",
     "downloadCv": "Unduh CV",
     "fullProfilePdf": "Profil Lengkap (PDF)",
-    "contactMe": "Hubungi Saya"
+    "contactMe": "Hubungi Saya",
+    "slidePrev": "Slide Sebelumnya",
+    "slideNext": "Slide Berikutnya",
+    "slidePointer": "Slide"
   },
   "sections": {
     "about": {
@@ -58,6 +61,13 @@
       "gallery": "Galeri",
       "prevProject": "Proyek Sebelumnya",
       "nextProject": "Proyek Berikutnya",
+      "viewMode": "Tata Letak",
+      "mode3d": "Slide 3D",
+      "modeGrid1": "1 Kolom",
+      "modeGrid2": "2 Kolom",
+      "modeGrid3": "3 Kolom",
+      "slidePrev": "Slide Sebelumnya",
+      "slideNext": "Slide Berikutnya",
       "role": "Peran",
       "teamSize": "Ukuran Tim",
       "client": "Klien",

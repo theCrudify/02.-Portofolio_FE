@@ -4,13 +4,17 @@ import {
   Activity,
   ArrowRight,
   ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
   Compass,
+  Cpu,
   Download,
   FileText,
   Globe2,
   Images,
   Layers,
   MapPin,
+  Radio,
   ShieldCheck,
   Sparkles,
   ZoomIn,
@@ -23,7 +27,7 @@ import { AuroraBackground } from '@/components/effects/aurora-background';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Container } from '@/components/layout/container';
 import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { Link } from '@/i18n/routing';
 import type {
@@ -65,6 +69,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const t = useTranslations('hero');
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [proceduralSlide, setProceduralSlide] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (!profile) return null;
@@ -118,6 +123,22 @@ export function HeroSection({
   const socialEntries = Object.entries(profile.socials ?? {}).filter(
     ([, url]) => typeof url === 'string' && url.length > 0,
   );
+
+  const handlePrevHeroImage = () => {
+    setActiveSlideIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+  };
+
+  const handleNextHeroImage = () => {
+    setActiveSlideIndex((prev) => (prev + 1) % heroImages.length);
+  };
+
+  const handlePrevProcedural = () => {
+    setProceduralSlide((prev) => (prev - 1 + 3) % 3);
+  };
+
+  const handleNextProcedural = () => {
+    setProceduralSlide((prev) => (prev + 1) % 3);
+  };
 
   return (
     <AuroraBackground className="border-b border-border/80">
@@ -185,7 +206,7 @@ export function HeroSection({
 
               <div className="space-y-5">
                 <div className="grid grid-cols-3 gap-3">
-                  <SpotlightCard className="bg-background/60 p-3.5 sm:p-4">
+                  <SpotlightCard interactiveTilt className="bg-background/60 p-3.5 sm:p-4">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
                         <Activity className="h-4 w-4" />
@@ -199,7 +220,7 @@ export function HeroSection({
                     </p>
                   </SpotlightCard>
 
-                  <SpotlightCard className="bg-background/60 p-3.5 sm:p-4">
+                  <SpotlightCard interactiveTilt className="bg-background/60 p-3.5 sm:p-4">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
                         <Layers className="h-4 w-4" />
@@ -213,7 +234,7 @@ export function HeroSection({
                     </p>
                   </SpotlightCard>
 
-                  <SpotlightCard className="bg-background/60 p-3.5 sm:p-4">
+                  <SpotlightCard interactiveTilt className="bg-background/60 p-3.5 sm:p-4">
                     <div className="flex items-center justify-between">
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-success/30 bg-success/10 text-success">
                         <ShieldCheck className="h-4 w-4" />
@@ -293,11 +314,7 @@ export function HeroSection({
                     interactiveTilt
                     className="relative flex h-full flex-col justify-between overflow-hidden p-3.5 sm:p-4"
                   >
-                    <button
-                      type="button"
-                      onClick={() => setLightboxOpen(true)}
-                      className="group relative aspect-4/3 w-full flex-1 overflow-hidden rounded-xl border border-border bg-muted text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
+                    <div className="group relative aspect-4/3 w-full flex-1 overflow-hidden rounded-xl border border-border bg-muted">
                       <Image
                         src={activeSlide.url}
                         alt={activeSlide.alt}
@@ -308,9 +325,10 @@ export function HeroSection({
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent" />
 
+                      {/* Header overlay with slide counter & zoom */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                         {heroImages.length > 1 ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/85 px-3 py-1 font-mono text-xs font-medium text-foreground backdrop-blur-md">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/85 px-3 py-1 font-mono text-xs font-semibold text-foreground backdrop-blur-md">
                             <Images className="h-3.5 w-3.5 text-primary" />
                             <span>
                               {activeSlideIndex + 1} / {heroImages.length}
@@ -319,11 +337,44 @@ export function HeroSection({
                         ) : (
                           <span />
                         )}
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-md">
+
+                        <button
+                          type="button"
+                          onClick={() => setLightboxOpen(true)}
+                          aria-label="Zoom image"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/80 bg-background/85 text-foreground shadow-sm backdrop-blur-md transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
                           <ZoomIn className="h-4 w-4" />
-                        </span>
+                        </button>
                       </div>
 
+                      {/* Floating Directional Slide Arrows (Tombol Slide Kiri/Kanan) */}
+                      {heroImages.length > 1 ? (
+                        <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePrevHeroImage}
+                            aria-label={t('slidePrev')}
+                            className="pointer-events-auto h-9 w-9 rounded-full border-primary/30 bg-background/85 text-foreground shadow-md backdrop-blur-md transition-all hover:scale-110 hover:border-primary"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={handleNextHeroImage}
+                            aria-label={t('slideNext')}
+                            className="pointer-events-auto h-9 w-9 rounded-full border-primary/30 bg-background/85 text-foreground shadow-md backdrop-blur-md transition-all hover:scale-110 hover:border-primary"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : null}
+
+                      {/* Caption box */}
                       <div className="absolute inset-x-3 bottom-3 rounded-xl border border-border/70 bg-background/85 p-3 backdrop-blur-md">
                         <p className="font-heading text-sm font-bold text-foreground sm:text-base">
                           {activeSlide.title}
@@ -334,131 +385,252 @@ export function HeroSection({
                           </p>
                         ) : null}
                       </div>
-                    </button>
+                    </div>
 
+                    {/* Thumbnail Dock & Slide Indicators */}
                     {heroImages.length > 1 ? (
-                      <div className="mt-3 grid grid-cols-5 gap-2">
-                        {heroImages.slice(0, 5).map((img, idx) => (
-                          <button
-                            key={img.id}
-                            type="button"
-                            onClick={() => setActiveSlideIndex(idx)}
-                            aria-label={img.title}
-                            className={cn(
-                              'relative aspect-video overflow-hidden rounded-lg border transition-all',
-                              idx === activeSlideIndex
-                                ? 'border-primary ring-2 ring-primary/40 scale-[1.02]'
-                                : 'border-border opacity-70 hover:opacity-100',
-                            )}
-                          >
-                            <Image
-                              src={img.url}
-                              alt={img.alt}
-                              fill
-                              sizes="96px"
-                              className="object-cover"
+                      <div className="mt-3 space-y-2">
+                        <div className="grid grid-cols-5 gap-2">
+                          {heroImages.slice(0, 5).map((img, idx) => (
+                            <button
+                              key={img.id}
+                              type="button"
+                              onClick={() => setActiveSlideIndex(idx)}
+                              aria-label={img.title}
+                              className={cn(
+                                'relative aspect-video overflow-hidden rounded-lg border transition-all',
+                                idx === activeSlideIndex
+                                  ? 'border-primary ring-2 ring-primary/40 scale-[1.02]'
+                                  : 'border-border opacity-70 hover:opacity-100',
+                              )}
+                            >
+                              <Image
+                                src={img.url}
+                                alt={img.alt}
+                                fill
+                                sizes="96px"
+                                className="object-cover"
+                              />
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Slide Indicator Dots */}
+                        <div className="flex items-center justify-center gap-1.5 pt-1">
+                          {heroImages.map((img, idx) => (
+                            <button
+                              key={`dot-${img.id}`}
+                              type="button"
+                              onClick={() => setActiveSlideIndex(idx)}
+                              aria-label={`Slide ${idx + 1}`}
+                              className={cn(
+                                'h-1.5 rounded-full transition-all duration-300',
+                                idx === activeSlideIndex
+                                  ? 'w-6 bg-primary'
+                                  : 'w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/80',
+                              )}
                             />
-                          </button>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     ) : null}
                   </SpotlightCard>
                 </div>
               ) : (
+                /* Interactive 3D Multi-Slide Procedural Deck */
                 <SpotlightCard
                   interactiveTilt
-                  className="bg-dot-matrix relative flex h-full min-h-[380px] flex-col justify-between overflow-hidden p-6 sm:p-7"
+                  className="bg-dot-matrix relative flex h-full min-h-[420px] flex-col justify-between overflow-hidden p-6 sm:p-7"
                 >
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
-                  >
-                    <div
-                      className="h-72 w-72 rounded-full opacity-25 blur-3xl"
-                      style={{
-                        background:
-                          'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
-                      }}
-                    />
-                    <svg
-                      viewBox="0 0 360 360"
-                      className="absolute h-72 w-72 text-primary/25 sm:h-80 sm:w-80"
-                      fill="none"
-                    >
-                      <circle
-                        cx="180"
-                        cy="180"
-                        r="150"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeDasharray="6 6"
-                      />
-                      <circle
-                        cx="180"
-                        cy="180"
-                        r="112"
-                        stroke="currentColor"
-                        strokeWidth="1.25"
-                      />
-                      <circle
-                        cx="180"
-                        cy="180"
-                        r="74"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeDasharray="3 5"
-                      />
-                      <line
-                        x1="180"
-                        y1="12"
-                        x2="180"
-                        y2="348"
-                        stroke="currentColor"
-                        strokeWidth="0.75"
-                      />
-                      <line
-                        x1="12"
-                        y1="180"
-                        x2="348"
-                        y2="180"
-                        stroke="currentColor"
-                        strokeWidth="0.75"
-                      />
-                      <circle cx="180" cy="30" r="4" fill="currentColor" />
-                      <circle cx="292" cy="180" r="4" fill="currentColor" />
-                      <circle cx="68" cy="180" r="3" fill="currentColor" />
-                      <circle cx="180" cy="292" r="3.5" fill="currentColor" />
-                    </svg>
-                  </div>
-
-                  <div className="relative z-10 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/85 px-3 py-1 font-mono text-xs font-medium text-foreground shadow-2xs backdrop-blur-md">
-                      <Compass className="h-3.5 w-3.5 text-primary" />
-                      <span>{workPrefLabel}</span>
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/85 px-3 py-1 font-mono text-xs font-medium text-foreground shadow-2xs backdrop-blur-md">
-                      <Globe2 className="h-3.5 w-3.5 text-primary" />
-                      <span>{profile.timezone}</span>
-                    </span>
-                  </div>
-
-                  <div className="relative z-10 my-6 flex flex-col items-center justify-center text-center">
-                    <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl border-2 border-primary/40 bg-background/90 shadow-xl backdrop-blur-xl sm:h-32 sm:w-32">
-                      <div
-                        aria-hidden="true"
-                        className="absolute -inset-2 rounded-3xl border border-primary/20"
-                      />
-                      <span className="font-heading text-4xl font-bold tracking-tight text-primary sm:text-5xl">
-                        {initials}
+                  {/* Procedural Header with Slide Controller & Directional Buttons */}
+                  <div className="relative z-10 flex items-center justify-between gap-2 border-b border-border/70 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+                      <span className="font-mono text-xs font-semibold text-primary uppercase tracking-wider">
+                        {proceduralSlide === 0
+                          ? '// 01 TELEMETRY RADAR'
+                          : proceduralSlide === 1
+                            ? '// 02 SPATIAL IDENTITY'
+                            : '// 03 CAPABILITIES & ARSENAL'}
                       </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-xs font-semibold text-muted-foreground">
+                        {String(proceduralSlide + 1).padStart(2, '0')} / 03
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handlePrevProcedural}
+                        aria-label={t('slidePrev')}
+                        className="h-7 w-7 rounded-lg"
+                      >
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handleNextProcedural}
+                        aria-label={t('slideNext')}
+                        className="h-7 w-7 rounded-lg"
+                      >
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   </div>
 
-                  <div className="relative z-10 space-y-3 rounded-xl border border-border/80 bg-background/90 p-4 shadow-sm backdrop-blur-md">
+                  {/* Procedural Slide Content with 3D Depth */}
+                  <div className="relative z-10 my-6 flex flex-1 items-center justify-center">
+                    {proceduralSlide === 0 ? (
+                      /* Slide 0: Telemetry Radar */
+                      <div className="relative flex flex-col items-center justify-center text-center">
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute h-64 w-64 rounded-full opacity-25 blur-3xl"
+                          style={{
+                            background:
+                              'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
+                          }}
+                        />
+                        <svg
+                          viewBox="0 0 360 360"
+                          className="h-60 w-60 text-primary/30 transition-transform duration-700 hover:rotate-45 sm:h-68 sm:w-68"
+                          fill="none"
+                        >
+                          <circle
+                            cx="180"
+                            cy="180"
+                            r="150"
+                            stroke="currentColor"
+                            strokeWidth="1"
+                            strokeDasharray="6 6"
+                          />
+                          <circle
+                            cx="180"
+                            cy="180"
+                            r="110"
+                            stroke="currentColor"
+                            strokeWidth="1.25"
+                          />
+                          <circle
+                            cx="180"
+                            cy="180"
+                            r="70"
+                            stroke="currentColor"
+                            strokeWidth="1"
+                            strokeDasharray="3 5"
+                          />
+                          <line
+                            x1="180"
+                            y1="15"
+                            x2="180"
+                            y2="345"
+                            stroke="currentColor"
+                            strokeWidth="0.75"
+                          />
+                          <line
+                            x1="15"
+                            y1="180"
+                            x2="345"
+                            y2="180"
+                            stroke="currentColor"
+                            strokeWidth="0.75"
+                          />
+                          <circle cx="180" cy="30" r="4" fill="currentColor" />
+                          <circle cx="290" cy="180" r="4" fill="currentColor" />
+                          <circle cx="70" cy="180" r="3" fill="currentColor" />
+                          <circle cx="180" cy="290" r="3.5" fill="currentColor" />
+                        </svg>
+
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/40 bg-background/90 text-primary shadow-lg backdrop-blur-md">
+                            <Radio className="h-6 w-6 animate-pulse" />
+                          </span>
+                          <span className="mt-2 font-mono text-xs font-bold text-foreground">
+                            {profile.timezone}
+                          </span>
+                          <span className="text-[11px] font-mono text-muted-foreground">
+                            {workPrefLabel}
+                          </span>
+                        </div>
+                      </div>
+                    ) : proceduralSlide === 1 ? (
+                      /* Slide 1: 3D Spatial Monogram */
+                      <div className="relative flex flex-col items-center justify-center text-center">
+                        <div className="relative flex h-32 w-32 items-center justify-center rounded-3xl border-2 border-primary/40 bg-background/90 shadow-2xl backdrop-blur-xl transition-transform duration-500 hover:rotate-6 sm:h-36 sm:w-36">
+                          <div
+                            aria-hidden="true"
+                            className="absolute -inset-2.5 rounded-3xl border border-primary/25"
+                          />
+                          <span className="font-heading text-4xl font-bold tracking-tight text-primary sm:text-5xl">
+                            {initials}
+                          </span>
+                        </div>
+                        <p className="mt-4 font-heading text-base font-bold text-foreground">
+                          {profile.name}
+                        </p>
+                        {profile.location ? (
+                          <span className="inline-flex items-center gap-1 font-mono text-xs text-muted-foreground">
+                            <MapPin className="h-3 w-3 text-primary" />
+                            <span>{profile.location}</span>
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : (
+                      /* Slide 2: Capabilities & Stack Radar */
+                      <div className="w-full space-y-3">
+                        <div className="flex items-center justify-between rounded-xl border border-border/80 bg-background/80 p-3 shadow-2xs">
+                          <div className="flex items-center gap-2.5">
+                            <Cpu className="h-4 w-4 text-primary" />
+                            <span className="text-xs font-semibold text-foreground">
+                              {profile.headline}
+                            </span>
+                          </div>
+                          <Badge variant="outline" className="font-mono text-[10px]">
+                            {stats.yearsExperience}+ YRS
+                          </Badge>
+                        </div>
+
+                        {profile.interests && profile.interests.length > 0 ? (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {profile.interests.slice(0, 6).map((item, idx) => (
+                              <Badge
+                                key={`proc-int-${idx}`}
+                                variant="secondary"
+                                className="border border-border/70 text-xs"
+                              >
+                                {item.label}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Procedural Footer with Slide Indicators & Quick Details */}
+                  <div className="relative z-10 space-y-3 rounded-xl border border-border/80 bg-background/90 p-3.5 shadow-sm backdrop-blur-md">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate font-heading text-base font-bold text-foreground">
-                        {profile.name}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        {[0, 1, 2].map((idx) => (
+                          <button
+                            key={`proc-dot-${idx}`}
+                            type="button"
+                            onClick={() => setProceduralSlide(idx)}
+                            aria-label={`Slide ${idx + 1}`}
+                            className={cn(
+                              'h-1.5 rounded-full transition-all duration-300',
+                              idx === proceduralSlide
+                                ? 'w-6 bg-primary'
+                                : 'w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/80',
+                            )}
+                          />
+                        ))}
+                      </div>
+
                       {profile.location ? (
                         <span className="inline-flex shrink-0 items-center gap-1 font-mono text-xs text-muted-foreground">
                           <MapPin className="h-3 w-3 text-primary" />

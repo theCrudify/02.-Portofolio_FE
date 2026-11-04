@@ -30,7 +30,10 @@
     "certifications": "Certifications",
     "downloadCv": "Download CV",
     "fullProfilePdf": "Full Profile (PDF)",
-    "contactMe": "Get in Touch"
+    "contactMe": "Get in Touch",
+    "slidePrev": "Previous Slide",
+    "slideNext": "Next Slide",
+    "slidePointer": "Slide"
   },
   "sections": {
     "about": {
@@ -58,6 +61,13 @@
       "gallery": "Gallery",
       "prevProject": "Previous Project",
       "nextProject": "Next Project",
+      "viewMode": "Layout",
+      "mode3d": "3D Slide",
+      "modeGrid1": "1 Column",
+      "modeGrid2": "2 Columns",
+      "modeGrid3": "3 Columns",
+      "slidePrev": "Previous Slide",
+      "slideNext": "Next Slide",
       "role": "Role",
       "teamSize": "Team Size",
       "client": "Client",
