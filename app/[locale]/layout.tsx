@@ -5,7 +5,9 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/footer';
 import { Navbar } from '@/components/layout/navbar';
 import { ThemeProvider } from '@/components/layout/theme-provider';
+import { PageViewTracker } from '@/components/analytics/page-view-tracker';
 import { routing, type AppLocale } from '@/i18n/routing';
+
 import { fetchSiteData } from '@/lib/api/server';
 import { getFontPairClass } from '@/lib/fonts';
 
@@ -46,7 +48,9 @@ export default async function LocaleLayout({
           lang={typedLocale}
           className={`flex min-h-screen flex-col bg-background text-foreground ${fontPairClass}`}
         >
+          <PageViewTracker locale={typedLocale} />
           <Navbar brandName={brandName} />
+
           <main id="main-content" className="flex-1">
             {children}
           </main>
