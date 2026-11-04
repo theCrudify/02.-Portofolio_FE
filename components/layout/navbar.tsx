@@ -9,7 +9,7 @@ import { Container } from '@/components/layout/container';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
+import { Link, usePathname } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
 export interface NavbarProps {
@@ -53,9 +53,14 @@ export function Navbar({ brandName }: NavbarProps) {
     { href: '/#contact', label: t('contact') },
   ];
 
-  // Highlight the in-page section currently crossing the middle of the viewport.
+  // Home: highlight the section crossing the middle of the viewport. Other pages: the route
+  // itself (/projects/x -> Projects, /certifications/x -> Certifications).
+  const pathname = usePathname(); // locale-free
+  const isHome = pathname === '/';
   const [activeId, setActiveId] = useState<string | null>(null);
   useEffect(() => {
+    setActiveId(null);
+    if (!isHome) return;
     // Watch every section so the highlight clears over sections without a nav link.
     const els = Array.from(document.querySelectorAll<HTMLElement>('section[id]'));
     if (els.length === 0) return;
@@ -69,7 +74,12 @@ export function Navbar({ brandName }: NavbarProps) {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+    // Re-run on navigation: the navbar outlives page changes.
+  }, [isHome, pathname]);
+
+  const activeKey = isHome ? activeId : (pathname.split('/')[1] ?? null);
+  /** '/#about' -> 'about', '/projects' -> 'projects' (matches both the section id and the route). */
+  const isActive = (href: string) => href.replace(/^\/#?/, '') === activeKey;
 
   return (
     <>
@@ -109,10 +119,10 @@ export function Navbar({ brandName }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                aria-current={item.href === `/#${activeId}` ? 'true' : undefined}
+                aria-current={isActive(item.href) ? 'page' : undefined}
                 className={cn(
                   'rounded-full px-3.5 py-1.5 text-xs font-medium transition-all hover:bg-background hover:text-foreground hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  item.href === `/#${activeId}`
+                  isActive(item.href)
                     ? 'bg-background text-primary shadow-xs'
                     : 'text-muted-foreground',
                 )}
@@ -154,7 +164,11 @@ export function Navbar({ brandName }: NavbarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-lg px-3.5 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  className={cn(
+                    'rounded-lg px-3.5 py-2.5 text-sm font-medium hover:bg-accent',
+                    isActive(item.href) ? 'bg-primary/10 text-primary' : 'text-foreground',
+                  )}
                 >
                   {item.label}
                 </Link>
