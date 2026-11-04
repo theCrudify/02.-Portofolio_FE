@@ -43,7 +43,6 @@ export default async function LocaleLayout({
         attribute="class"
         defaultTheme={colorMode}
         enableSystem
-        disableTransitionOnChange
       >
         <div
           data-theme={themePreset}

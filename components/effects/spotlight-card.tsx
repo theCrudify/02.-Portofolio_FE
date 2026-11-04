@@ -10,7 +10,7 @@ export interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement>
 
 /**
  * SpotlightCard: Interactive card with mouse-tracking radial spotlight glow,
- * subtle 3D perspective hover tilt, and illuminated border ring.
+ * subtle 3D perspective hover tilt, and illuminated border ring for both Bright and Dark themes.
  */
 export function SpotlightCard({
   children,
@@ -57,7 +57,7 @@ export function SpotlightCard({
           : undefined,
       }}
       className={cn(
-        'group/spotlight relative overflow-hidden rounded-xl border border-border/80 bg-card/90 text-card-foreground shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:shadow-xl',
+        'group/spotlight relative overflow-hidden rounded-xl border border-border/80 bg-card/90 text-card-foreground shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:shadow-xl dark:bg-card/85 dark:shadow-lg dark:hover:border-primary/60',
         className,
       )}
       {...props}
@@ -67,11 +67,10 @@ export function SpotlightCard({
         className="pointer-events-none absolute -inset-px z-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(520px circle at ${mousePos.x}px ${mousePos.y}px, color-mix(in oklab, var(--primary) 16%, transparent), transparent 45%)`,
+          background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, color-mix(in oklab, var(--primary) 22%, transparent), transparent 45%)`,
         }}
       />
       <div className="relative z-10 flex h-full flex-col">{children}</div>
     </div>
   );
 }
-

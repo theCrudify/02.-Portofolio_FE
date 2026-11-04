@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root,
 [data-theme='slate'] {
   --background: oklch(0.985 0.002 260);
@@ -22,6 +24,8 @@
   --accent: oklch(0.94 0.025 255);
   --accent-foreground: oklch(0.21 0.006 285.9);
   --ring: oklch(0.5 0.18 255);
+  --spotlight-opacity: 0.14;
+  --aurora-opacity: 0.22;
 }
 
 [data-theme='forest'] {
@@ -49,6 +53,9 @@
 }
 
 .dark,
+.dark [data-theme],
+.dark[data-theme],
+.dark [data-theme='slate'],
 .dark[data-theme='slate'] {
   --background: oklch(0.13 0.008 265);
   --foreground: oklch(0.97 0 0);
@@ -65,8 +72,11 @@
   --accent: oklch(0.25 0.025 255);
   --accent-foreground: oklch(0.97 0 0);
   --ring: oklch(0.72 0.14 255);
+  --spotlight-opacity: 0.24;
+  --aurora-opacity: 0.35;
 }
 
+.dark [data-theme='forest'],
 .dark[data-theme='forest'] {
   --primary: oklch(0.74 0.13 155);
   --primary-foreground: oklch(0.145 0.004 285.8);
@@ -75,6 +85,7 @@
   --ring: oklch(0.74 0.13 155);
 }
 
+.dark [data-theme='sunset'],
 .dark[data-theme='sunset'] {
   --primary: oklch(0.75 0.15 50);
   --primary-foreground: oklch(0.145 0.004 285.8);
@@ -83,6 +94,7 @@
   --ring: oklch(0.75 0.15 50);
 }
 
+.dark [data-theme='mono'],
 .dark[data-theme='mono'] {
   --primary: oklch(0.97 0 0);
   --primary-foreground: oklch(0.145 0.004 285.8);
@@ -141,28 +153,47 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .bg-page-canvas {
   background-color: var(--background);
+  color: var(--foreground);
   background-image:
-    radial-gradient(ellipse 75% 45% at 50% -10%, color-mix(in oklab, var(--primary) 18%, transparent), transparent),
-    radial-gradient(ellipse 50% 40% at 90% 20%, color-mix(in oklab, var(--ring) 10%, transparent), transparent),
-    linear-gradient(to right, color-mix(in oklab, var(--border) 42%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 42%, transparent) 1px, transparent 1px);
+    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in oklab, var(--primary) 18%, transparent), transparent),
+    radial-gradient(ellipse 55% 40% at 90% 15%, color-mix(in oklab, var(--ring) 12%, transparent), transparent),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 56px 56px, 56px 56px;
+  background-attachment: fixed;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+.dark .bg-page-canvas,
+.dark.bg-page-canvas {
+  background-image:
+    radial-gradient(ellipse 85% 55% at 50% -12%, color-mix(in oklab, var(--primary) 28%, transparent), transparent),
+    radial-gradient(ellipse 60% 45% at 88% 18%, color-mix(in oklab, var(--ring) 18%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 12% 80%, color-mix(in oklab, var(--primary) 12%, transparent), transparent),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 56px 56px, 56px 56px;
   background-attachment: fixed;
 }
 
 .bg-architectural-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--border) 50%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 50%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--border) 52%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 52%, transparent) 1px, transparent 1px);
   background-size: 36px 36px;
 }
 
 .bg-dot-matrix {
-  background-image: radial-gradient(color-mix(in oklab, var(--primary) 28%, transparent) 1.25px, transparent 1.25px);
+  background-image: radial-gradient(color-mix(in oklab, var(--primary) 30%, transparent) 1.25px, transparent 1.25px);
   background-size: 18px 18px;
 }
 
