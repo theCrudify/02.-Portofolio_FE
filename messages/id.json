@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "skipToContent": "Lewati ke konten utama",
+    "about": "Tentang",
+    "projects": "Proyek",
+    "skills": "Keahlian",
+    "experience": "Pengalaman",
+    "education": "Pendidikan",
+    "certifications": "Sertifikasi",
+    "contact": "Kontak",
+    "cv": "CV / Resume",
+    "menu": "Buka menu",
+    "closeMenu": "Tutup menu",
+    "toggleTheme": "Ganti tema",
+    "switchLanguage": "Ganti bahasa",
+    "languageBanner": "Lihat dalam Bahasa Indonesia?",
+    "languageBannerAccept": "Ya, ganti",
+    "languageBannerDismiss": "Tetap Bahasa Inggris"
+  },
+  "hero": {
+    "eyebrow": "Software Engineer",
+    "openToWork": "Siap bekerja",
+    "freelance": "Tersedia untuk freelance",
+    "notAvailable": "Sedang tidak tersedia",
+    "remote": "Remote",
+    "hybrid": "Hibrida",
+    "onsite": "On-site",
+    "yearsExp": "Tahun Pengalaman",
+    "projects": "Proyek",
+    "certifications": "Sertifikat",
+    "downloadCv": "Unduh CV",
+    "fullProfilePdf": "Profil Lengkap (PDF)",
+    "contactMe": "Hubungi Saya"
+  },
+  "sections": {
+    "about": {
+      "eyebrow": "PROFIL",
+      "title": "Tentang Saya",
+      "languages": "Bahasa",
+      "interests": "Minat",
+      "location": "Lokasi"
+    },
+    "projects": {
+      "eyebrow": "KARYA PILIHAN",
+      "title": "Proyek Unggulan",
+      "viewAll": "Lihat semua proyek",
+      "allTypes": "Semua Kategori",
+      "allTech": "Semua Teknologi",
+      "privateRepo": "Repo privat",
+      "caseStudy": "Baca Studi Kasus",
+      "problem": "Masalah",
+      "solution": "Solusi",
+      "result": "Dampak & Hasil",
+      "challenges": "Tantangan Teknis",
+      "highlights": "Poin Utama",
+      "techStack": "Teknologi yang Digunakan",
+      "architecture": "Arsitektur Sistem",
+      "gallery": "Galeri",
+      "prevProject": "Proyek Sebelumnya",
+      "nextProject": "Proyek Berikutnya",
+      "role": "Peran",
+      "teamSize": "Ukuran Tim",
+      "client": "Klien",
+      "period": "Periode"
+    },
+    "skills": {
+      "eyebrow": "KAPABILITAS",
+      "title": "Keahlian & Teknologi",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "database": "Basis Data",
+      "devops": "DevOps & Cloud",
+      "tools": "Alat & Alur Kerja",
+      "soft_skill": "Praktik Rekayasa"
+    },
+    "experience": {
+      "eyebrow": "KARIER",
+      "title": "Pengalaman Kerja",
+      "present": "Sekarang"
+    },
+    "education": {
+      "eyebrow": "AKADEMIK",
+      "title": "Pendidikan",
+      "gpa": "IPK"
+    },
+    "certifications": {
+      "eyebrow": "KREDENSIAL",
+      "title": "Sertifikasi & Kursus",
+      "viewAll": "Lihat semua sertifikasi",
+      "verify": "Verifikasi Kredensial",
+      "expired": "Kedaluwarsa",
+      "issued": "Diterbitkan",
+      "expires": "Berlaku hingga"
+    },
+    "activities": {
+      "eyebrow": "KOMUNITAS",
+      "title": "Organisasi & Aktivitas",
+      "all": "Semua",
+      "volunteer": "Relawan",
+      "committee": "Kepanitiaan",
+      "organization": "Organisasi"
+    },
+    "achievements": {
+      "eyebrow": "PENGHARGAAN",
+      "title": "Penghargaan & Pencapaian"
+    },
+    "publications": {
+      "eyebrow": "TULISAN & DISKUSI",
+      "title": "Publikasi & Pembicara"
+    },
+    "testimonials": {
+      "eyebrow": "REKOMENDASI",
+      "title": "Kata Rekan Kerja",
+      "prev": "Testimoni sebelumnya",
+      "next": "Testimoni berikutnya"
+    },
+    "github": {
+      "eyebrow": "SUMBER TERBUKA",
+      "title": "Aktivitas GitHub",
+      "publicRepos": "Repositori Publik",
+      "totalStars": "Total Bintang",
+      "followers": "Pengikut",
+      "topLanguages": "Bahasa Teratas"
+    },
+    "contact": {
+      "eyebrow": "KONTAK",
+      "title": "Hubungi Saya",
+      "subtitle": "Punya ide proyek atau ingin berdiskusi peluang kerja sama? Kirim pesan di bawah ini.",
+      "name": "Nama Anda",
+      "email": "Alamat Email",
+      "subject": "Subjek (Opsional)",
+      "message": "Pesan",
+      "send": "Kirim Pesan",
+      "sending": "Mengirim...",
+      "success": "Terima kasih! Pesan Anda telah terkirim.",
+      "rateLimited": "Terlalu banyak pesan terkirim baru-baru ini. Silakan coba lagi dalam satu jam."
+    }
+  },
+  "common": {
+    "readMore": "Baca selengkapnya",
+    "readLess": "Tampilkan lebih sedikit",
+    "backToHome": "Kembali ke Beranda",
+    "retry": "Coba Lagi",
+    "loading": "Memuat...",
+    "notFoundTitle": "Halaman Tidak Ditemukan",
+    "notFoundDesc": "Halaman atau sumber daya yang Anda cari tidak ditemukan atau telah dipindahkan.",
+    "errorTitle": "Terjadi Kesalahan",
+    "errorDesc": "Terjadi kesalahan tak terduga saat memuat halaman ini.",
+    "printCv": "Cetak / Simpan PDF",
+    "previewMode": "Mode pratinjau (Draft terlihat)",
+    "exitPreview": "Keluar pratinjau"
+  },
+  "privacy": {
+    "title": "Kebijakan Privasi",
+    "intro": "Situs portofolio ini menghormati privasi Anda dan beroperasi tanpa cookie pelacakan.",
+    "dataCollectedTitle": "Data yang Kami Catat",
+    "dataCollectedBody": "Kami mencatat kunjungan halaman anonim, klik tautan keluar, dan unduhan CV menggunakan hash kriptografi harian (SHA-256) dari IP dan User-Agent. Alamat IP mentah tidak pernah disimpan.",
+    "cookiesTitle": "Tanpa Cookie Pelacakan",
+    "cookiesBody": "Tidak ada cookie analitik atau pengenal permanen yang disimpan di peramban Anda.",
+    "retentionTitle": "Retensi Data",
+    "retentionBody": "Data interaksi anonim mentah dihapus otomatis setelah 90 hari, dan hanya menyisakan ringkasan harian teragregasi.",
+    "contactTitle": "Formulir Kontak",
+    "contactBody": "Saat Anda mengirim formulir kontak, nama, alamat email, dan pesan Anda disimpan semata-mata untuk membalas pesan Anda."
+  },
+  "footer": {
+    "lastUpdated": "Terakhir diperbarui",
+    "privacy": "Kebijakan Privasi",
+    "rights": "Hak cipta dilindungi."
+  }
+}

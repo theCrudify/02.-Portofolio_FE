@@ -1,0 +1,170 @@
+{
+  "nav": {
+    "skipToContent": "Skip to content",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "experience": "Experience",
+    "education": "Education",
+    "certifications": "Certifications",
+    "contact": "Contact",
+    "cv": "CV / Resume",
+    "menu": "Open menu",
+    "closeMenu": "Close menu",
+    "toggleTheme": "Toggle theme",
+    "switchLanguage": "Switch language",
+    "languageBanner": "Lihat dalam Bahasa Indonesia?",
+    "languageBannerAccept": "Ya, ganti",
+    "languageBannerDismiss": "Tetap Bahasa Inggris"
+  },
+  "hero": {
+    "eyebrow": "Software Engineer",
+    "openToWork": "Open to work",
+    "freelance": "Available for freelance",
+    "notAvailable": "Currently unavailable",
+    "remote": "Remote",
+    "hybrid": "Hybrid",
+    "onsite": "On-site",
+    "yearsExp": "Years Exp.",
+    "projects": "Projects",
+    "certifications": "Certifications",
+    "downloadCv": "Download CV",
+    "fullProfilePdf": "Full Profile (PDF)",
+    "contactMe": "Get in Touch"
+  },
+  "sections": {
+    "about": {
+      "eyebrow": "PROFILE",
+      "title": "About Me",
+      "languages": "Languages",
+      "interests": "Interests",
+      "location": "Location"
+    },
+    "projects": {
+      "eyebrow": "SELECTED WORK",
+      "title": "Featured Projects",
+      "viewAll": "View all projects",
+      "allTypes": "All Types",
+      "allTech": "All Technologies",
+      "privateRepo": "Private repo",
+      "caseStudy": "Read Case Study",
+      "problem": "The Problem",
+      "solution": "The Solution",
+      "result": "Impact & Results",
+      "challenges": "Technical Challenges",
+      "highlights": "Key Highlights",
+      "techStack": "Technology Stack",
+      "architecture": "System Architecture",
+      "gallery": "Gallery",
+      "prevProject": "Previous Project",
+      "nextProject": "Next Project",
+      "role": "Role",
+      "teamSize": "Team Size",
+      "client": "Client",
+      "period": "Timeline"
+    },
+    "skills": {
+      "eyebrow": "CAPABILITIES",
+      "title": "Skills & Technologies",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "database": "Database",
+      "devops": "DevOps & Cloud",
+      "tools": "Tools & Workflow",
+      "soft_skill": "Engineering Practices"
+    },
+    "experience": {
+      "eyebrow": "CAREER",
+      "title": "Work Experience",
+      "present": "Present"
+    },
+    "education": {
+      "eyebrow": "ACADEMIC",
+      "title": "Education",
+      "gpa": "GPA"
+    },
+    "certifications": {
+      "eyebrow": "CREDENTIALS",
+      "title": "Certifications & Courses",
+      "viewAll": "View all certifications",
+      "verify": "Verify Credential",
+      "expired": "Expired",
+      "issued": "Issued",
+      "expires": "Expires"
+    },
+    "activities": {
+      "eyebrow": "COMMUNITY",
+      "title": "Organizations & Activities",
+      "all": "All",
+      "volunteer": "Volunteer",
+      "committee": "Committee",
+      "organization": "Organization"
+    },
+    "achievements": {
+      "eyebrow": "RECOGNITION",
+      "title": "Awards & Achievements"
+    },
+    "publications": {
+      "eyebrow": "WRITING & TALKS",
+      "title": "Publications & Speaking"
+    },
+    "testimonials": {
+      "eyebrow": "RECOMMENDATIONS",
+      "title": "What Colleagues Say",
+      "prev": "Previous testimonial",
+      "next": "Next testimonial"
+    },
+    "github": {
+      "eyebrow": "OPEN SOURCE",
+      "title": "GitHub Activity",
+      "publicRepos": "Public Repositories",
+      "totalStars": "Total Stars",
+      "followers": "Followers",
+      "topLanguages": "Top Languages"
+    },
+    "contact": {
+      "eyebrow": "CONNECT",
+      "title": "Get in Touch",
+      "subtitle": "Have a project in mind or want to discuss engineering opportunities? Send a message below.",
+      "name": "Your Name",
+      "email": "Email Address",
+      "subject": "Subject (Optional)",
+      "message": "Message",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Thank you! Your message has been sent.",
+      "rateLimited": "Too many messages sent recently. Please try again in an hour."
+    }
+  },
+  "common": {
+    "readMore": "Read more",
+    "readLess": "Show less",
+    "backToHome": "Back to Home",
+    "retry": "Try Again",
+    "loading": "Loading...",
+    "notFoundTitle": "Page Not Found",
+    "notFoundDesc": "The page or resource you are looking for does not exist or has been moved.",
+    "errorTitle": "Something Went Wrong",
+    "errorDesc": "An unexpected error occurred while loading this page.",
+    "printCv": "Print / Save PDF",
+    "previewMode": "Preview mode (Drafts visible)",
+    "exitPreview": "Exit preview"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This portfolio website respects your privacy and operates without tracking cookies.",
+    "dataCollectedTitle": "What Data We Collect",
+    "dataCollectedBody": "We record anonymous page views, outbound link clicks, and CV downloads using a daily rotating cryptographic hash (SHA-256) of the request IP and User-Agent. Raw IP addresses are never stored.",
+    "cookiesTitle": "No Tracking Cookies",
+    "cookiesBody": "No analytics cookies or persistent identifiers are stored in your browser.",
+    "retentionTitle": "Data Retention",
+    "retentionBody": "Raw anonymous interaction events are automatically purged after 90 days, retaining only aggregated daily counts.",
+    "contactTitle": "Contact Form",
+    "contactBody": "When you submit the contact form, your name, email address, and message are stored solely to respond to your inquiry."
+  },
+  "footer": {
+    "lastUpdated": "Last updated",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  }
+}
