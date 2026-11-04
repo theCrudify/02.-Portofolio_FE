@@ -169,6 +169,15 @@
       "sending": "Sending...",
       "success": "Thank you! Your message has been sent.",
       "rateLimited": "Too many messages sent recently. Please try again in an hour."
+    },
+    "extras": {
+      "details": "Details & attachments",
+      "achievements": "Achievements",
+      "skills": "Tools & skills",
+      "attachments": "Attachments",
+      "links": "Links",
+      "file": "Document",
+      "private": "Private"
     }
   },
   "common": {
@@ -216,4 +225,3 @@
     "openDocument": "Open / download {title}"
   }
 }
-

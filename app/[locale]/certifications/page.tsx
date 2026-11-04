@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
+import { PortfolioExtras } from '@/components/sections/portfolio-extras';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -106,6 +107,7 @@ export default async function CertificationsPage({
               ) : null}
               {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
             </CardContent>
+            <PortfolioExtras trackId={`cert-${cert.id}`} {...cert} />
 
             {cert.credentialUrl ? (
               <CardFooter className="border-t border-border pt-3">

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
+import { PortfolioExtras } from '@/components/sections/portfolio-extras';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -123,6 +124,8 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 </ul>
               ) : null}
             </CardContent>
+            {/* Achievements are already listed above; the clamped description expands here. */}
+            <PortfolioExtras trackId={`activity-${act.id}`} {...act} achievements={[]} />
           </SpotlightCard>
         ))}
       </div>

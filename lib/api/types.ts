@@ -204,7 +204,17 @@ export interface PublicEducation {
   activities: string[];
 }
 
-export interface PublicCertification {
+/** Detail shared by certificates and activities. */
+export interface PublicPortfolioExtras {
+  achievements: string[];
+  /** Tools and skills (technologies; soft skills are a tech category). */
+  technologies: PublicTechChip[];
+  links: PublicProjectLink[];
+  /** Images, PDFs and documents in display order. */
+  attachments: (PublicMedia & { caption: string | null })[];
+}
+
+export interface PublicCertification extends PublicPortfolioExtras {
   id: string;
   type: PublicLookup;
   name: string;
@@ -214,11 +224,12 @@ export interface PublicCertification {
   isExpired: boolean;
   credentialId: string | null;
   credentialUrl: string | null;
+  description: string | null;
   image: PublicImage | null;
   featured: boolean;
 }
 
-export interface PublicActivity {
+export interface PublicActivity extends PublicPortfolioExtras {
   id: string;
   type: PublicLookup;
   organization: PublicOrganization | null;
@@ -227,7 +238,6 @@ export interface PublicActivity {
   startDate: string | null;
   endDate: string | null;
   description: string | null;
-  achievements: string[];
   media: PublicImage | null;
   linkUrl: string | null;
 }

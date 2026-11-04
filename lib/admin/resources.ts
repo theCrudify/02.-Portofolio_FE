@@ -108,6 +108,42 @@ const bullets = (name: string, label: string, help?: string): ResourceFieldDef =
   help,
   itemFields: [{ ...bi('text', 'Text', { multiline: true, required: true }) }],
 });
+/** Tools/skills, links to other platforms and uploaded images/PDFs (certificates, activities). */
+const extras = (): ResourceFieldDef[] => [
+  {
+    name: 'technologies',
+    label: 'Tools & skills',
+    type: 'repeater',
+    help: 'Soft skills are technologies with the "Soft skills" category.',
+    itemFields: [
+      {
+        name: 'technologyId',
+        label: 'Tool / skill',
+        type: 'reference',
+        resource: 'technologies',
+        optionLabel: (row) => String(row.name),
+        required: true,
+      },
+    ],
+  },
+  {
+    name: 'media',
+    label: 'Attachments (certificate PDF, photos, documents)',
+    type: 'repeater',
+    itemFields: [media('mediaId', 'File (image or PDF)', 'any'), bi('caption', 'Caption')],
+  },
+  {
+    name: 'links',
+    label: 'Links (LinkedIn, Instagram, YouTube, article…)',
+    type: 'repeater',
+    itemFields: [
+      lookup('typeId', 'Type', 'link_type'),
+      text('label', 'Label', true),
+      { name: 'url', label: 'URL', type: 'url' },
+      { name: 'isPrivate', label: 'Private', type: 'checkbox' },
+    ],
+  },
+];
 const sortOrder: ResourceFieldDef = { name: 'sortOrder', label: 'Sort order', type: 'number' };
 
 const experienceLabel = (row: Row) =>
@@ -323,7 +359,10 @@ export const ADMIN_RESOURCES: Record<AdminResourceKey, AdminResourceMeta> = {
       { name: 'expiryDate', label: 'Expiry date', type: 'date' },
       text('credentialId', 'Credential ID'),
       { name: 'credentialUrl', label: 'Credential URL', type: 'url' },
-      media('imageMediaId', 'Certificate image'),
+      bi('description', 'Description', { multiline: true }),
+      media('imageMediaId', 'Certificate image (cover)'),
+      bullets('achievements', 'Achievements'),
+      ...extras(),
       { name: 'featured', label: 'Featured on home page', type: 'checkbox' },
       sortOrder,
     ],
@@ -343,8 +382,9 @@ export const ADMIN_RESOURCES: Record<AdminResourceKey, AdminResourceMeta> = {
       { name: 'endDate', label: 'End date', type: 'date' },
       bi('description', 'Description', { multiline: true }),
       bullets('achievements', 'Achievements'),
-      media('mediaId', 'Photo'),
+      media('mediaId', 'Photo (cover)'),
       { name: 'linkUrl', label: 'Link', type: 'url' },
+      ...extras(),
       sortOrder,
     ],
   },

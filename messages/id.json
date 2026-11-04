@@ -169,6 +169,15 @@
       "sending": "Mengirim...",
       "success": "Terima kasih! Pesan Anda telah terkirim.",
       "rateLimited": "Terlalu banyak pesan terkirim baru-baru ini. Silakan coba lagi dalam satu jam."
+    },
+    "extras": {
+      "details": "Detail & lampiran",
+      "achievements": "Capaian",
+      "skills": "Tools & skill",
+      "attachments": "Lampiran",
+      "links": "Tautan",
+      "file": "Dokumen",
+      "private": "Privat"
     }
   },
   "common": {
@@ -216,4 +225,3 @@
     "openDocument": "Buka / unduh {title}"
   }
 }
-

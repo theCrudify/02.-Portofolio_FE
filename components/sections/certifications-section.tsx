@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
+import { PortfolioExtras } from '@/components/sections/portfolio-extras';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -98,6 +99,7 @@ export function CertificationsSection({
                     <p className="font-mono text-foreground">{cert.credentialId}</p>
                   ) : null}
                 </CardContent>
+                <PortfolioExtras trackId={`cert-${cert.id}`} {...cert} />
               </div>
 
               {cert.credentialUrl ? (
