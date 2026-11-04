@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/footer';
@@ -19,6 +19,8 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
 
   if (!routing.locales.includes(locale as AppLocale)) {
     notFound();

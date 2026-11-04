@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
 import { ProjectGrid } from '@/components/project/project-grid';
 import { buttonVariants } from '@/components/ui/button';
@@ -34,6 +34,8 @@ export default async function ProjectsPage({
   searchParams: Promise<{ technology?: string; type?: string; page?: string }>;
 }) {
   const { locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
   const query = await searchParams;
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
 

@@ -1,5 +1,6 @@
 import { fetchSiteData } from '@/lib/api/server';
 import { CvPrintableView, type CvExportPayload } from '@/components/pdf/cv-templates';
+import { setRequestLocale } from 'next-intl/server';
 
 export default async function WebCvPage({
   params,
@@ -7,6 +8,8 @@ export default async function WebCvPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
   const typedLocale = locale === 'id' ? 'id' : 'en';
   const site = await fetchSiteData(typedLocale);
 

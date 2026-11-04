@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { CvPrintableView, type CvExportPayload } from '@/components/pdf/cv-templates';
+import { setRequestLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'Shared Document',
@@ -21,7 +22,9 @@ export default async function ShareTokenPage({
 }: {
   params: Promise<{ locale: string; token: string }>;
 }) {
-  const { token } = await params;
+  const { token, locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
 
   let status = 500;
   let payload: ShareLinkData | null = null;

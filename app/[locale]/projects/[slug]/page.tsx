@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Container } from '@/components/layout/container';
 import { getEmbedIframeUrl, VideoEmbed } from '@/components/media/video-embed';
@@ -73,6 +73,8 @@ export default async function ProjectDetailPage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
 
   const [t, site, project] = await Promise.all([

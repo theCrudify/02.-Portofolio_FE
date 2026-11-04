@@ -20,6 +20,7 @@ import {
 import { fetchSiteData } from '@/lib/api/server';
 import type { SectionKey, SupportedLocale } from '@/lib/api/types';
 import { buildMetadata } from '@/lib/seo';
+import { setRequestLocale } from 'next-intl/server';
 
 export const revalidate = false;
 
@@ -55,6 +56,8 @@ export default async function HomePage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
   const site = await fetchSiteData(typedLocale);
 

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { SupportedLocale } from '@/lib/api/types';
@@ -28,6 +28,8 @@ export default async function PrivacyPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
+  setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
   const t = await getTranslations({ locale: typedLocale, namespace: 'privacy' });
 
