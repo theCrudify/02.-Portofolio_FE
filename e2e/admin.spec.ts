@@ -10,3 +10,4 @@ test.describe('Admin Panel Authentication & CRUD Flow', () => {
     await expect(page.locator('input[type="password"]')).toBeVisible();
   });
 });
+

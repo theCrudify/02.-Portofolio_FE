@@ -51,3 +51,4 @@ export function TechStackGroup({ technologies, labels = {} }: TechStackGroupProp
     </div>
   );
 }
+

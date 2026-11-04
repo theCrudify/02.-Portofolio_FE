@@ -119,3 +119,4 @@ export function buildVideoObjectJsonLd(input: {
     embedUrl: input.embedUrl,
   };
 }
+

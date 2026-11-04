@@ -20,3 +20,4 @@ describe('T13 · Theme Presets WCAG AA Contrast Verification', () => {
     });
   }
 });
+

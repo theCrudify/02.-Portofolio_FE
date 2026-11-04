@@ -18,3 +18,4 @@ export function StatusBadge({
   }
   return <Badge variant="warning">Draft</Badge>;
 }
+

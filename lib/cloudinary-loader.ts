@@ -13,3 +13,4 @@ export default function cloudinaryLoader({
   const params = ['f_auto', 'c_limit', `w_${width}`, `q_${quality || 'auto'}`];
   return src.replace('/upload/', `/upload/${params.join(',')}/`);
 }
+

@@ -42,3 +42,4 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
     </Section>
   );
 }
+

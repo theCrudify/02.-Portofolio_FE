@@ -14,3 +14,4 @@ test.describe('Public Portfolio Pages (EN & ID)', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 });
+

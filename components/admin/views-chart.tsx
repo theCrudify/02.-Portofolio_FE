@@ -38,3 +38,4 @@ export function ViewsChart({ series }: { series: DailySeriesPoint[] }) {
     </div>
   );
 }
+

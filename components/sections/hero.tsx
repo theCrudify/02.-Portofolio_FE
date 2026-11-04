@@ -160,3 +160,4 @@ export function HeroSection({ profile, settings, stats, locale }: HeroSectionPro
     </section>
   );
 }
+

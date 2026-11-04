@@ -52,3 +52,4 @@ export function Footer({ name, socials = {}, updatedAt }: FooterProps) {
     </footer>
   );
 }
+

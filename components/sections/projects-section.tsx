@@ -32,3 +32,4 @@ export function ProjectsSection({ projects, muted }: ProjectsSectionProps) {
     </Section>
   );
 }
+

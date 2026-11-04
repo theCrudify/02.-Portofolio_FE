@@ -69,3 +69,4 @@ export function TestimonialsSection({ testimonials, muted }: TestimonialsSection
     </Section>
   );
 }
+

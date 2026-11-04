@@ -42,3 +42,4 @@
 - [ ] Upload active CV PDFs (EN & ID) in `/admin/documents`.
 - [ ] Publish initial projects and verify `/sitemap.xml`, OpenGraph preview, and contact form delivery.
 - [ ] Configure Cloudflare Uptime / Better Stack monitor on `/health` and `/en`.
+

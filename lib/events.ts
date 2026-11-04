@@ -93,3 +93,4 @@ export function track(type: AnalyticsEventType, data: TrackEventPayload = {}): v
     // Ignore tracking network failures
   }
 }
+

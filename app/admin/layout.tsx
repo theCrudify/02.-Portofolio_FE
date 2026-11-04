@@ -14,3 +14,4 @@ export default function AdminRootLayout({ children }: { children: React.ReactNod
     </NextIntlClientProvider>
   );
 }
+

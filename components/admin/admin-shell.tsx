@@ -183,3 +183,4 @@ export function AdminShell({ user, children }: AdminShellProps) {
     </UserProvider>
   );
 }
+

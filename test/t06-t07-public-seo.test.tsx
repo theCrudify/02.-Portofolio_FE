@@ -105,3 +105,4 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
     expect(sitemapEntries.some((e) => e.url.endsWith('/projects/cashier-app'))).toBe(true);
   });
 });
+

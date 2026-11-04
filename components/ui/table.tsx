@@ -57,3 +57,4 @@ export function TableHead({ className, ...props }: ThHTMLAttributes<HTMLTableCel
 export function TableCell({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) {
   return <td className={cn('p-4 align-middle', className)} {...props} />;
 }
+

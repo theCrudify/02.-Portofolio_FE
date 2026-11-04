@@ -24,3 +24,4 @@ export async function GET(req: NextRequest) {
   const target = slug ? `/en/projects/${encodeURIComponent(slug)}` : '/en';
   return NextResponse.redirect(new URL(target, req.url));
 }
+

@@ -41,3 +41,4 @@ export const getCurrentUser = cache(async (): Promise<AdminUser | null> => {
     return null;
   }
 });
+

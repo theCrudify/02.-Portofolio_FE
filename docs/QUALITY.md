@@ -27,3 +27,4 @@
 - **Accessibility**: 100 (WCAG 2.1 AA contrast verified mathematically in `test/t13-theme-contrast.test.ts`, skip-to-content link, semantic landmarks, `prefers-reduced-motion` support).
 - **Best Practices**: 100 (Strict CSP, `HttpOnly; Secure; SameSite=Lax` cookies, CSRF protection).
 - **SEO**: 100 (`hreflang` alternates, dynamic OpenGraph images, JSON-LD `Person` & `CreativeWork`, `/sitemap.xml`, `/robots.txt` disallowing `/admin` and `/s/`).
+

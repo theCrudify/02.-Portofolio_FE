@@ -32,3 +32,4 @@ export function RoleGate({ minRole, children, fallback = null }: RoleGateProps) 
   }
   return <>{children}</>;
 }
+

@@ -57,3 +57,4 @@ export function EducationSection({ education, locale, muted }: EducationSectionP
     </Section>
   );
 }
+

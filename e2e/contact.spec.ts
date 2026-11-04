@@ -9,3 +9,4 @@ test.describe('Contact Form & Privacy Policy', () => {
     await expect(page.locator('h1')).toBeVisible();
   });
 });
+

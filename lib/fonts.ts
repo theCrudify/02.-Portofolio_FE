@@ -56,3 +56,4 @@ export function getFontPairClass(fontPair?: string | null): string {
   }
   return 'font-pair-geist';
 }
+

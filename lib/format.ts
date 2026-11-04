@@ -82,3 +82,4 @@ export function formatPeriod(
   }
   return `${startFormatted} – ${endFormatted} · ${duration}`;
 }
+

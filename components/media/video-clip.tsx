@@ -65,3 +65,4 @@ export function VideoClip({ url, sources, poster, className }: VideoClipProps) {
     </video>
   );
 }
+

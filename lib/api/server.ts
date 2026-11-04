@@ -455,3 +455,4 @@ export async function fetchCertificationsList(
     return type ? list.filter((c) => c.type === type) : list;
   }
 }
+

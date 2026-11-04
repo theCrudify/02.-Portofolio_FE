@@ -27,3 +27,4 @@ export function ThemeToggle({ label = 'Toggle theme' }: { label?: string }) {
     </Button>
   );
 }
+

@@ -29,3 +29,4 @@ export function LocaleSwitcher({ label = 'Switch language' }: { label?: string }
     </Button>
   );
 }
+

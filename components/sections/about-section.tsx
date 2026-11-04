@@ -65,3 +65,4 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
     </Section>
   );
 }
+

@@ -78,3 +78,4 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
     </Section>
   );
 }
+

@@ -63,3 +63,4 @@ export function GithubSection({ github, muted }: GithubSectionProps) {
     </Section>
   );
 }
+

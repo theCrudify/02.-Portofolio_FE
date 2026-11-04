@@ -73,3 +73,4 @@ export function ExperienceSection({ experiences, locale, muted }: ExperienceSect
     </Section>
   );
 }
+

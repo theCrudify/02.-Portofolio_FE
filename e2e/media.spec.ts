@@ -6,3 +6,4 @@ test.describe('Media Library & Video Embed', () => {
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 });
+

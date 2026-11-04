@@ -14,3 +14,4 @@ vi.mock('next/font/google', () => {
     Instrument_Serif: createFontMock,
   };
 });
+

@@ -196,3 +196,4 @@ export function ContactSection({ profile, locale, muted }: ContactSectionProps) 
     </Section>
   );
 }
+

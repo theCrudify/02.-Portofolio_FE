@@ -111,3 +111,4 @@ export function Navbar({ brandName }: NavbarProps) {
     </>
   );
 }
+

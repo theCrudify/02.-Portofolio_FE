@@ -132,3 +132,4 @@ export function CvPrintableView({ data }: { data: CvExportPayload }) {
     </article>
   );
 }
+

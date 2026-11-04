@@ -11,3 +11,4 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
   }
   return <AdminShell user={user}>{children}</AdminShell>;
 }
+

@@ -23,3 +23,4 @@ export function MetricBadgeGrid({ metrics }: MetricBadgeProps) {
     </div>
   );
 }
+

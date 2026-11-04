@@ -55,3 +55,4 @@ export default async function PrivacyPage({
     </Section>
   );
 }
+

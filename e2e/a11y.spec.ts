@@ -7,3 +7,4 @@ test.describe('Accessibility (WCAG 2.1 AA) & Keyboard Navigation', () => {
     await expect(skipLink).toHaveCount(1);
   });
 });
+

@@ -108,3 +108,4 @@ export function contrastRatio(c1: OklchColor, c2: OklchColor): number {
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) / (darkest + 0.05);
 }
+
