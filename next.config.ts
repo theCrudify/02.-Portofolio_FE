@@ -17,13 +17,14 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${apiOrigin}/v1/:path*`,
-      },
+      // health first: the catch-all below would otherwise send it to /v1/health (404).
       {
         source: '/api/v1/health',
         destination: `${apiOrigin}/health`,
+      },
+      {
+        source: '/api/v1/:path*',
+        destination: `${apiOrigin}/v1/:path*`,
       },
     ];
   },
