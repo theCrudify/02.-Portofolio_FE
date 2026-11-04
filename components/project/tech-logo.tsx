@@ -45,7 +45,7 @@ export function TechLogo({ name, icon, className }: TechLogoProps) {
     return (
       <span
         aria-hidden="true"
-        className={cn('h-1.5 w-1.5 rounded-full bg-primary', className)}
+        className="mx-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
       />
     );
   }

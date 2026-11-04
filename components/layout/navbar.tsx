@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { motion, useScroll, useSpring } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { CommandPalette } from '@/components/layout/command-palette';
 import { Container } from '@/components/layout/container';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
@@ -52,6 +53,24 @@ export function Navbar({ brandName }: NavbarProps) {
     { href: '/#contact', label: t('contact') },
   ];
 
+  // Highlight the in-page section currently crossing the middle of the viewport.
+  const [activeId, setActiveId] = useState<string | null>(null);
+  useEffect(() => {
+    // Watch every section so the highlight clears over sections without a nav link.
+    const els = Array.from(document.querySelectorAll<HTMLElement>('section[id]'));
+    if (els.length === 0) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   return (
     <>
       <a
@@ -90,7 +109,13 @@ export function Navbar({ brandName }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-background hover:text-foreground hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-current={item.href === `/#${activeId}` ? 'true' : undefined}
+                className={cn(
+                  'rounded-full px-3.5 py-1.5 text-xs font-medium transition-all hover:bg-background hover:text-foreground hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  item.href === `/#${activeId}`
+                    ? 'bg-background text-primary shadow-xs'
+                    : 'text-muted-foreground',
+                )}
               >
                 {item.label}
               </Link>
@@ -98,6 +123,7 @@ export function Navbar({ brandName }: NavbarProps) {
           </nav>
 
           <div className="flex items-center gap-2">
+            <CommandPalette items={navItems} />
             <LocaleSwitcher label={t('switchLanguage')} />
             <ThemeToggle label={t('toggleTheme')} />
             <Button

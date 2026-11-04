@@ -15,9 +15,10 @@ import type { VisualShowcaseItem } from '@/lib/visuals';
 export interface ProjectsSectionProps {
   projects: PublicProjectCard[];
   muted?: boolean;
+  inverted?: boolean;
 }
 
-export function ProjectsSection({ projects, muted }: ProjectsSectionProps) {
+export function ProjectsSection({ projects, muted, inverted }: ProjectsSectionProps) {
   const t = useTranslations('sections.projects');
   if (!projects || projects.length === 0) return null;
 
@@ -71,6 +72,7 @@ export function ProjectsSection({ projects, muted }: ProjectsSectionProps) {
       eyebrow={t('eyebrow')}
       title={t('title')}
       muted={muted}
+      inverted={inverted}
       actions={
         <Link href="/projects" className={buttonVariants({ variant: 'default' })}>
           <span>{t('viewAll')}</span>

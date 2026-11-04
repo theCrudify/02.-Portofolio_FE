@@ -107,6 +107,7 @@ export default async function HomePage({
                 key="projects"
                 projects={site.featuredProjects}
                 muted={isMuted}
+                inverted
               />
             );
           case 'skills':
@@ -160,6 +161,7 @@ export default async function HomePage({
                 achievements={site.achievements}
                 locale={typedLocale}
                 muted={isMuted}
+                inverted
               />
             );
           case 'publications':

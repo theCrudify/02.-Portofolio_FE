@@ -46,9 +46,34 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
   const visibleCategories =
     selectedCat === 'all' ? nonEmpty : nonEmpty.filter((c) => c === selectedCat);
 
+  const allTech = nonEmpty.flatMap((c) => technologies[c]);
+
   return (
     <Section id="skills" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
       <div className="space-y-6">
+        {/* Endless logo strip; the duplicate copy makes the loop seamless and is hidden from AT. */}
+        <div className="marquee-mask group/marquee relative overflow-hidden py-2">
+          <div className="marquee-track flex w-max gap-3 group-hover/marquee:[animation-play-state:paused]">
+            {[0, 1].map((copy) => (
+              <ul
+                key={copy}
+                aria-hidden={copy === 1 ? true : undefined}
+                className="flex shrink-0 gap-3"
+              >
+                {allTech.map((tech) => (
+                  <li
+                    key={`${copy}-${tech.slug}`}
+                    className="inline-flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card/85 px-4 py-2.5 text-sm font-semibold text-foreground shadow-2xs backdrop-blur-md"
+                  >
+                    <TechLogo name={tech.name} icon={tech.icon} className="h-6 w-6" />
+                    <span className="whitespace-nowrap">{tech.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
+
         {nonEmpty.length > 1 ? (
           <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/80 bg-card/85 p-2.5 shadow-2xs backdrop-blur-md">
             {nonEmpty.map((cat) => {

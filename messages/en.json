@@ -15,7 +15,10 @@
     "switchLanguage": "Switch language",
     "languageBanner": "Lihat dalam Bahasa Indonesia?",
     "languageBannerAccept": "Ya, ganti",
-    "languageBannerDismiss": "Tetap Bahasa Inggris"
+    "languageBannerDismiss": "Tetap Bahasa Inggris",
+    "commandPalette": "Command menu (Ctrl+K)",
+    "commandPlaceholder": "Type a command or search…",
+    "commandEmpty": "No results"
   },
   "hero": {
     "eyebrow": "Software Engineer",

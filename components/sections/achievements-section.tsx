@@ -13,6 +13,7 @@ export interface AchievementsSectionProps {
   achievements: PublicAchievement[];
   locale: SupportedLocale;
   muted?: boolean;
+  inverted?: boolean;
 }
 
 const MEDAL = {
@@ -43,12 +44,19 @@ export function AchievementsSection({
   achievements,
   locale,
   muted,
+  inverted,
 }: AchievementsSectionProps) {
   const t = useTranslations('sections.achievements');
   if (!achievements || achievements.length === 0) return null;
 
   return (
-    <Section id="achievements" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
+    <Section
+      id="achievements"
+      eyebrow={t('eyebrow')}
+      title={t('title')}
+      muted={muted}
+      inverted={inverted}
+    >
       <div
         className={cn(
           'grid grid-cols-1 gap-6',

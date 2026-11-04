@@ -9,6 +9,8 @@ export interface SectionProps extends HTMLAttributes<HTMLElement> {
   title?: string;
   subtitle?: string;
   muted?: boolean;
+  /** Render this section in the dark palette regardless of the page theme. */
+  inverted?: boolean;
   actions?: ReactNode;
 }
 
@@ -18,6 +20,7 @@ export function Section({
   title,
   subtitle,
   muted = false,
+  inverted = false,
   actions,
   children,
   className,
@@ -28,7 +31,11 @@ export function Section({
       id={id}
       className={cn(
         'relative overflow-hidden border-b border-border/70 py-12 md:py-16 lg:py-20',
-        muted ? 'bg-muted/30' : 'bg-transparent',
+        inverted
+          ? 'dark bg-background text-foreground'
+          : muted
+            ? 'bg-muted/30'
+            : 'bg-transparent',
         className,
       )}
       {...props}
