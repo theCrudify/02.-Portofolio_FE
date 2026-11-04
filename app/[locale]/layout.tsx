@@ -48,7 +48,7 @@ export default async function LocaleLayout({
         <div
           data-theme={themePreset}
           lang={typedLocale}
-          className={`flex min-h-screen flex-col bg-background text-foreground ${fontPairClass}`}
+          className={`bg-page-canvas flex min-h-screen flex-col text-foreground ${fontPairClass}`}
         >
           <PageViewTracker locale={typedLocale} />
           <Navbar brandName={brandName} />

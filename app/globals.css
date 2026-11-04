@@ -141,24 +141,29 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+.bg-page-canvas {
+  background-color: var(--background);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, color-mix(in oklab, var(--primary) 14%, transparent), transparent),
-    linear-gradient(to right, color-mix(in oklab, var(--border) 38%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 38%, transparent) 1px, transparent 1px);
-  background-size: 100% 100%, 64px 64px, 64px 64px;
+    radial-gradient(ellipse 75% 45% at 50% -10%, color-mix(in oklab, var(--primary) 18%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 90% 20%, color-mix(in oklab, var(--ring) 10%, transparent), transparent),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 42%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 42%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 56px 56px, 56px 56px;
   background-attachment: fixed;
 }
 
 .bg-architectural-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, color-mix(in oklab, var(--border) 50%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 50%, transparent) 1px, transparent 1px);
+  background-size: 36px 36px;
 }
 
 .bg-dot-matrix {
-  background-image: radial-gradient(color-mix(in oklab, var(--primary) 26%, transparent) 1.25px, transparent 1.25px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(color-mix(in oklab, var(--primary) 28%, transparent) 1.25px, transparent 1.25px);
+  background-size: 18px 18px;
 }
 
 @media print {

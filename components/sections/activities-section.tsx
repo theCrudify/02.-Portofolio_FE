@@ -1,5 +1,6 @@
 'use client';
 
+import { CheckCircle2, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { PublicActivity, SupportedLocale } from '@/lib/api/types';
 import { formatPeriod } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface ActivitiesSectionProps {
   activities: PublicActivity[];
@@ -44,7 +46,12 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-6',
+          filtered.length === 1 ? 'lg:grid-cols-1' : 'md:grid-cols-2',
+        )}
+      >
         {filtered.map((act) => (
           <SpotlightCard key={act.id} className="group overflow-hidden">
             {act.media ? (
@@ -58,29 +65,47 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 />
               </div>
             ) : null}
-            <CardHeader className="space-y-2 pb-3">
-              <div className="flex items-center justify-between gap-2">
-                <Badge variant="secondary">{t(act.type)}</Badge>
+            <CardHeader className="bg-dot-matrix space-y-2 border-b border-border/60 pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
+                    <Users className="h-4 w-4" />
+                  </span>
+                  <Badge variant="secondary">{t(act.type)}</Badge>
+                </div>
                 {act.startDate ? (
-                  <span className="font-mono text-xs text-muted-foreground">
+                  <span className="rounded-full border border-border bg-background/85 px-3 py-1 font-mono text-xs text-muted-foreground">
                     {formatPeriod(act.startDate, act.endDate, locale)}
                   </span>
                 ) : null}
               </div>
-              <CardTitle>{act.role}</CardTitle>
-              <p className="text-sm font-medium text-primary">
+              <CardTitle className="pt-1 text-xl">{act.role}</CardTitle>
+              <p className="text-sm font-semibold text-primary">
                 {act.organization}
                 {act.eventName ? ` · ${act.eventName}` : ''}
               </p>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4 pt-5">
               {act.description ? (
-                <p className="text-sm text-muted-foreground">{act.description}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  {act.description}
+                </p>
               ) : null}
               {act.achievements.length > 0 ? (
-                <ul className="list-disc space-y-1 pl-5 text-sm text-foreground">
+                <ul
+                  className={cn(
+                    'grid grid-cols-1 gap-2.5',
+                    filtered.length === 1 ? 'sm:grid-cols-2' : 'grid-cols-1',
+                  )}
+                >
                   {act.achievements.map((item, i) => (
-                    <li key={i}>{item}</li>
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 rounded-xl border border-border/80 bg-background/80 p-3 text-sm text-foreground"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               ) : null}

@@ -5,6 +5,7 @@ import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
 import type { PublicPublication, SupportedLocale } from '@/lib/api/types';
 import { formatDate } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface PublicationsSectionProps {
   publications: PublicPublication[];
@@ -22,11 +23,19 @@ export function PublicationsSection({
 
   return (
     <Section id="publications" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-6',
+          publications.length === 1 ? 'lg:grid-cols-1' : 'md:grid-cols-2',
+        )}
+      >
         {publications.map((pub) => (
-          <SpotlightCard key={pub.id} className="group flex flex-col justify-between overflow-hidden p-6">
+          <SpotlightCard
+            key={pub.id}
+            className="group flex flex-col justify-between overflow-hidden p-6"
+          >
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="gap-1.5 capitalize">
                     <BookOpen className="h-3 w-3 text-primary" />
@@ -62,7 +71,9 @@ export function PublicationsSection({
               </h3>
 
               {pub.summary ? (
-                <p className="text-sm leading-relaxed text-muted-foreground">{pub.summary}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  {pub.summary}
+                </p>
               ) : null}
             </div>
           </SpotlightCard>

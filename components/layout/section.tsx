@@ -27,63 +27,67 @@ export function Section({
     <section
       id={id}
       className={cn(
-        'relative overflow-hidden border-b border-border/80 py-16 md:py-24',
-        muted ? 'bg-muted/35' : 'bg-background/70',
+        'relative overflow-hidden border-b border-border/70 py-12 md:py-16 lg:py-20',
+        muted ? 'bg-muted/30' : 'bg-transparent',
         className,
       )}
       {...props}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-32 right-1/4 h-72 w-72 rounded-full opacity-25 blur-3xl"
+        className="pointer-events-none absolute -top-28 right-1/4 h-64 w-64 rounded-full opacity-20 blur-3xl"
         style={{
           background:
-            'radial-gradient(circle, color-mix(in oklab, var(--primary) 50%, transparent) 0%, transparent 70%)',
+            'radial-gradient(circle, color-mix(in oklab, var(--primary) 45%, transparent) 0%, transparent 70%)',
         }}
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-32 left-1/4 h-72 w-72 rounded-full opacity-20 blur-3xl"
+        className="pointer-events-none absolute -bottom-28 left-1/4 h-64 w-64 rounded-full opacity-15 blur-3xl"
         style={{
           background:
-            'radial-gradient(circle, color-mix(in oklab, var(--primary) 40%, transparent) 0%, transparent 70%)',
+            'radial-gradient(circle, color-mix(in oklab, var(--primary) 35%, transparent) 0%, transparent 70%)',
         }}
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-3 left-4 font-mono text-xs text-muted-foreground/40 select-none sm:left-8"
+        className="pointer-events-none absolute top-3 left-4 font-mono text-[11px] text-primary/40 select-none sm:left-8"
       >
         +
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-3 right-4 font-mono text-xs text-muted-foreground/40 select-none sm:right-8"
+        className="pointer-events-none absolute top-3 right-4 font-mono text-[11px] text-primary/40 select-none sm:right-8"
       >
         +
       </div>
 
       <Container className="relative z-10">
         {eyebrow || title || actions ? (
-          <div className="mb-10 rounded-2xl border border-border/80 bg-card/80 p-6 shadow-sm backdrop-blur-md md:mb-12 md:p-8">
-            <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-              <div className="space-y-3">
-                {eyebrow ? (
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
-                      <Sparkles className="h-3 w-3" />
-                      <span>{eyebrow}</span>
-                    </span>
-                  </div>
-                ) : null}
+          <div className="mb-8 border-b border-border/80 pb-6 md:mb-10">
+            {eyebrow ? (
+              <div className="mb-3 flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/35 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary shadow-2xs">
+                  <Sparkles className="h-3 w-3" />
+                  <span>{eyebrow}</span>
+                </span>
+                <div
+                  aria-hidden="true"
+                  className="h-px flex-1 bg-gradient-to-r from-primary/35 via-border/80 to-transparent"
+                />
+              </div>
+            ) : null}
 
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+              <div className="space-y-2">
                 {title ? (
-                  <h2 className="font-heading text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl lg:text-[42px]">
+                  <h2 className="font-heading text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:text-4xl">
                     {title}
                   </h2>
                 ) : null}
                 {subtitle ? (
-                  <p className="max-w-[70ch] text-base leading-relaxed text-muted-foreground md:text-lg">
+                  <p className="max-w-[68ch] text-sm leading-relaxed text-muted-foreground sm:text-base">
                     {subtitle}
                   </p>
                 ) : null}

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpRight, ExternalLink, Images, Lock } from 'lucide-react';
+import { ArrowUpRight, ExternalLink, Images, Layers, Lock } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -30,8 +30,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const currentImage = imageList[activeImageIndex] ?? imageList[0] ?? null;
 
   return (
-    <SpotlightCard className="group flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
-      <div className="relative aspect-video w-full overflow-hidden bg-muted">
+    <SpotlightCard className="group flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative aspect-video w-full overflow-hidden border-b border-border/60 bg-muted">
         <Link
           href={`/projects/${project.slug}`}
           className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -52,10 +52,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-              <span className="font-heading text-2xl font-bold opacity-30">
-                {project.title.slice(0, 2).toUpperCase()}
-              </span>
+            <div className="bg-architectural-grid relative flex h-full w-full items-center justify-center overflow-hidden bg-muted/60">
+              <div
+                aria-hidden="true"
+                className="h-36 w-36 rounded-full opacity-25 blur-2xl"
+                style={{
+                  background:
+                    'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
+                }}
+              />
+              <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/35 bg-background/90 shadow-md backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
+                <Layers className="h-6 w-6 text-primary" />
+              </div>
             </div>
           )}
         </Link>
@@ -149,7 +157,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {project.technologies.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {project.technologies.slice(0, 5).map((tech) => (
-              <Badge key={tech.slug} variant="outline" className="text-xs font-normal">
+              <Badge key={tech.slug} variant="outline" className="bg-background/80 text-xs font-normal">
                 {tech.name}
               </Badge>
             ))}

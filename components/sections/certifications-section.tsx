@@ -1,4 +1,4 @@
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
@@ -9,6 +9,7 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/
 import { Link } from '@/i18n/routing';
 import type { PublicCertification, SupportedLocale } from '@/lib/api/types';
 import { formatMonthYear } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export interface CertificationsSectionProps {
   certifications: PublicCertification[];
@@ -37,7 +38,16 @@ export function CertificationsSection({
         </Link>
       }
     >
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-6',
+          certifications.length === 1
+            ? 'lg:grid-cols-1'
+            : certifications.length === 2
+              ? 'md:grid-cols-2'
+              : 'md:grid-cols-2 lg:grid-cols-3',
+        )}
+      >
         {certifications.map((cert) => {
           const previewUrl = cert.image?.url ?? cert.issuerLogo?.url ?? null;
 
@@ -59,20 +69,25 @@ export function CertificationsSection({
                   </div>
                 ) : null}
 
-                <CardHeader className="space-y-2 pb-3">
+                <CardHeader className="bg-dot-matrix space-y-2.5 border-b border-border/60 pb-4">
                   <div className="flex items-center justify-between gap-2">
-                    <Badge variant="secondary" className="capitalize">
-                      {cert.type}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
+                        <ShieldCheck className="h-4 w-4" />
+                      </span>
+                      <Badge variant="secondary" className="capitalize">
+                        {cert.type}
+                      </Badge>
+                    </div>
                     {cert.isExpired ? (
                       <Badge variant="destructive">{t('expired')}</Badge>
                     ) : null}
                   </div>
-                  <CardTitle className="text-base md:text-lg">{cert.name}</CardTitle>
-                  <p className="text-sm font-medium text-muted-foreground">{cert.issuer}</p>
+                  <CardTitle className="pt-1 text-base sm:text-lg">{cert.name}</CardTitle>
+                  <p className="text-sm font-semibold text-primary">{cert.issuer}</p>
                 </CardHeader>
 
-                <CardContent className="text-xs text-muted-foreground">
+                <CardContent className="space-y-1.5 pt-4 text-xs text-muted-foreground">
                   {cert.issueDate ? (
                     <p>
                       {t('issued')}: {formatMonthYear(cert.issueDate, locale)}
@@ -81,17 +96,19 @@ export function CertificationsSection({
                         : ''}
                     </p>
                   ) : null}
-                  {cert.credentialId ? <p className="mt-1 font-mono">{cert.credentialId}</p> : null}
+                  {cert.credentialId ? (
+                    <p className="font-mono text-foreground">{cert.credentialId}</p>
+                  ) : null}
                 </CardContent>
               </div>
 
               {cert.credentialUrl ? (
-                <CardFooter className="border-t border-border pt-3">
+                <CardFooter className="border-t border-border/70 pt-3">
                   <a
                     href={cert.credentialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <span>{t('verify')}</span>
                     <ExternalLink className="h-3.5 w-3.5" />
