@@ -162,11 +162,11 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in oklab, var(--primary) 18%, transparent), transparent),
-    radial-gradient(ellipse 55% 40% at 90% 15%, color-mix(in oklab, var(--ring) 12%, transparent), transparent),
-    linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 56px 56px, 56px 56px;
+    radial-gradient(ellipse 90% 60% at 50% -15%, color-mix(in oklab, var(--primary) 14%, transparent), transparent),
+    radial-gradient(ellipse 60% 50% at 95% 25%, color-mix(in oklab, var(--ring) 10%, transparent), transparent),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px;
   background-attachment: fixed;
   transition:
     background-color 0.35s ease,
@@ -179,9 +179,9 @@ body {
     radial-gradient(ellipse 85% 55% at 50% -12%, color-mix(in oklab, var(--primary) 28%, transparent), transparent),
     radial-gradient(ellipse 60% 45% at 88% 18%, color-mix(in oklab, var(--ring) 18%, transparent), transparent),
     radial-gradient(ellipse 50% 40% at 12% 80%, color-mix(in oklab, var(--primary) 12%, transparent), transparent),
-    linear-gradient(to right, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 56px 56px, 56px 56px;
+    linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px;
   background-attachment: fixed;
 }
 
