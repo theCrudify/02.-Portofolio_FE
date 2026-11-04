@@ -27,9 +27,9 @@ export function AchievementsSection({
     <Section id="achievements" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {achievements.map((ach, idx) => {
-          const certImg =
-            ach.certificate?.url ??
-            PORTFOLIO_SHOWCASE_IMAGES[(idx + 4) % PORTFOLIO_SHOWCASE_IMAGES.length].url;
+          const fallbackVisual =
+            PORTFOLIO_SHOWCASE_IMAGES[(idx + 4) % PORTFOLIO_SHOWCASE_IMAGES.length];
+          const certImg = ach.certificate?.url ?? fallbackVisual?.url ?? '';
 
           return (
             <SpotlightCard key={ach.id} className="group overflow-hidden">

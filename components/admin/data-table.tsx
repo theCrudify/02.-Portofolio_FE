@@ -41,7 +41,10 @@ export function DataTable({
   const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
 
   const queryResult = React.useMemo(() => {
-    const searchFields = [primaryColumn, ...(secondaryColumn ? [secondaryColumn] : [])] as (keyof DataRow)[];
+    const searchFields: string[] = [
+      primaryColumn,
+      ...(secondaryColumn ? [secondaryColumn] : []),
+    ];
     return FrontendQueryBuilder.executeClientQuery(
       items,
       {

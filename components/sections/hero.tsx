@@ -56,19 +56,21 @@ export function HeroSection({ profile, settings, stats, locale }: HeroSectionPro
 
   const exportPresetSlug = locale === 'id' ? 'full-id' : 'full-en';
 
+  const defaultSlide = {
+    id: 'hero-avatar',
+    url: profile.avatar?.url ?? DEFAULT_AVATAR_URI,
+    alt: profile.avatar?.alt || profile.name,
+    title: profile.name,
+    caption: profile.headline,
+    category: 'Profile',
+  };
+
   const heroImages = [
-    {
-      id: 'hero-avatar',
-      url: profile.avatar?.url ?? DEFAULT_AVATAR_URI,
-      alt: profile.avatar?.alt || profile.name,
-      title: profile.name,
-      caption: profile.headline,
-      category: 'Profile',
-    },
+    defaultSlide,
     ...PORTFOLIO_SHOWCASE_IMAGES.slice(0, 4),
   ];
 
-  const activeSlide = heroImages[activeSlideIndex] ?? heroImages[0];
+  const activeSlide = heroImages[activeSlideIndex] ?? defaultSlide;
 
   return (
     <AuroraBackground className="border-b border-border/50">
@@ -171,9 +173,9 @@ export function HeroSection({ profile, settings, stats, locale }: HeroSectionPro
               </div>
             </AnimatedReveal>
 
-            <AnimatedReveal direction="left" delayMs={120} className="lg:col-span-5">
+            <AnimatedReveal direction="left" delay={0.12} className="lg:col-span-5">
               <div className="space-y-3">
-                <SpotlightCard tilt className="overflow-hidden p-2">
+                <SpotlightCard interactiveTilt className="overflow-hidden p-2">
                   <button
                     type="button"
                     onClick={() => setLightboxOpen(true)}

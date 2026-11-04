@@ -47,9 +47,9 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {filtered.map((act, idx) => {
-          const mediaUrl =
-            act.media?.url ??
-            PORTFOLIO_SHOWCASE_IMAGES[(idx + 7) % PORTFOLIO_SHOWCASE_IMAGES.length].url;
+          const fallbackVisual =
+            PORTFOLIO_SHOWCASE_IMAGES[(idx + 7) % PORTFOLIO_SHOWCASE_IMAGES.length];
+          const mediaUrl = act.media?.url ?? fallbackVisual?.url ?? '';
           const mediaAlt = act.media?.alt || `${act.role} · ${act.organization}`;
 
           return (

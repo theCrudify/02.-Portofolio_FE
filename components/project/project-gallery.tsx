@@ -2,7 +2,7 @@
 
 import {
   MultiImageShowcase,
-  type ShowcaseMediaItem,
+  type ShowcaseImageEntry,
 } from '@/components/media/multi-image-showcase';
 import type { PublicProjectMediaItem } from '@/lib/api/types';
 
@@ -15,14 +15,13 @@ export function ProjectGallery({ items }: ProjectGalleryProps) {
     return null;
   }
 
-  const showcaseItems: ShowcaseMediaItem[] = items.map((item, idx) => ({
+  const showcaseItems: ShowcaseImageEntry[] = items.map((item, idx) => ({
     id: item.id,
     url: item.url,
     alt: item.alt || item.caption || `Gallery visual ${idx + 1}`,
     title: item.title ?? item.caption ?? `Visual #${idx + 1}`,
     caption: item.caption ?? undefined,
-    category: item.kind === 'architecture' ? 'Architecture' : 'Gallery',
-    featured: idx === 0,
+    category: item.kind === 'image' ? 'Gallery' : item.kind,
   }));
 
   return <MultiImageShowcase items={showcaseItems} defaultLayout="bento" />;

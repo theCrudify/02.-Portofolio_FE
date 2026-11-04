@@ -40,9 +40,9 @@ export function CertificationsSection({
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {certifications.map((cert, idx) => {
-          const previewUrl =
-            cert.image?.url ??
-            PORTFOLIO_SHOWCASE_IMAGES[(idx + 6) % PORTFOLIO_SHOWCASE_IMAGES.length].url;
+          const fallbackVisual =
+            PORTFOLIO_SHOWCASE_IMAGES[(idx + 6) % PORTFOLIO_SHOWCASE_IMAGES.length];
+          const previewUrl = cert.image?.url ?? fallbackVisual?.url ?? '';
 
           return (
             <SpotlightCard key={cert.id} className="group flex flex-col justify-between overflow-hidden">
