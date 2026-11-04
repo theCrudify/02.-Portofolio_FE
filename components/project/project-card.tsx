@@ -1,11 +1,16 @@
-import { ArrowUpRight, ExternalLink, Lock } from 'lucide-react';
+'use client';
+
+import { ArrowUpRight, ExternalLink, Images, Lock } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { VideoClip } from '@/components/media/video-clip';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/i18n/routing';
 import type { PublicProjectCard } from '@/lib/api/types';
+import { cn } from '@/lib/utils';
 
 export interface ProjectCardProps {
   project: PublicProjectCard;
@@ -13,36 +18,107 @@ export interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const t = useTranslations('sections.projects');
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const imageList =
+    project.images && project.images.length > 0
+      ? project.images
+      : project.cover
+        ? [project.cover]
+        : [];
+
+  const currentImage = imageList[activeImageIndex] ?? imageList[0] ?? null;
 
   return (
-    <Card className="group flex h-full flex-col overflow-hidden transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md">
-      <Link
-        href={`/projects/${project.slug}`}
-        className="relative aspect-video w-full overflow-hidden bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        {project.clip ? (
-          <VideoClip
-            url={project.clip.url}
-            sources={project.clip.sources}
-            poster={project.cover?.url ?? project.clip.thumbnailUrl}
-            className="h-full w-full object-cover"
-          />
-        ) : project.cover ? (
-          <Image
-            src={project.cover.url}
-            alt={project.cover.alt || project.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-            <span className="font-heading text-2xl font-bold opacity-30">
-              {project.title.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
-        )}
-      </Link>
+    <SpotlightCard className="group flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+      <div className="relative aspect-video w-full overflow-hidden bg-muted">
+        <Link
+          href={`/projects/${project.slug}`}
+          className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {project.clip && activeImageIndex === 0 ? (
+            <VideoClip
+              url={project.clip.url}
+              sources={project.clip.sources}
+              poster={project.cover?.url ?? project.clip.thumbnailUrl}
+              className="h-full w-full object-cover"
+            />
+          ) : currentImage ? (
+            <Image
+              src={currentImage.url}
+              alt={currentImage.alt || project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
+              <span className="font-heading text-2xl font-bold opacity-30">
+                {project.title.slice(0, 2).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </Link>
+
+        {imageList.length > 1 ? (
+          <>
+            <div className="pointer-events-none absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-medium text-foreground shadow-xs backdrop-blur-xs">
+              <Images className="h-3 w-3 text-primary" />
+              <span>
+                {activeImageIndex + 1}/{imageList.length}
+              </span>
+            </div>
+
+            <div className="absolute inset-x-2.5 bottom-2.5 flex items-center justify-center gap-1.5 rounded-full bg-background/80 px-2.5 py-1.5 backdrop-blur-xs">
+              {imageList.map((img, idx) => (
+                <button
+                  key={`${img.url}-${idx}`}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveImageIndex(idx);
+                  }}
+                  aria-label={`Show image ${idx + 1} for ${project.title}`}
+                  className={cn(
+                    'h-2 rounded-full transition-all',
+                    idx === activeImageIndex
+                      ? 'w-6 bg-primary'
+                      : 'w-2 bg-muted-foreground/50 hover:bg-foreground',
+                  )}
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
+      </div>
+
+      {imageList.length > 1 ? (
+        <div className="grid grid-cols-4 gap-1.5 border-b border-border/60 bg-muted/30 px-3 py-2">
+          {imageList.slice(0, 4).map((img, idx) => (
+            <button
+              key={`thumb-${img.url}-${idx}`}
+              type="button"
+              onClick={() => setActiveImageIndex(idx)}
+              aria-label={`Select preview ${idx + 1}`}
+              className={cn(
+                'relative aspect-video overflow-hidden rounded border transition-all',
+                idx === activeImageIndex
+                  ? 'border-primary ring-1 ring-primary'
+                  : 'border-border/60 opacity-65 hover:opacity-100',
+              )}
+            >
+              <Image
+                src={img.url}
+                alt={img.alt || `${project.title} preview ${idx + 1}`}
+                fill
+                sizes="80px"
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       <CardHeader className="space-y-2 pb-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -72,7 +148,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
         {project.technologies.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
-            {project.technologies.slice(0, 4).map((tech) => (
+            {project.technologies.slice(0, 5).map((tech) => (
               <Badge key={tech.slug} variant="outline" className="text-xs font-normal">
                 {tech.name}
               </Badge>
@@ -87,7 +163,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span>{t('caseStudy')}</span>
-          <ArrowUpRight className="h-4 w-4" />
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </Link>
 
         {project.primaryLink ? (
@@ -110,7 +186,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           )
         ) : null}
       </CardFooter>
-    </Card>
+    </SpotlightCard>
   );
 }
-
