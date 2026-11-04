@@ -178,7 +178,27 @@
       "links": "Links",
       "file": "Document",
       "private": "Private",
-      "back": "Back"
+      "back": "Back",
+      "description": "Description",
+      "gallery": "Gallery",
+      "documents": "Documents",
+      "organization": "Organization",
+      "issuer": "Issuer",
+      "organizer": "Organizer",
+      "event": "Event",
+      "period": "Period",
+      "type": "Type",
+      "role": "Role",
+      "rank": "Rank",
+      "date": "Date",
+      "credentialId": "Credential ID",
+      "noExpiry": "No expiry",
+      "website": "Visit website",
+      "openLink": "Open link",
+      "prev": "Previous",
+      "next": "Next",
+      "more": "More entries",
+      "empty": "More details coming soon."
     }
   },
   "common": {

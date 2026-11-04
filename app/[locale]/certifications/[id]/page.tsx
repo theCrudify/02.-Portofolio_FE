@@ -2,7 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { PortfolioDetailPage } from '@/components/sections/portfolio-detail';
+import { neighbours, PortfolioDetailPage } from '@/components/sections/portfolio-detail';
 import { buttonVariants } from '@/components/ui/button';
 import { fetchCertificationsList } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
@@ -12,14 +12,10 @@ import { buildMetadata } from '@/lib/seo';
 type Params = Promise<{ locale: string; id: string }>;
 
 // shortcut: looks the id up in the full list (small); add a by-id endpoint if the list grows large.
-async function findCertification(id: string, locale: SupportedLocale) {
-  return (await fetchCertificationsList(locale)).find((c) => c.id === id) ?? null;
-}
-
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, id } = await params;
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const cert = await findCertification(id, typedLocale);
+  const cert = (await fetchCertificationsList(typedLocale)).find((c) => c.id === id);
   return buildMetadata({
     title: cert?.name ?? 'Not found',
     description: cert?.description ?? cert?.issuer?.name ?? '',
@@ -34,27 +30,39 @@ export default async function CertificationDetailPage({ params }: { params: Para
   const { locale, id } = await params;
   setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const [t, cert] = await Promise.all([
+  const [t, tCert, list] = await Promise.all([
+    getTranslations({ locale: typedLocale, namespace: 'sections.extras' }),
     getTranslations({ locale: typedLocale, namespace: 'sections.certifications' }),
-    findCertification(id, typedLocale),
+    fetchCertificationsList(typedLocale),
   ]);
+  const index = list.findIndex((c) => c.id === id);
+  const cert = list[index];
   if (!cert) notFound();
 
   return (
     <PortfolioDetailPage
       {...cert}
+      {...neighbours(list, index, (c) => ({ href: `/certifications/${c.id}`, title: c.name }))}
       title={cert.name}
+      subtitle={cert.issuer?.name}
       backHref="/certifications"
+      backLabel={tCert('title')}
       trackId={`cert-${cert.id}`}
       cover={cert.image}
-      badges={[cert.type.label, cert.isExpired ? t('expired') : null]}
-      meta={[
-        cert.issuer?.name,
-        cert.issueDate
-          ? `${t('issued')}: ${formatMonthYear(cert.issueDate, typedLocale)}`
-          : null,
-        cert.expiryDate ? `${t('expires')}: ${formatMonthYear(cert.expiryDate, typedLocale)}` : null,
-        cert.credentialId,
+      badges={[cert.type.label, cert.isExpired ? tCert('expired') : null]}
+      organization={cert.issuer}
+      organizationLabel={t('issuer')}
+      facts={[
+        { label: t('issuer'), value: cert.issuer?.name },
+        {
+          label: tCert('issued'),
+          value: cert.issueDate ? formatMonthYear(cert.issueDate, typedLocale) : null,
+        },
+        {
+          label: tCert('expires'),
+          value: cert.expiryDate ? formatMonthYear(cert.expiryDate, typedLocale) : t('noExpiry'),
+        },
+        { label: t('credentialId'), value: cert.credentialId, mono: true },
       ]}
       actions={
         cert.credentialUrl ? (
@@ -62,9 +70,9 @@ export default async function CertificationDetailPage({ params }: { params: Para
             href={cert.credentialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: 'default', size: 'sm' })}
+            className={buttonVariants({ variant: 'default' })}
           >
-            {t('verify')}
+            {tCert('verify')}
             <ExternalLink className="h-4 w-4" />
           </a>
         ) : null

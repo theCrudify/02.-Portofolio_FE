@@ -178,7 +178,27 @@
       "links": "Tautan",
       "file": "Dokumen",
       "private": "Privat",
-      "back": "Kembali"
+      "back": "Kembali",
+      "description": "Deskripsi",
+      "gallery": "Galeri",
+      "documents": "Dokumen",
+      "organization": "Organisasi",
+      "issuer": "Penerbit",
+      "organizer": "Penyelenggara",
+      "event": "Acara",
+      "period": "Periode",
+      "type": "Jenis",
+      "role": "Peran",
+      "rank": "Peringkat",
+      "date": "Tanggal",
+      "credentialId": "ID Kredensial",
+      "noExpiry": "Tidak kedaluwarsa",
+      "website": "Kunjungi situs",
+      "openLink": "Buka tautan",
+      "prev": "Sebelumnya",
+      "next": "Berikutnya",
+      "more": "Entri lainnya",
+      "empty": "Detail lengkap segera ditambahkan."
     }
   },
   "common": {
