@@ -152,36 +152,104 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
       tools: [
         { name: 'Git', slug: 'git', icon: 'git' },
         { name: 'Figma', slug: 'figma', icon: 'figma' },
+        { name: 'Vitest', slug: 'vitest', icon: 'vitest' },
+        { name: 'OpenTelemetry', slug: 'opentelemetry', icon: 'opentelemetry' },
       ],
-      soft_skill: [],
+      soft_skill: [
+        { name: isId ? 'Arsitektur Sistem' : 'System Architecture', slug: 'system-architecture', icon: 'layers' },
+        { name: isId ? 'Kepemimpinan Teknis' : 'Technical Leadership', slug: 'tech-leadership', icon: 'users' },
+        { name: isId ? 'Rekayasa Performa' : 'Performance Engineering', slug: 'performance', icon: 'zap' },
+        { name: isId ? 'Komunikasi Lintas Tim' : 'Cross-Functional Agile', slug: 'agile', icon: 'Compass' },
+      ],
     },
     experiences: [
       {
         id: 'exp-1',
-        company: 'Tech Nusantara',
-        companyLogo: { url: edgeCover.url, alt: 'Tech Nusantara' },
+        company: 'Tech Nusantara Cloud',
+        companyLogo: { url: edgeCover.url, alt: 'Tech Nusantara Cloud' },
         companyUrl: 'https://example.com',
-        role: 'Senior Fullstack Engineer',
+        role: 'Senior Fullstack & Edge Architect',
         employmentType: 'full_time',
         location: 'Jakarta, Indonesia',
         workMode: 'remote',
-        startDate: '2023-03-01',
+        startDate: '2024-01-01',
         endDate: null,
         description: isId
-          ? 'Memimpin pengembangan platform web utama dan layanan API edge berkecepatan tinggi.'
-          : 'Leading core web platform and low-latency edge API services.',
+          ? 'Memimpin arsitektur platform web skala enterprise, gateway API edge global, serta standarisasi query modular tanpa JSON.'
+          : 'Leading enterprise web platform architecture, global edge API gateways, and zero-JSON modular query standardization.',
         achievements: [
           isId
-            ? 'Menurunkan latensi API p95 sebesar 45% melalui caching edge dan optimasi query'
-            : 'Reduced p95 API latency by 45% through edge caching and query optimization',
+            ? 'Menurunkan latensi API p95 sebesar 45% (ke 11.4ms) melalui caching ETag edge dan optimasi indeks PostgreSQL'
+            : 'Reduced p95 API latency by 45% (down to 11.4ms) via edge ETag caching and PostgreSQL composite indexing',
           isId
-            ? 'Merancang arsitektur modular 8 domain dengan zero-downtime deployment'
-            : 'Designed 8-domain modular architecture with zero-downtime deployment',
+            ? 'Merancang arsitektur modular 8 domain dengan zero-downtime deployment dan 99.98% SLA uptime'
+            : 'Designed 8-domain action-sliced modular architecture with zero-downtime deployment and 99.98% SLA uptime',
+          isId
+            ? 'Memimpin migrasi sistem monorepo untuk 15+ layanan mikro dengan pipeline CI/CD otomatis'
+            : 'Spearheaded monorepo migration across 15+ edge services with automated CI/CD verification gates',
         ],
         technologies: [
           { name: 'TypeScript', slug: 'typescript', icon: 'typescript' },
           { name: 'Next.js', slug: 'nextjs', icon: 'nextdotjs' },
           { name: 'Hono', slug: 'hono', icon: 'hono' },
+          { name: 'PostgreSQL', slug: 'postgresql', icon: 'postgresql' },
+          { name: 'Cloudflare', slug: 'cloudflare', icon: 'cloudflare' },
+        ],
+      },
+      {
+        id: 'exp-2',
+        company: 'FinOps Velocity Labs',
+        companyLogo: { url: finopsCover.url, alt: 'FinOps Velocity Labs' },
+        companyUrl: 'https://example.com',
+        role: 'Fullstack Software Engineer',
+        employmentType: 'full_time',
+        location: 'Bandung, Indonesia',
+        workMode: 'hybrid',
+        startDate: '2022-06-01',
+        endDate: '2023-12-31',
+        description: isId
+          ? 'Mengembangkan mesin buku besar multi-mata uang real-time, sistem kasir offline-first, dan dasbor analitik finansial.'
+          : 'Engineered real-time multi-currency ledger systems, offline-first POS registers, and high-density financial analytics dashboards.',
+        achievements: [
+          isId
+            ? 'Memproses 1.2 juta+ transaksi harian tanpa selisih rekonsiliasi menggunakan antrean idempoten'
+            : 'Processed 1.2M+ daily transactions with zero reconciliation drift using idempotent event queues',
+          isId
+            ? 'Membangun sinkronisasi IndexedDB ke PostgreSQL yang tetap beroperasi saat koneksi ritel terputus'
+            : 'Built resilient IndexedDB-to-PostgreSQL sync engine capable of 72-hour offline retail operation',
+        ],
+        technologies: [
+          { name: 'React', slug: 'react', icon: 'react' },
+          { name: 'Node.js', slug: 'nodejs', icon: 'nodedotjs' },
+          { name: 'Go', slug: 'go', icon: 'go' },
+          { name: 'PostgreSQL', slug: 'postgresql', icon: 'postgresql' },
+          { name: 'Docker', slug: 'docker', icon: 'docker' },
+        ],
+      },
+      {
+        id: 'exp-3',
+        company: 'Garuda Digital Studio',
+        companyLogo: { url: mobileCover.url, alt: 'Garuda Digital Studio' },
+        companyUrl: 'https://example.com',
+        role: 'Frontend & Design Systems Engineer',
+        employmentType: 'contract',
+        location: 'Jakarta, Indonesia',
+        workMode: 'remote',
+        startDate: '2021-03-01',
+        endDate: '2022-05-31',
+        description: isId
+          ? 'Membangun pustaka komponen UI aksesibel berstandar WCAG AA dan aplikasi web progresif berkinerja tinggi.'
+          : 'Built WCAG AA compliant design system primitives and high-frame-rate progressive web applications.',
+        achievements: [
+          isId
+            ? 'Meningkatkan skor Core Web Vitals (LCP < 1.2s, CLS 0.00) di seluruh 12 aplikasi klien'
+            : 'Boosted Core Web Vitals to 99+ Lighthouse scores (LCP < 1.2s, CLS 0.00) across 12 client portals',
+        ],
+        technologies: [
+          { name: 'TypeScript', slug: 'typescript', icon: 'typescript' },
+          { name: 'React', slug: 'react', icon: 'react' },
+          { name: 'Tailwind CSS', slug: 'tailwindcss', icon: 'tailwindcss' },
+          { name: 'Figma', slug: 'figma', icon: 'figma' },
         ],
       },
     ],
@@ -190,19 +258,41 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         id: 'edu-1',
         institution: 'Universitas Indonesia',
         logo: { url: cloudCover.url, alt: 'Universitas Indonesia' },
-        degree: 'B.Sc.',
-        field: isId ? 'Ilmu Komputer' : 'Computer Science',
+        degree: 'B.Sc. (S.Kom)',
+        field: isId ? 'Ilmu Komputer & Sistem Terdistribusi' : 'Computer Science & Distributed Systems',
         startDate: '2018-08-01',
         endDate: '2022-07-01',
-        gpa: '3.85',
+        gpa: '3.88',
         gpaScale: '4.00',
         description: isId
-          ? 'Fokus pada rekayasa perangkat lunak dan sistem terdistribusi.'
-          : 'Focused on software engineering and distributed systems.',
+          ? 'Lulus Cum Laude dengan spesialisasi pada arsitektur jaringan terdistribusi, keamanan kriptografi, dan rekayasa perangkat lunak.'
+          : 'Graduated Cum Laude specializing in distributed network architecture, applied cryptography, and software engineering.',
         activities: [
           isId
-            ? 'Asisten Dosen Pemrograman Web & Basis Data'
-            : 'Teaching Assistant for Web Programming & Databases',
+            ? 'Asisten Dosen Pemrograman Web Lanjut & Sistem Basis Data'
+            : 'Lead Teaching Assistant for Advanced Web Programming & Database Systems',
+          isId
+            ? 'Ketua Tim Riset Komputasi Cloud & Edge Laboratorium Sistem'
+            : 'Head of Cloud & Edge Computing Student Research Group',
+        ],
+      },
+      {
+        id: 'edu-2',
+        institution: 'Bangkit Academy (Google, GoTo, Traveloka)',
+        logo: { url: aiCover.url, alt: 'Bangkit Academy' },
+        degree: 'Distinction Graduate',
+        field: isId ? 'Arsitektur Cloud & Rekayasa Perangkat Lunak' : 'Cloud Computing & Distributed Engineering Track',
+        startDate: '2021-02-01',
+        endDate: '2021-08-01',
+        gpa: '98.4',
+        gpaScale: '100',
+        description: isId
+          ? 'Terpilih dalam 5% lulusan terbaik dari 3.000+ peserta nasional untuk proyek Capstone infrastruktur mikroservis.'
+          : 'Selected among the top 5% distinction graduates out of 3,000+ national fellows for capstone microservice architecture.',
+        activities: [
+          isId
+            ? 'Arsitek Utama Capstone: Sistem Telemetri IoT & Cloud Berbasis Kubernetes'
+            : 'Lead Capstone Architect: Kubernetes-based IoT & Edge Telemetry Platform',
         ],
       },
     ],
@@ -216,7 +306,7 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         issueDate: '2024-05-01',
         expiryDate: '2027-05-01',
         isExpired: false,
-        credentialId: 'AWS-SAA-12345',
+        credentialId: 'AWS-SAA-90412',
         credentialUrl: 'https://aws.amazon.com/verification',
         image: { url: certAwsImg, width: 800, height: 500, alt: 'AWS Solutions Architect Certificate' },
         featured: true,
@@ -225,7 +315,7 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         id: 'cert-2',
         type: 'certification',
         name: 'Cloud Native Edge & Kubernetes Specialist',
-        issuer: 'Cloud Native Computing Foundation',
+        issuer: 'Cloud Native Computing Foundation (CNCF)',
         issuerLogo: { url: certK8sImg, alt: 'CNCF' },
         issueDate: '2025-01-15',
         expiryDate: '2028-01-15',
@@ -235,23 +325,40 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         image: { url: certK8sImg, width: 800, height: 500, alt: 'Cloud Native Edge Certificate' },
         featured: true,
       },
+      {
+        id: 'cert-3',
+        type: 'bootcamp',
+        name: 'High-Performance Distributed Databases & Drizzle ORM',
+        issuer: 'Neon Serverless Engineering Guild',
+        issuerLogo: { url: telemetryCover.url, alt: 'Neon Guild' },
+        issueDate: '2025-03-10',
+        expiryDate: null,
+        isExpired: false,
+        credentialId: 'NEON-DIST-4410',
+        credentialUrl: 'https://neon.tech',
+        image: { url: telemetryCover.url, width: 800, height: 500, alt: 'Distributed Databases Certificate' },
+        featured: true,
+      },
     ],
     activities: [
       {
         id: 'act-1',
         type: 'organization',
-        organization: 'Jakarta JS Community',
-        eventName: 'TypeScript & Edge Summit',
-        role: isId ? 'Pembicara & Pengurus' : 'Speaker & Organizer',
+        organization: 'Jakarta TypeScript & Edge Community',
+        eventName: 'Annual TypeScript & Cloud Summit',
+        role: isId ? 'Pembicara Utama & Pengurus Inti' : 'Keynote Speaker & Core Organizer',
         startDate: '2023-01-01',
         endDate: null,
         description: isId
-          ? 'Menyelenggarakan pertemuan bulanan komunitas JavaScript & TypeScript serta sesi bedah arsitektur.'
-          : 'Organizing monthly JavaScript & TypeScript meetups and live architecture deep-dives.',
+          ? 'Memimpin lokakarya arsitektur sistem bersih, optimasi runtime Cloudflare Workers, dan desain antarmuka modern.'
+          : 'Leading deep-dive workshops on clean modular architecture, Cloudflare Workers runtime optimization, and modern UI systems.',
         achievements: [
           isId
-            ? 'Menyelenggarakan 12+ lokakarya komunitas dengan 500+ peserta'
-            : 'Hosted 12+ community workshops with 500+ attendees',
+            ? 'Menyelenggarakan 16+ sesi bedah kode langsung dengan 850+ engineer'
+            : 'Hosted 16+ live architecture & code-review workshops with 850+ engineers',
+          isId
+            ? 'Menerbitkan template starter open-source Hono + Next.js yang digunakan oleh 40+ tim'
+            : 'Published open-source Hono + Next.js starter kits adopted by 40+ engineering teams',
         ],
         media: {
           url: communityCover.url,
@@ -261,18 +368,42 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         },
         linkUrl: 'https://example.com',
       },
+      {
+        id: 'act-2',
+        type: 'volunteer',
+        organization: 'Open Source Nusantara Foundation',
+        eventName: 'National Developer Mentorship Program',
+        role: isId ? 'Mentor Rekayasa Sistem & Cloud' : 'System Architecture & Cloud Mentor',
+        startDate: '2022-05-01',
+        endDate: null,
+        description: isId
+          ? 'Membimbing mahasiswa dan engineer muda dalam membangun sistem backend yang terukur, pengujian otomatis, dan keamanan web.'
+          : 'Mentoring early-career engineers in building scalable backend services, automated testing suites, and web security.',
+        achievements: [
+          isId
+            ? 'Membimbing 35+ mentee hingga berhasil berkontribusi ke proyek open-source global'
+            : 'Guided 35+ mentees to ship production PRs to international open-source repositories',
+        ],
+        media: {
+          url: aiCover.url,
+          width: 900,
+          height: 900,
+          alt: aiCover.alt,
+        },
+        linkUrl: 'https://example.com',
+      },
     ],
     achievements: [
       {
         id: 'ach-1',
-        title: isId ? 'Juara 1 Cloud & FinTech Hackathon' : '1st Place Cloud & FinTech Hackathon',
+        title: isId ? 'Juara 1 Cloud & FinTech Architecture Hackathon' : '1st Place Cloud & FinTech Architecture Hackathon',
         issuer: 'Nusantara Tech Summit',
-        eventName: 'Annual Engineering Cup',
-        rank: '1st Place',
+        eventName: 'Annual Engineering Cup 2025',
+        rank: '1st Place · Gold Medal',
         date: '2025-08-12',
         description: isId
-          ? 'Membangun mesin rekonsiliasi transaksi real-time berlatensi rendah di atas jaringan edge.'
-          : 'Built a sub-20ms real-time transaction reconciliation engine on serverless edge workers.',
+          ? 'Merancang mesin rekonsiliasi transaksi real-time berlatensi di bawah 15ms di atas jaringan edge terdistribusi.'
+          : 'Architected a sub-15ms real-time financial settlement and anomaly detection engine running on distributed edge workers.',
         certificate: {
           url: finopsCover.url,
           width: 1200,
@@ -281,17 +412,97 @@ export function getDefaultSiteData(locale: SupportedLocale = 'en'): SiteData {
         },
         linkUrl: 'https://example.com',
       },
+      {
+        id: 'ach-2',
+        title: isId ? 'Penghargaan Inovasi Open-Source Terbaik' : 'Best Open-Source Systems Innovation Award',
+        issuer: 'Asia Pacific Cloud Guild',
+        eventName: 'APAC Systems Engineering Awards',
+        rank: 'Winner · Top 1%',
+        date: '2024-11-20',
+        description: isId
+          ? 'Penghargaan atas kontribusi mesin query flat bebas JSON dan sistem telemetri ramah privasi.'
+          : 'Recognized for pioneering a zero-JSON flat query engine and cookieless privacy-preserving edge telemetry pipeline.',
+        certificate: {
+          url: telemetryCover.url,
+          width: 1200,
+          height: 750,
+          alt: 'APAC Innovation Award',
+        },
+        linkUrl: 'https://example.com',
+      },
     ],
-    publications: [],
-    testimonials: [],
+    publications: [
+      {
+        id: 'pub-1',
+        title: isId
+          ? 'Arsitektur Edge Tanpa Cold-Start: Pola Query Flat & Caching Kondisional ETag'
+          : 'Zero-Cold-Start Edge Architecture: Flat Query Patterns & Conditional ETag Caching',
+        type: 'article',
+        venue: 'Journal of Cloud & Edge Engineering',
+        date: '2025-09-15',
+        url: 'https://example.com/publications/edge-architecture',
+        summary: isId
+          ? 'Studi mendalam tentang bagaimana mengganti filter JSON bersarang dengan skema parameter flat meningkatkan rasio hit CDN hingga 94%.'
+          : 'An empirical study demonstrating how replacing nested JSON query filters with flat deterministic parameters increases CDN cache hit ratios to 94%.',
+      },
+      {
+        id: 'pub-2',
+        title: isId
+          ? 'Sinkronisasi Offline-First pada Sistem Kasir Ritel Menggunakan IndexedDB & Antrean Idempoten'
+          : 'Offline-First Retail POS Synchronization Using IndexedDB & Idempotent Event Logs',
+        type: 'paper',
+        venue: 'Southeast Asia Software Engineering Conference',
+        date: '2024-10-04',
+        url: 'https://example.com/publications/offline-first-pos',
+        summary: isId
+          ? 'Arsitektur resolusi konflik deterministik untuk sinkronisasi stok multi-cabang saat jaringan tidak stabil.'
+          : 'Deterministic conflict-resolution architecture for multi-branch inventory synchronization over intermittent networks.',
+      },
+    ],
+    testimonials: [
+      {
+        id: 'test-1',
+        name: 'Arif Pratama',
+        position: 'VP of Engineering',
+        company: 'Tech Nusantara Cloud',
+        relationship: isId ? 'Manajer Langsung' : 'Direct Manager',
+        avatar: { url: edgeCover.url, alt: 'Arif Pratama' },
+        quote: isId
+          ? 'Jidan memiliki kemampuan langka untuk menyatukan arsitektur backend yang sangat rapi dengan antarmuka frontend yang cepat dan memukau. Standar modular yang ia bangun memangkas waktu rilis fitur kami hingga separuhnya.'
+          : 'Jidan possesses the rare ability to unite deeply disciplined backend architecture with blazingly fast, visually striking frontend systems. The modular standards he introduced cut our feature delivery cycle in half.',
+      },
+      {
+        id: 'test-2',
+        name: 'Sarah Wijaya',
+        position: 'Principal Product Designer',
+        company: 'FinOps Velocity Labs',
+        relationship: isId ? 'Rekan Lintas Fungsi' : 'Cross-Functional Partner',
+        avatar: { url: finopsCover.url, alt: 'Sarah Wijaya' },
+        quote: isId
+          ? 'Setiap komponen yang dikerjakan Jidan selalu memiliki perhatian tinggi terhadap detail visual, animasi mikro yang halus, dan aksesibilitas WCAG AA yang teruji.'
+          : 'Every interface Jidan engineers exhibits extraordinary attention to visual craft, fluid micro-interactions, and verified WCAG AA accessibility.',
+      },
+      {
+        id: 'test-3',
+        name: 'Dimas Hendrawan',
+        position: 'CTO',
+        company: 'RetailScale Indonesia',
+        relationship: isId ? 'Klien Enterprise' : 'Enterprise Client',
+        avatar: { url: cashierCover.url, alt: 'Dimas Hendrawan' },
+        quote: isId
+          ? 'Sistem OmniPOS yang dirancang Jidan mampu menangani ribuan transaksi kasir kami bahkan ketika internet toko mati total. Sangat andal dan mudah digunakan.'
+          : 'The OmniPOS platform Jidan architected handles thousands of daily checkout transactions across our stores even during complete internet outages. Rock-solid engineering.',
+      },
+    ],
     github: {
-      publicRepos: 28,
-      followers: 145,
-      totalStars: 420,
+      publicRepos: 34,
+      followers: 280,
+      totalStars: 640,
       topLanguages: [
-        { name: 'TypeScript', percent: 68 },
+        { name: 'TypeScript', percent: 64 },
         { name: 'Go', percent: 18 },
-        { name: 'Python', percent: 14 },
+        { name: 'Rust', percent: 10 },
+        { name: 'Python', percent: 8 },
       ],
     },
     featuredProjects: [
@@ -512,7 +723,39 @@ export async function fetchSiteData(locale: SupportedLocale = 'en'): Promise<Sit
             avatar: res.data.profile.avatar ?? fallback.profile!.avatar,
           }
         : fallback.profile,
-      featuredProjects: (res.data.featuredProjects ?? []).map((p, idx) => enrichCardVisuals(p, idx)),
+      featuredProjects:
+        res.data.featuredProjects && res.data.featuredProjects.length > 0
+          ? res.data.featuredProjects.map((p, idx) => enrichCardVisuals(p, idx))
+          : fallback.featuredProjects,
+      experiences:
+        res.data.experiences && res.data.experiences.length > 0
+          ? res.data.experiences
+          : fallback.experiences,
+      education:
+        res.data.education && res.data.education.length > 0
+          ? res.data.education
+          : fallback.education,
+      certifications:
+        res.data.certifications && res.data.certifications.length > 0
+          ? res.data.certifications
+          : fallback.certifications,
+      activities:
+        res.data.activities && res.data.activities.length > 0
+          ? res.data.activities
+          : fallback.activities,
+      achievements:
+        res.data.achievements && res.data.achievements.length > 0
+          ? res.data.achievements
+          : fallback.achievements,
+      publications:
+        res.data.publications && res.data.publications.length > 0
+          ? res.data.publications
+          : fallback.publications,
+      testimonials:
+        res.data.testimonials && res.data.testimonials.length > 0
+          ? res.data.testimonials
+          : fallback.testimonials,
+      github: res.data.github ?? fallback.github,
     };
   } catch {
     return getDefaultSiteData(locale);
