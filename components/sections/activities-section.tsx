@@ -1,0 +1,80 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { Section } from '@/components/layout/section';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { PublicActivity, SupportedLocale } from '@/lib/api/types';
+import { formatPeriod } from '@/lib/format';
+
+export interface ActivitiesSectionProps {
+  activities: PublicActivity[];
+  locale: SupportedLocale;
+  muted?: boolean;
+}
+
+export function ActivitiesSection({ activities, locale, muted }: ActivitiesSectionProps) {
+  const t = useTranslations('sections.activities');
+  const [filter, setFilter] = useState<'all' | 'volunteer' | 'committee' | 'organization'>('all');
+
+  if (!activities || activities.length === 0) return null;
+
+  const filtered =
+    filter === 'all' ? activities : activities.filter((a) => a.type === filter);
+
+  return (
+    <Section id="activities" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
+      {activities.length > 3 ? (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {(['all', 'volunteer', 'committee', 'organization'] as const).map((tab) => (
+            <Button
+              key={tab}
+              type="button"
+              size="sm"
+              variant={filter === tab ? 'default' : 'outline'}
+              onClick={() => setFilter(tab)}
+            >
+              {t(tab)}
+            </Button>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {filtered.map((act) => (
+          <Card key={act.id}>
+            <CardHeader className="space-y-2 pb-3">
+              <div className="flex items-center justify-between gap-2">
+                <Badge variant="secondary">{t(act.type)}</Badge>
+                {act.startDate ? (
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {formatPeriod(act.startDate, act.endDate, locale)}
+                  </span>
+                ) : null}
+              </div>
+              <CardTitle>{act.role}</CardTitle>
+              <p className="text-sm font-medium text-primary">
+                {act.organization}
+                {act.eventName ? ` · ${act.eventName}` : ''}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {act.description ? (
+                <p className="text-sm text-muted-foreground">{act.description}</p>
+              ) : null}
+              {act.achievements.length > 0 ? (
+                <ul className="list-disc space-y-1 pl-5 text-sm text-foreground">
+                  {act.achievements.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </Section>
+  );
+}
