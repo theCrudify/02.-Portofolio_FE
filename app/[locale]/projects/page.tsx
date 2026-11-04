@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
+import { MultiImageShowcase } from '@/components/media/multi-image-showcase';
 import { ProjectGrid } from '@/components/project/project-grid';
 import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
@@ -8,6 +9,7 @@ import { fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { buildMetadata } from '@/lib/seo';
 import { cn } from '@/lib/utils';
+import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
 
 export async function generateMetadata({
   params,
@@ -31,7 +33,16 @@ export default async function ProjectsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ technology?: string; type?: string; page?: string }>;
+  searchParams: Promise<{
+    technology?: string;
+    type?: string;
+    page?: string;
+    search?: string;
+    q?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    all?: string;
+  }>;
 }) {
   const { locale } = await params;
   // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
@@ -47,6 +58,10 @@ export default async function ProjectsPage({
       technology: query.technology,
       type: query.type,
       page: query.page ? Number(query.page) : 1,
+      search: query.search ?? query.q,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
+      all: query.all === 'true' || query.all === '1',
     }),
   ]);
 
@@ -129,8 +144,21 @@ export default async function ProjectsPage({
         ) : null}
       </div>
 
-      <ProjectGrid projects={projectsResult.data} />
+      <div className="space-y-14">
+        <ProjectGrid projects={projectsResult.data} />
+
+        <div className="space-y-4 border-t border-border pt-10">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+              Visual Showcase
+            </p>
+            <h2 className="mt-1 font-heading text-2xl font-bold text-foreground">
+              Multi-Image Architecture &amp; Interface Gallery
+            </h2>
+          </div>
+          <MultiImageShowcase items={PORTFOLIO_SHOWCASE_IMAGES} defaultLayout="bento" />
+        </div>
+      </div>
     </Section>
   );
 }
-

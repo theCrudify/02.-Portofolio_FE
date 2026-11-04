@@ -1,12 +1,15 @@
 import { ArrowRight, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/i18n/routing';
 import type { PublicCertification, SupportedLocale } from '@/lib/api/types';
 import { formatMonthYear } from '@/lib/format';
+import { PORTFOLIO_SHOWCASE_IMAGES } from '@/lib/visuals';
 
 export interface CertificationsSectionProps {
   certifications: PublicCertification[];
@@ -36,48 +39,66 @@ export function CertificationsSection({
       }
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {certifications.map((cert) => (
-          <Card key={cert.id} className="flex flex-col justify-between">
-            <CardHeader className="space-y-2 pb-3">
-              <div className="flex items-center justify-between gap-2">
-                <Badge variant="secondary" className="capitalize">
-                  {cert.type}
-                </Badge>
-                {cert.isExpired ? (
-                  <Badge variant="destructive">{t('expired')}</Badge>
-                ) : null}
+        {certifications.map((cert, idx) => {
+          const previewUrl =
+            cert.image?.url ??
+            PORTFOLIO_SHOWCASE_IMAGES[(idx + 6) % PORTFOLIO_SHOWCASE_IMAGES.length].url;
+
+          return (
+            <SpotlightCard key={cert.id} className="group flex flex-col justify-between overflow-hidden">
+              <div>
+                <div className="relative aspect-16/8 w-full overflow-hidden border-b border-border/60 bg-muted">
+                  <Image
+                    src={previewUrl}
+                    alt={cert.image?.alt || cert.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <CardHeader className="space-y-2 pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge variant="secondary" className="capitalize">
+                      {cert.type}
+                    </Badge>
+                    {cert.isExpired ? (
+                      <Badge variant="destructive">{t('expired')}</Badge>
+                    ) : null}
+                  </div>
+                  <CardTitle className="text-base md:text-lg">{cert.name}</CardTitle>
+                  <p className="text-sm font-medium text-muted-foreground">{cert.issuer}</p>
+                </CardHeader>
+
+                <CardContent className="text-xs text-muted-foreground">
+                  {cert.issueDate ? (
+                    <p>
+                      {t('issued')}: {formatMonthYear(cert.issueDate, locale)}
+                      {cert.expiryDate
+                        ? ` · ${t('expires')}: ${formatMonthYear(cert.expiryDate, locale)}`
+                        : ''}
+                    </p>
+                  ) : null}
+                  {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
+                </CardContent>
               </div>
-              <CardTitle className="text-base md:text-lg">{cert.name}</CardTitle>
-              <p className="text-sm font-medium text-muted-foreground">{cert.issuer}</p>
-            </CardHeader>
 
-            <CardContent className="text-xs text-muted-foreground">
-              {cert.issueDate ? (
-                <p>
-                  {t('issued')}: {formatMonthYear(cert.issueDate, locale)}
-                  {cert.expiryDate ? ` · ${t('expires')}: ${formatMonthYear(cert.expiryDate, locale)}` : ''}
-                </p>
+              {cert.credentialUrl ? (
+                <CardFooter className="border-t border-border pt-3">
+                  <a
+                    href={cert.credentialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center gap-1.5 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span>{t('verify')}</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </CardFooter>
               ) : null}
-              {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
-            </CardContent>
-
-            {cert.credentialUrl ? (
-              <CardFooter className="border-t border-border pt-3">
-                <a
-                  href={cert.credentialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-1.5 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <span>{t('verify')}</span>
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </CardFooter>
-            ) : null}
-          </Card>
-        ))}
+            </SpotlightCard>
+          );
+        })}
       </div>
     </Section>
   );
 }
-

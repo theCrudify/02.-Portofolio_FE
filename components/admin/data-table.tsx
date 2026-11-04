@@ -1,10 +1,13 @@
 'use client';
 
+import { ArrowUpDown, Search } from 'lucide-react';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { StatusBadge } from './status-badge';
+import { Input } from '@/components/ui/input';
+import { FrontendQueryBuilder } from '@/core/query';
 import { EmptyState } from './empty-state';
 import { RoleGate } from './role-gate';
+import { StatusBadge } from './status-badge';
 
 export interface DataRow {
   id: string;
@@ -34,31 +37,70 @@ export function DataTable({
   onCreate?: () => void;
 }) {
   const [filter, setFilter] = React.useState<'all' | 'draft' | 'published' | 'archived'>('all');
+  const [search, setSearch] = React.useState('');
+  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
 
-  const filtered = items.filter((item) => {
-    if (filter === 'all') return true;
-    return item.status === filter;
-  });
+  const queryResult = React.useMemo(() => {
+    const searchFields = [primaryColumn, ...(secondaryColumn ? [secondaryColumn] : [])] as (keyof DataRow)[];
+    return FrontendQueryBuilder.executeClientQuery(
+      items,
+      {
+        search: search || undefined,
+        sortBy: primaryColumn,
+        sortOrder,
+        all: true,
+        filters: filter === 'all' ? {} : { status: filter },
+      },
+      searchFields,
+    );
+  }, [items, filter, search, sortOrder, primaryColumn, secondaryColumn]);
+
+  const filtered = queryResult.data;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="inline-flex rounded-md border border-border bg-muted p-1 text-xs">
-          {(['all', 'draft', 'published', 'archived'] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setFilter(tab)}
-              className={`rounded px-3 py-1 font-medium capitalize ${
-                filter === tab
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-md border border-border bg-muted p-1 text-xs">
+            {(['all', 'draft', 'published', 'archived'] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setFilter(tab)}
+                className={`rounded px-3 py-1 font-medium capitalize ${
+                  filter === tab
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-48 sm:w-60">
+            <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Fast search..."
+              aria-label="Search table items"
+              className="h-8 pl-8 text-xs"
+            />
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+            className="h-8 gap-1 text-xs"
+          >
+            <ArrowUpDown className="h-3.5 w-3.5" />
+            <span>Sort ({sortOrder.toUpperCase()})</span>
+          </Button>
         </div>
+
         {onCreate && (
           <Button type="button" onClick={onCreate} size="sm">
             + Create New
@@ -177,4 +219,3 @@ export function DataTable({
     </div>
   );
 }
-
