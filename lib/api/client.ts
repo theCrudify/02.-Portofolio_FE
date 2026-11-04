@@ -72,3 +72,6 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<ApiL
 
   return payload as ApiListResponse<T>;
 }
+
+export const apiFetch = api;
+
