@@ -140,14 +140,16 @@ export function MediaPicker({
     }
   }, [open, loadLibrary]);
 
-  // Edit forms only know the saved media ID; look it up once so the preview shows the actual image.
+  // Edit forms only know the saved media ID; fetch that one asset so the preview shows the actual image.
   React.useEffect(() => {
     if (!value) {
       setSelected(null);
     } else if (selected?.id !== value) {
-      void loadLibrary().then((items) => setSelected(items.find((i) => i.id === value) ?? null));
+      apiFetch<MediaAssetItem>(`/v1/admin/media/${value}`)
+        .then((res) => setSelected(res.data))
+        .catch(() => setSelected(null));
     }
-  }, [value, selected?.id, loadLibrary]);
+  }, [value, selected?.id]);
 
   function pick(asset: MediaAssetItem) {
     setSelected(asset);
