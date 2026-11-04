@@ -21,12 +21,8 @@ export default async function ProjectOpenGraphImage({
   const title = project?.title ?? 'Project Case Study';
   const summary = project?.summary ?? '';
   const techs = project
-    ? [
-        ...project.technologies.frontend,
-        ...project.technologies.backend,
-        ...project.technologies.database,
-        ...project.technologies.devops,
-      ]
+    ? project.technologies
+        .flatMap((g) => g.items)
         .slice(0, 3)
         .map((t) => t.name)
     : [];

@@ -1,6 +1,5 @@
 'use client';
 
-import { Cpu, Database, Globe, Layers, Sparkles, Wrench } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
@@ -8,6 +7,7 @@ import { TechLogo } from '@/components/project/tech-logo';
 import { Section } from '@/components/layout/section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { LookupIcon } from '@/components/ui/lookup-icon';
 import type { SiteData } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
@@ -16,37 +16,18 @@ export interface SkillsSectionProps {
   muted?: boolean;
 }
 
-const CATEGORY_ICONS = {
-  frontend: Globe,
-  backend: Cpu,
-  database: Database,
-  devops: Layers,
-  tools: Wrench,
-  soft_skill: Sparkles,
-} as const;
-
 export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
   const t = useTranslations('sections.skills');
-  const [selectedCat, setSelectedCat] = useState<'all' | keyof SiteData['technologies']>(
-    'all',
-  );
+  // Category code, or 'all'. Categories, labels and icons all come from master data.
+  const [selectedCat, setSelectedCat] = useState<string>('all');
 
-  const categories = [
-    'frontend',
-    'backend',
-    'database',
-    'devops',
-    'tools',
-    'soft_skill',
-  ] as const;
-
-  const nonEmpty = categories.filter((c) => (technologies[c]?.length ?? 0) > 0);
+  const nonEmpty = technologies.filter((g) => g.items.length > 0);
   if (nonEmpty.length === 0) return null;
 
   const visibleCategories =
-    selectedCat === 'all' ? nonEmpty : nonEmpty.filter((c) => c === selectedCat);
+    selectedCat === 'all' ? nonEmpty : nonEmpty.filter((g) => g.group.code === selectedCat);
 
-  const allTech = nonEmpty.flatMap((c) => technologies[c]);
+  const allTech = nonEmpty.flatMap((g) => g.items);
 
   return (
     <Section id="skills" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
@@ -76,21 +57,22 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
 
         {nonEmpty.length > 1 ? (
           <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border/80 bg-card/85 p-2.5 shadow-2xs backdrop-blur-md">
-            {nonEmpty.map((cat) => {
-              const Icon = CATEGORY_ICONS[cat];
-              const isSelected = selectedCat === cat;
+            {nonEmpty.map(({ group, items }) => {
+              const isSelected = selectedCat === group.code;
               return (
                 <Button
-                  key={cat}
+                  key={group.code}
                   type="button"
                   size="sm"
                   variant={isSelected ? 'default' : 'outline'}
-                  onClick={() => setSelectedCat((prev) => (prev === cat ? 'all' : cat))}
+                  onClick={() =>
+                    setSelectedCat((prev) => (prev === group.code ? 'all' : group.code))
+                  }
                   className="gap-1.5"
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <LookupIcon name={group.icon} className="h-3.5 w-3.5" />
                   <span>
-                    {t(cat)} ({technologies[cat].length})
+                    {group.label} ({items.length})
                   </span>
                 </Button>
               );
@@ -108,10 +90,9 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
                 : 'sm:grid-cols-2 lg:grid-cols-3',
           )}
         >
-          {visibleCategories.map((cat) => {
-            const Icon = CATEGORY_ICONS[cat];
+          {visibleCategories.map(({ group, items }) => {
             return (
-              <SpotlightCard key={cat} className="relative overflow-hidden p-6">
+              <SpotlightCard key={group.code} className="relative overflow-hidden p-6">
                 <div
                   aria-hidden="true"
                   className="bg-dot-matrix pointer-events-none absolute top-0 right-0 h-24 w-24 opacity-40"
@@ -119,18 +100,18 @@ export function SkillsSection({ technologies, muted }: SkillsSectionProps) {
                 <div className="relative z-10 mb-4 flex items-center justify-between border-b border-border/70 pb-3.5">
                   <div className="flex items-center gap-3">
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary shadow-2xs">
-                      <Icon className="h-4 w-4" />
+                      <LookupIcon name={group.icon} className="h-4 w-4" />
                     </span>
                     <h3 className="font-heading text-base font-bold text-foreground sm:text-lg">
-                      {t(cat)}
+                      {group.label}
                     </h3>
                   </div>
                   <Badge variant="outline" className="bg-background/80 font-mono text-xs">
-                    {technologies[cat].length}
+                    {items.length}
                   </Badge>
                 </div>
                 <div className="relative z-10 flex flex-wrap gap-2">
-                  {technologies[cat].map((tech) => (
+                  {items.map((tech) => (
                     <Badge
                       key={tech.slug}
                       variant="secondary"

@@ -21,33 +21,30 @@ export interface ActivitiesSectionProps {
 
 export function ActivitiesSection({ activities, locale, muted }: ActivitiesSectionProps) {
   const t = useTranslations('sections.activities');
-  const [filter, setFilter] = useState<
-    'all' | 'volunteer' | 'committee' | 'organization'
-  >('all');
+  // Activity type code, or 'all'. Types and labels come from master data.
+  const [filter, setFilter] = useState<string>('all');
 
   if (!activities || activities.length === 0) return null;
 
   // Only offer filters that actually have entries.
-  const types = (['volunteer', 'committee', 'organization'] as const).filter((type) =>
-    activities.some((a) => a.type === type),
-  );
+  const types = [...new Map(activities.map((a) => [a.type.code, a.type])).values()];
 
   const filtered =
-    filter === 'all' ? activities : activities.filter((a) => a.type === filter);
+    filter === 'all' ? activities : activities.filter((a) => a.type.code === filter);
 
   return (
     <Section id="activities" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
       {activities.length > 3 && types.length > 1 ? (
         <div className="mb-6 flex flex-wrap gap-2">
-          {(['all', ...types] as const).map((tab) => (
+          {[{ code: 'all', label: t('all') }, ...types].map((tab) => (
             <Button
-              key={tab}
+              key={tab.code}
               type="button"
               size="sm"
-              variant={filter === tab ? 'default' : 'outline'}
-              onClick={() => setFilter(tab)}
+              variant={filter === tab.code ? 'default' : 'outline'}
+              onClick={() => setFilter(tab.code)}
             >
-              {t(tab)}
+              {tab.label}
             </Button>
           ))}
         </div>
@@ -85,7 +82,7 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                   <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
                     <Users className="h-3.5 w-3.5" />
                   </span>
-                  <Badge variant="secondary">{t(act.type)}</Badge>
+                  <Badge variant="secondary">{act.type.label}</Badge>
                 </div>
                 {act.startDate ? (
                   <span className="font-mono text-[11px] text-muted-foreground">
@@ -97,7 +94,7 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 {act.role}
               </CardTitle>
               <p className="line-clamp-2 text-xs font-semibold text-primary">
-                {act.organization}
+                {act.organization?.name}
                 {act.eventName ? ` · ${act.eventName}` : ''}
               </p>
             </CardHeader>

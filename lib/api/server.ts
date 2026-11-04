@@ -23,22 +23,8 @@ export function getDefaultSiteData(): SiteData {
       themePreset: 'slate',
       colorMode: 'system',
       fontPair: 'geist',
-      sectionOrder: [
-        'hero',
-        'about',
-        'projects',
-        'skills',
-        'experience',
-        'education',
-        'certifications',
-        'activities',
-        'achievements',
-        'publications',
-        'testimonials',
-        'github',
-        'contact',
-      ],
-      hiddenSections: [],
+      // Section order lives in the database; without the API nothing is rendered.
+      sections: [],
       heroCvButtons: 'both',
       seo: {
         title: null,
@@ -51,14 +37,7 @@ export function getDefaultSiteData(): SiteData {
       projectCount: 0,
       certificationCount: 0,
     },
-    technologies: {
-      frontend: [],
-      backend: [],
-      database: [],
-      devops: [],
-      tools: [],
-      soft_skill: [],
-    },
+    technologies: [],
     experiences: [],
     education: [],
     certifications: [],
@@ -68,6 +47,8 @@ export function getDefaultSiteData(): SiteData {
     testimonials: [],
     github: null,
     featuredProjects: [],
+    exportPresets: [],
+    filters: { projectTypes: [], certificationTypes: [], activityTypes: [] },
   };
 }
 

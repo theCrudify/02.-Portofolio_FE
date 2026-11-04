@@ -11,8 +11,10 @@ import { PAGE_SIZE, Pager } from '@/components/admin/pager';
 
 export interface MediaAssetItem {
   id: string;
-  provider: 'cloudinary' | 'youtube' | 'vimeo' | 'loom';
-  kind: 'image' | 'video' | 'document';
+  /** media_provider code */
+  provider: string;
+  /** media_kind code: image, video, pdf, document */
+  kind: string;
   url: string;
   thumbnailUrl?: string | null;
   titleEn?: string | null;
@@ -33,11 +35,30 @@ interface SignedUpload {
   allowedFormats: string[];
 }
 
+const DOCUMENT_ACCEPT =
+  'application/pdf,.pptx,.ppt,.key,.odp,.docx,.xlsx,application/vnd.openxmlformats-officedocument.presentationml.presentation';
+
 export const UPLOAD_ACCEPT: Record<UploadKind, string> = {
   image: 'image/jpeg,image/png,image/webp,image/avif,image/svg+xml',
   video: 'video/mp4,video/webm',
-  document: 'application/pdf',
+  document: DOCUMENT_ACCEPT,
 };
+
+type PickerKind = UploadKind | 'any';
+
+/** media_kind codes listed for each picker mode ("document" covers PDFs and slide decks). */
+const LIST_KINDS: Record<PickerKind, string> = {
+  image: 'image',
+  video: 'video',
+  document: 'pdf,document',
+  any: '',
+};
+
+function kindOfFile(file: File): UploadKind {
+  if (file.type.startsWith('image/')) return 'image';
+  if (file.type.startsWith('video/')) return 'video';
+  return 'document';
+}
 
 // Signed direct upload: the browser sends the file straight to Cloudinary, then registers it with the API.
 export async function uploadMedia(file: File, kind: UploadKind): Promise<MediaAssetItem> {
@@ -106,7 +127,7 @@ export function MediaPicker({
 }: {
   value?: string | null;
   onChange: (mediaId: string | null, asset?: MediaAssetItem) => void;
-  acceptKind?: 'image' | 'video' | 'document';
+  acceptKind?: PickerKind;
   label?: string;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -122,7 +143,7 @@ export function MediaPicker({
   const loadLibrary = React.useCallback(async (page = 1) => {
     try {
       const res = await apiFetch<MediaAssetItem[]>(
-        `/v1/admin/media?kind=${acceptKind}&page=${page}&limit=${PAGE_SIZE}`
+        `/v1/admin/media?${LIST_KINDS[acceptKind] ? `kind=${LIST_KINDS[acceptKind]}&` : ''}page=${page}&limit=${PAGE_SIZE}`
       );
       setLibrary(res.data);
       setLibPage(page);
@@ -164,7 +185,7 @@ export function MediaPicker({
     setError(null);
     setBusy(true);
     try {
-      pick(await uploadMedia(file, acceptKind));
+      pick(await uploadMedia(file, acceptKind === 'any' ? kindOfFile(file) : acceptKind));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -283,7 +304,11 @@ export function MediaPicker({
                 <Input
                   id={`upload-${acceptKind}`}
                   type="file"
-                  accept={UPLOAD_ACCEPT[acceptKind]}
+                  accept={
+                    acceptKind === 'any'
+                      ? Object.values(UPLOAD_ACCEPT).join(',')
+                      : UPLOAD_ACCEPT[acceptKind]
+                  }
                   onChange={handleFileUpload}
                   disabled={busy}
                 />

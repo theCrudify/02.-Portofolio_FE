@@ -39,7 +39,7 @@ export function PublicationsSection({
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="gap-1.5 capitalize">
                     <BookOpen className="h-3 w-3 text-primary" />
-                    <span>{pub.type}</span>
+                    <span>{pub.type.label}</span>
                   </Badge>
                   {pub.venue ? (
                     <span className="font-mono text-xs font-semibold uppercase tracking-wider text-primary">

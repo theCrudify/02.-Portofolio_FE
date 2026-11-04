@@ -61,10 +61,10 @@ export default async function HomePage({
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
   const site = await fetchSiteData(typedLocale);
 
-  const hiddenSet = new Set(site.settings.hiddenSections ?? []);
-  const orderedSections = (site.settings.sectionOrder ?? []).filter(
-    (key): key is SectionKey => !hiddenSet.has(key),
-  );
+  // Order and visibility come from the site_sections table (admin → Appearance).
+  const orderedSections: SectionKey[] = site.settings.sections
+    .filter((s) => s.visible)
+    .map((s) => s.code);
 
   let visibleNonHeroIndex = 0;
 
@@ -88,7 +88,9 @@ export default async function HomePage({
               stats={site.stats}
               locale={typedLocale}
               projects={site.featuredProjects}
-              stack={[...site.technologies.backend, ...site.technologies.frontend]
+              exportPresets={site.exportPresets}
+              stack={site.technologies
+                .flatMap((g) => g.items)
                 .slice(0, 6)
                 .map((tech) => tech.name)}
             />

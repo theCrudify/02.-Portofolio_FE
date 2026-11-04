@@ -2,21 +2,20 @@ import { ArrowUpRight, Terminal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/layout/container';
 import { Link } from '@/i18n/routing';
+import type { PublicProfile } from '@/lib/api/types';
 
 export interface FooterProps {
   name: string;
-  socials?: Record<string, string>;
+  socials?: PublicProfile['socials'];
   updatedAt?: string;
 }
 
-export function Footer({ name, socials = {}, updatedAt }: FooterProps) {
+export function Footer({ name, socials = [], updatedAt }: FooterProps) {
   const t = useTranslations('footer');
   const year = new Date().getFullYear();
   const formattedDate = updatedAt ? updatedAt.slice(0, 10) : null;
 
-  const socialEntries = Object.entries(socials).filter(
-    ([, url]) => typeof url === 'string' && url.length > 0,
-  );
+  const socialEntries = socials.filter((s) => s.url.length > 0);
 
   return (
     <footer className="no-print relative overflow-hidden border-t border-border bg-card/85 py-12 text-sm text-muted-foreground backdrop-blur-md">
@@ -38,15 +37,15 @@ export function Footer({ name, socials = {}, updatedAt }: FooterProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {socialEntries.map(([platform, url]) => (
+          {socialEntries.map(({ platform, url }) => (
             <a
-              key={platform}
+              key={platform.code}
               href={url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium capitalize text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <span>{platform}</span>
+              <span>{platform.label}</span>
               <ArrowUpRight className="h-3 w-3" />
             </a>
           ))}

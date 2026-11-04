@@ -66,21 +66,9 @@ export default async function ProjectsPage({
     }),
   ]);
 
-  const allTechs = [
-    ...site.technologies.frontend,
-    ...site.technologies.backend,
-    ...site.technologies.database,
-    ...site.technologies.devops,
-    ...site.technologies.tools,
-  ];
-
-  const projectTypes = [
-    'personal',
-    'freelance',
-    'company',
-    'open_source',
-    'hackathon',
-  ] as const;
+  const allTechs = site.technologies.flatMap((g) => g.items);
+  // Type filters (codes + labels) come from master data.
+  const projectTypes = site.filters.projectTypes;
 
   const showcaseItems: ShowcaseImageEntry[] = [];
   for (const proj of projectsResult.data) {
@@ -92,7 +80,7 @@ export default async function ProjectsPage({
           alt: img.alt || proj.title,
           title: proj.title,
           caption: img.caption ?? proj.summary,
-          category: proj.type.replace('_', ' '),
+          category: proj.type.label,
           width: img.width,
           height: img.height,
         });
@@ -104,7 +92,7 @@ export default async function ProjectsPage({
         alt: proj.cover.alt || proj.title,
         title: proj.title,
         caption: proj.summary,
-        category: proj.type.replace('_', ' '),
+        category: proj.type.label,
         width: proj.cover.width,
         height: proj.cover.height,
       });
@@ -128,17 +116,16 @@ export default async function ProjectsPage({
           </Link>
           {projectTypes.map((pType) => (
             <Link
-              key={pType}
-              href={`/projects?type=${pType}${query.technology ? `&technology=${query.technology}` : ''}`}
+              key={pType.code}
+              href={`/projects?type=${pType.code}${query.technology ? `&technology=${query.technology}` : ''}`}
               className={cn(
                 buttonVariants({
-                  variant: query.type === pType ? 'default' : 'outline',
+                  variant: query.type === pType.code ? 'default' : 'outline',
                   size: 'sm',
                 }),
-                'capitalize',
               )}
             >
-              {pType.replace('_', ' ')}
+              {pType.label}
             </Link>
           ))}
         </div>

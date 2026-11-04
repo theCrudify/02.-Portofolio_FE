@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { CvPrintableView, type CvExportPayload } from '@/components/pdf/cv-templates';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getCvLabels } from '@/lib/cv';
 
 export const metadata: Metadata = {
   title: 'Shared Document',
@@ -25,6 +26,7 @@ export default async function ShareTokenPage({
   const { token, locale } = await params;
   // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
   setRequestLocale(locale);
+  const t = await getTranslations({ locale: locale === 'id' ? 'id' : 'en', namespace: 'cv' });
 
   let status = 500;
   let payload: ShareLinkData | null = null;
@@ -79,11 +81,11 @@ export default async function ShareTokenPage({
             rel="noopener noreferrer"
             className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           >
-            Open / Download {payload.document.title} (PDF)
+            {t('openDocument', { title: payload.document.title })}
           </a>
         </div>
       ) : payload.kind === 'preset' && payload.export ? (
-        <CvPrintableView data={payload.export} />
+        <CvPrintableView data={payload.export} labels={await getCvLabels(locale === 'id' ? 'id' : 'en')} />
       ) : null}
     </div>
   );

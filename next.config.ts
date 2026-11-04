@@ -1,3 +1,4 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
@@ -7,6 +8,14 @@ const apiOrigin = process.env.API_ORIGIN || 'http://localhost:8787';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  webpack: (config) => {
+    // lucide-react 0.475 maps "./dynamic" to a CJS file it doesn't ship; use the ESM build.
+    config.resolve.alias['lucide-react/dynamic$'] = path.resolve(
+      __dirname,
+      'node_modules/lucide-react/dist/esm/dynamic.js',
+    );
+    return config;
+  },
   images: {
     // Cloudinary resizes its own images (free credits) instead of Vercel's capped optimizer.
     loader: 'custom',

@@ -34,7 +34,7 @@ export function ProjectsSection({ projects, muted, inverted }: ProjectsSectionPr
           alt: img.alt || proj.title,
           title: proj.title,
           caption: img.caption ?? proj.summary,
-          category: proj.type.replace('_', ' '),
+          category: proj.type.label,
           width: img.width,
           height: img.height,
         });
@@ -46,7 +46,7 @@ export function ProjectsSection({ projects, muted, inverted }: ProjectsSectionPr
         alt: proj.cover.alt || proj.title,
         title: proj.title,
         caption: proj.summary,
-        category: proj.type.replace('_', ' '),
+        category: proj.type.label,
         width: proj.cover.width,
         height: proj.cover.height,
       });
@@ -59,7 +59,7 @@ export function ProjectsSection({ projects, muted, inverted }: ProjectsSectionPr
         alt: proj.cover.alt || proj.title,
         title: proj.title,
         caption: proj.summary,
-        category: proj.type.replace('_', ' '),
+        category: proj.type.label,
         width: proj.cover.width,
         height: proj.cover.height,
       });

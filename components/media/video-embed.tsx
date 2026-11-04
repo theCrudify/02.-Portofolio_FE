@@ -6,7 +6,8 @@ import { useState } from 'react';
 import { track } from '@/lib/events';
 
 export interface VideoEmbedProps {
-  provider: 'youtube' | 'vimeo' | 'loom' | 'cloudinary';
+  /** media_provider code; unknown providers fall back to the plain URL. */
+  provider: string;
   embedId: string | null;
   url: string;
   thumbnailUrl?: string | null;

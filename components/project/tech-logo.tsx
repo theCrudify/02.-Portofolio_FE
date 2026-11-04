@@ -4,32 +4,20 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-// Names whose simple-icons slug can't be derived mechanically.
-const ALIASES: Record<string, string> = {
-  '.net / c#': 'dotnet',
-  '.net': 'dotnet',
-  'prisma orm': 'prisma',
-  'swagger / openapi': 'swagger',
-  'gitlab ci/cd': 'gitlab',
-  'sap integration': 'sap',
-};
-
-/** "Node.js" -> "nodedotjs", the simple-icons slug convention. */
+/** Fallback when no icon is set: "Node.js" -> "nodedotjs", the simple-icons convention. */
 export function simpleIconSlug(name: string): string {
-  const key = name.trim().toLowerCase();
-  return (
-    ALIASES[key] ??
-    key
-      .replace(/\+/g, 'plus')
-      .replace(/\./g, 'dot')
-      .replace(/#/g, 'sharp')
-      .replace(/[^a-z0-9]/g, '')
-  );
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\+/g, 'plus')
+    .replace(/\./g, 'dot')
+    .replace(/#/g, 'sharp')
+    .replace(/[^a-z0-9]/g, '');
 }
 
 export interface TechLogoProps {
   name: string;
-  /** Admin-set icon: a full URL or a simple-icons slug. */
+  /** Icon set in the admin (technologies.icon): a simple-icons slug or a full URL. */
   icon?: string | null;
   className?: string;
 }

@@ -129,19 +129,19 @@ export function ContactSection({ profile, locale, muted }: ContactSectionProps) 
             </SpotlightCard>
           ) : null}
 
-          {profile?.socials && Object.keys(profile.socials).length > 0 ? (
+          {profile?.socials && profile.socials.length > 0 ? (
             <SpotlightCard className="flex-1">
               <CardContent className="flex h-full flex-wrap items-center gap-2.5 p-5 sm:p-6">
-                {Object.entries(profile.socials).map(([key, url]) =>
+                {profile.socials.map(({ platform, url }) =>
                   url ? (
                     <a
-                      key={key}
+                      key={platform.code}
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-background/90 px-4 py-2.5 text-xs font-semibold capitalize text-foreground shadow-2xs transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <span>{key}</span>
+                      <span>{platform.label}</span>
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                   ) : null,

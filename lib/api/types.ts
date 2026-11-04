@@ -1,19 +1,22 @@
 export type SupportedLocale = 'en' | 'id';
 
-export type SectionKey =
-  | 'hero'
-  | 'about'
-  | 'projects'
-  | 'skills'
-  | 'experience'
-  | 'education'
-  | 'certifications'
-  | 'activities'
-  | 'achievements'
-  | 'publications'
-  | 'testimonials'
-  | 'github'
-  | 'contact';
+/** A home-page section code (site_section lookup); unknown codes are skipped when rendering. */
+export type SectionKey = string;
+
+/** A master-data value as the API sends it: `code` for logic, `label` for display. */
+export interface PublicLookup {
+  code: string;
+  label: string;
+  icon: string | null;
+  color: string | null;
+}
+
+export interface PublicImage {
+  url: string;
+  width: number | null;
+  height: number | null;
+  alt: string;
+}
 
 export interface PublicMedia {
   id: string;
@@ -21,8 +24,10 @@ export interface PublicMedia {
   width: number | null;
   height: number | null;
   alt: string;
-  provider: 'cloudinary' | 'youtube' | 'vimeo' | 'loom';
-  kind: 'image' | 'pdf' | 'video';
+  /** media_provider code */
+  provider: string;
+  /** media_kind code (image, pdf, video, document) */
+  kind: string;
   embedId: string | null;
   thumbnailUrl: string | null;
   title: string | null;
@@ -30,35 +35,50 @@ export interface PublicMedia {
   sources?: { mp4: string; webm: string };
 }
 
+export interface PublicOrganization {
+  slug: string;
+  name: string;
+  type: PublicLookup | null;
+  logo: PublicImage | null;
+  websiteUrl: string | null;
+  location: string | null;
+}
+
 export interface PublicProfile {
   name: string;
   headline: string;
   bio: string;
-  avatar: { url: string; width: number | null; height: number | null; alt: string } | null;
+  avatar: PublicImage | null;
   location: string | null;
   timezone: string;
   email: string | null;
-  socials: Record<string, string>;
-  availability: 'open_to_work' | 'freelance' | 'not_available';
-  workPreference: 'onsite' | 'hybrid' | 'remote';
-  languages: { name: string; level: string }[];
+  socials: { platform: PublicLookup; url: string; handle: string | null }[];
+  availability: PublicLookup;
+  workPreference: PublicLookup;
+  languages: { name: string; level: PublicLookup }[];
   interests: { label: string; icon: string | null }[];
   referencesNote: string | null;
   careerStartDate: string | null;
   updatedAt: string;
 }
 
+export interface PublicSiteSection {
+  code: SectionKey;
+  label: string;
+  visible: boolean;
+}
+
 export interface PublicSiteSettings {
-  themePreset: 'slate' | 'forest' | 'sunset' | 'mono' | string;
-  colorMode: 'light' | 'dark' | 'system' | string;
-  fontPair: 'geist' | 'inter' | 'serif-accent' | string;
-  sectionOrder: SectionKey[];
-  hiddenSections: SectionKey[];
-  heroCvButtons: 'uploaded' | 'export' | 'both';
+  themePreset: string;
+  colorMode: string;
+  fontPair: string;
+  /** hero_cv_buttons code: uploaded | export | both */
+  heroCvButtons: string;
+  sections: PublicSiteSection[];
   seo: {
     title: string | null;
     description: string | null;
-    ogImage: { url: string; width: number | null; height: number | null; alt: string } | null;
+    ogImage: PublicImage | null;
   };
 }
 
@@ -68,112 +88,112 @@ export interface PublicTechChip {
   icon: string | null;
 }
 
+export interface PublicTechGroup {
+  group: PublicLookup;
+  items: PublicTechChip[];
+}
+
 export interface PublicProjectLink {
-  type:
-    | 'demo'
-    | 'repo_frontend'
-    | 'repo_backend'
-    | 'repo'
-    | 'api_docs'
-    | 'postman'
-    | 'design'
-    | 'video'
-    | 'article'
-    | 'other';
+  /** link_type lookup (demo, repo_frontend, repo_backend, repo_service, documentation, slides…) */
+  type: PublicLookup;
   label: string;
   url: string | null;
   isPrivate: boolean;
+}
+
+export interface PublicProjectRef {
+  slug: string;
+  title: string;
 }
 
 export interface PublicProjectCard {
   slug: string;
   title: string;
   summary: string;
-  type: 'personal' | 'freelance' | 'company' | 'open_source' | 'hackathon';
-  projectState: 'live' | 'in_development' | 'archived';
+  type: PublicLookup;
+  state: PublicLookup;
   featured: boolean;
-  cover: { url: string; width: number | null; height: number | null; alt: string } | null;
-  images?: { url: string; width: number | null; height: number | null; alt: string; caption?: string }[];
+  client: PublicOrganization | null;
+  cover: PublicImage | null;
+  images?: (PublicImage & { caption?: string })[];
   clip: PublicMedia | null;
   technologies: PublicTechChip[];
   primaryLink: PublicProjectLink | null;
   periodStart: string | null;
   periodEnd: string | null;
+  /** Present on the site payload (featured projects) and in exports. */
+  role?: string | null;
+  responsibilities?: string[];
+  metrics?: { label: string; value: string }[];
 }
 
-export interface PublicProjectMediaItem {
-  id: string;
-  role: 'gallery' | 'demo_video' | 'clip';
-  provider: 'cloudinary' | 'youtube' | 'vimeo' | 'loom';
-  kind: 'image' | 'pdf' | 'video';
-  url: string;
-  embedId: string | null;
-  thumbnailUrl: string | null;
-  width: number | null;
-  height: number | null;
-  alt: string;
-  title: string | null;
+export interface PublicProjectMediaItem extends PublicMedia {
+  /** project_media_role lookup (gallery, demo_video, clip, documentation, slides, architecture) */
+  role: PublicLookup;
   caption: string | null;
-  sources?: { mp4: string; webm: string };
+}
+
+/** A position (experience) a project belongs to. */
+export interface PublicPositionRef {
+  id: string;
+  role: string;
+  organization: PublicOrganization | null;
+  startDate: string;
+  endDate: string | null;
 }
 
 export interface PublicProjectDetail {
   slug: string;
   title: string;
   summary: string;
-  type: 'personal' | 'freelance' | 'company' | 'open_source' | 'hackathon';
-  projectState: 'live' | 'in_development' | 'archived';
+  type: PublicLookup;
+  state: PublicLookup;
   role: string | null;
   teamSize: number | null;
-  client: string | null;
+  client: PublicOrganization | null;
+  positions: PublicPositionRef[];
   periodStart: string | null;
   periodEnd: string | null;
   problem: string | null;
   solution: string | null;
   result: string | null;
   challenges: string | null;
+  responsibilities: string[];
   metrics: { label: string; value: string }[];
   highlights: string[];
-  technologies: {
-    frontend: PublicTechChip[];
-    backend: PublicTechChip[];
-    database: PublicTechChip[];
-    devops: PublicTechChip[];
-    other: PublicTechChip[];
-  };
+  technologies: PublicTechGroup[];
   links: PublicProjectLink[];
-  cover: { url: string; width: number | null; height: number | null; alt: string } | null;
-  architecture: { url: string; width: number | null; height: number | null; alt: string } | null;
+  cover: PublicImage | null;
+  architecture: PublicImage | null;
   media: PublicProjectMediaItem[];
   seo: {
     title: string;
     description: string;
   };
   updatedAt: string;
-  prev: { slug: string; title: string } | null;
-  next: { slug: string; title: string } | null;
+  prev: PublicProjectRef | null;
+  next: PublicProjectRef | null;
 }
 
 export interface PublicExperience {
   id: string;
-  company: string;
-  companyLogo: { url: string; alt: string } | null;
-  companyUrl: string | null;
+  organization: PublicOrganization | null;
   role: string;
-  employmentType: 'full_time' | 'part_time' | 'internship' | 'freelance' | 'contract';
+  employmentType: PublicLookup;
   location: string | null;
-  workMode: 'onsite' | 'hybrid' | 'remote' | null;
+  workMode: PublicLookup | null;
   startDate: string;
   endDate: string | null;
   description: string | null;
+  responsibilities: string[];
   achievements: string[];
   technologies: PublicTechChip[];
+  projects: PublicProjectRef[];
 }
 
 export interface PublicEducation {
   id: string;
-  institution: string;
-  logo: { url: string; alt: string } | null;
+  organization: PublicOrganization | null;
   degree: string | null;
   field: string | null;
   startDate: string | null;
@@ -186,48 +206,47 @@ export interface PublicEducation {
 
 export interface PublicCertification {
   id: string;
-  type: 'certification' | 'course' | 'bootcamp' | 'training';
+  type: PublicLookup;
   name: string;
-  issuer: string;
-  issuerLogo: { url: string; alt: string } | null;
+  issuer: PublicOrganization | null;
   issueDate: string | null;
   expiryDate: string | null;
   isExpired: boolean;
   credentialId: string | null;
   credentialUrl: string | null;
-  image: { url: string; width: number | null; height: number | null; alt: string } | null;
+  image: PublicImage | null;
   featured: boolean;
 }
 
 export interface PublicActivity {
   id: string;
-  type: 'volunteer' | 'committee' | 'organization';
-  organization: string;
+  type: PublicLookup;
+  organization: PublicOrganization | null;
   eventName: string | null;
   role: string;
   startDate: string | null;
   endDate: string | null;
   description: string | null;
   achievements: string[];
-  media: { url: string; width: number | null; height: number | null; alt: string } | null;
+  media: PublicImage | null;
   linkUrl: string | null;
 }
 
 export interface PublicAchievement {
   id: string;
   title: string;
-  issuer: string | null;
+  issuer: PublicOrganization | null;
   eventName: string | null;
   rank: string | null;
   date: string | null;
   description: string | null;
-  certificate: { url: string; width: number | null; height: number | null; alt: string } | null;
+  certificate: PublicImage | null;
   linkUrl: string | null;
 }
 
 export interface PublicPublication {
   id: string;
-  type: 'article' | 'paper' | 'talk' | 'workshop' | 'podcast';
+  type: PublicLookup;
   title: string;
   venue: string | null;
   date: string | null;
@@ -240,8 +259,8 @@ export interface PublicTestimonial {
   id: string;
   name: string;
   position: string | null;
-  company: string | null;
-  avatar: { url: string; alt: string } | null;
+  organization: PublicOrganization | null;
+  avatar: PublicImage | null;
   relationship: string | null;
   quote: string;
   linkedinUrl: string | null;
@@ -263,14 +282,8 @@ export interface SiteData {
     projectCount: number;
     certificationCount: number;
   };
-  technologies: {
-    frontend: PublicTechChip[];
-    backend: PublicTechChip[];
-    database: PublicTechChip[];
-    devops: PublicTechChip[];
-    tools: PublicTechChip[];
-    soft_skill: PublicTechChip[];
-  };
+  /** Skills grouped by tech_category lookup, in master-data order. */
+  technologies: PublicTechGroup[];
   experiences: PublicExperience[];
   education: PublicEducation[];
   certifications: PublicCertification[];
@@ -280,20 +293,27 @@ export interface SiteData {
   testimonials: PublicTestimonial[];
   github: GithubStats | null;
   featuredProjects: PublicProjectCard[];
+  /** Public CV export presets (PDF downloads). */
+  exportPresets: { slug: string; name: string; template: string; locale: string }[];
+  /** Filter options for public listings, from master data. */
+  filters: {
+    projectTypes: PublicLookup[];
+    certificationTypes: PublicLookup[];
+    activityTypes: PublicLookup[];
+  };
 }
 
 export interface ExportPayload {
   preset: {
     slug: string;
     name: string;
-    template: 'full' | 'one_page' | 'ats';
+    /** export_template code */
+    template: string;
     locale: SupportedLocale;
   };
   profile: PublicProfile | null;
-  sections: {
-    key: SectionKey;
-    items: unknown[];
-  }[];
+  /** Keyed by section code, in the preset's order. */
+  sections: Record<string, unknown[]>;
   generatedAt: string;
   siteUrl: string;
 }

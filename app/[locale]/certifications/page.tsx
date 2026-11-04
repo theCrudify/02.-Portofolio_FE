@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/i18n/routing';
-import { fetchCertificationsList } from '@/lib/api/server';
+import { fetchCertificationsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { formatMonthYear } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
@@ -42,12 +42,14 @@ export default async function CertificationsPage({
   const query = await searchParams;
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
 
-  const [t, certifications] = await Promise.all([
+  const [t, certifications, site] = await Promise.all([
     getTranslations({ locale: typedLocale, namespace: 'sections.certifications' }),
     fetchCertificationsList(typedLocale, query.type),
+    fetchSiteData(typedLocale),
   ]);
 
-  const certTypes = ['certification', 'course', 'bootcamp', 'training'] as const;
+  // Type filters (codes + labels) come from master data.
+  const certTypes = site.filters.certificationTypes;
 
   return (
     <Section eyebrow={t('eyebrow')} title={t('title')}>
@@ -61,21 +63,20 @@ export default async function CertificationsPage({
             }),
           )}
         >
-          All
+          {t('all')}
         </Link>
         {certTypes.map((cType) => (
           <Link
-            key={cType}
-            href={`/certifications?type=${cType}`}
+            key={cType.code}
+            href={`/certifications?type=${cType.code}`}
             className={cn(
               buttonVariants({
-                variant: query.type === cType ? 'default' : 'outline',
+                variant: query.type === cType.code ? 'default' : 'outline',
                 size: 'sm',
               }),
-              'capitalize',
             )}
           >
-            {cType}
+            {cType.label}
           </Link>
         ))}
       </div>
@@ -85,15 +86,13 @@ export default async function CertificationsPage({
           <Card key={cert.id} className="flex flex-col justify-between">
             <CardHeader className="space-y-2 pb-3">
               <div className="flex items-center justify-between gap-2">
-                <Badge variant="secondary" className="capitalize">
-                  {cert.type}
-                </Badge>
+                <Badge variant="secondary">{cert.type.label}</Badge>
                 {cert.isExpired ? (
                   <Badge variant="destructive">{t('expired')}</Badge>
                 ) : null}
               </div>
               <CardTitle className="text-base md:text-lg">{cert.name}</CardTitle>
-              <p className="text-sm font-medium text-muted-foreground">{cert.issuer}</p>
+              <p className="text-sm font-medium text-muted-foreground">{cert.issuer?.name}</p>
             </CardHeader>
 
             <CardContent className="text-xs text-muted-foreground">

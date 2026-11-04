@@ -21,9 +21,7 @@ export function buildPersonJsonLd(profile: PublicProfile | null) {
     };
   }
 
-  const sameAs = Object.values(profile.socials ?? {}).filter(
-    (v): v is string => typeof v === 'string' && v.startsWith('http'),
-  );
+  const sameAs = profile.socials.map((s) => s.url).filter((url) => url.startsWith('http'));
 
   return {
     '@context': 'https://schema.org',
@@ -64,13 +62,7 @@ export function buildProjectCreativeWorkJsonLd(
   authorName: string,
 ) {
   const siteUrl = getSiteUrl();
-  const keywords = [
-    ...project.technologies.frontend,
-    ...project.technologies.backend,
-    ...project.technologies.database,
-    ...project.technologies.devops,
-    ...project.technologies.other,
-  ].map((t) => t.name);
+  const keywords = project.technologies.flatMap((g) => g.items).map((t) => t.name);
 
   return {
     '@context': 'https://schema.org',

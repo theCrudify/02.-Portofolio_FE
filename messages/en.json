@@ -81,7 +81,10 @@
       "role": "Role",
       "teamSize": "Team Size",
       "client": "Client",
-      "period": "Timeline"
+      "period": "Timeline",
+      "company": "Company & position",
+      "responsibilities": "Responsibilities",
+      "documents": "Documentation"
     },
     "skills": {
       "eyebrow": "CAPABILITIES",
@@ -104,7 +107,10 @@
       "showGuide": "Show guide character",
       "hideGuide": "Hide guide character",
       "guideAlt": "Animated guide character walking along the career timeline",
-      "now": "Now"
+      "now": "Now",
+      "responsibilities": "Responsibilities",
+      "achievements": "Achievements",
+      "projectsInRole": "Projects in this role"
     },
     "education": {
       "eyebrow": "ACADEMIC",
@@ -118,7 +124,8 @@
       "verify": "Verify Credential",
       "expired": "Expired",
       "issued": "Issued",
-      "expires": "Expires"
+      "expires": "Expires",
+      "all": "All"
     },
     "activities": {
       "eyebrow": "COMMUNITY",
@@ -194,6 +201,19 @@
     "lastUpdated": "Last updated",
     "privacy": "Privacy Policy",
     "rights": "All rights reserved."
+  },
+  "cv": {
+    "experience": "Work Experience",
+    "projects": "Selected Projects",
+    "education": "Education",
+    "skills": "Skills & Technologies",
+    "certifications": "Certifications",
+    "responsibilities": "Responsibilities",
+    "present": "Present",
+    "gpa": "GPA",
+    "printTitle": "Print-friendly curriculum vitae",
+    "downloadPdf": "Download PDF",
+    "openDocument": "Open / download {title}"
   }
 }
 

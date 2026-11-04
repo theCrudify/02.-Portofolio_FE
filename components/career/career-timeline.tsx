@@ -1,13 +1,17 @@
 'use client';
 
 import {
+  ArrowUpRight,
   Building2,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   Eye,
   EyeOff,
+  FolderGit2,
+  ListChecks,
   MapPin,
+  Trophy,
 } from 'lucide-react';
 import {
   motion,
@@ -23,6 +27,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChibiGuide, type ChibiPose } from '@/components/career/chibi-guide';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/routing';
 import type { PublicExperience, SupportedLocale } from '@/lib/api/types';
 import { formatPeriod } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -278,7 +283,7 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                   key={active.id}
                   className="chibi-bubble absolute bottom-full left-1/2 mb-1 max-w-[180px] -translate-x-1/2 rounded-xl border border-border bg-popover px-3 py-1.5 text-center text-xs font-semibold text-popover-foreground shadow-lg"
                 >
-                  <span className="line-clamp-2">{active.company}</span>
+                  <span className="line-clamp-2">{active.organization?.name}</span>
                   <span
                     aria-hidden="true"
                     className="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 border-r border-b border-border bg-popover"
@@ -348,11 +353,11 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                     </div>
 
                     <div className="mt-3 flex items-start gap-4">
-                      {exp.companyLogo ? (
+                      {exp.organization?.logo ? (
                         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border bg-background">
                           <Image
-                            src={exp.companyLogo.url}
-                            alt={exp.companyLogo.alt || exp.company}
+                            src={exp.organization.logo.url}
+                            alt={exp.organization.logo.alt || exp.organization.name}
                             fill
                             sizes="48px"
                             className="object-contain p-1.5"
@@ -366,17 +371,17 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                         <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                           <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
                             <Building2 className="h-4 w-4 text-primary" />
-                            {exp.companyUrl ? (
+                            {exp.organization?.websiteUrl ? (
                               <a
-                                href={exp.companyUrl}
+                                href={exp.organization.websiteUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="hover:text-primary hover:underline"
                               >
-                                {exp.company}
+                                {exp.organization.name}
                               </a>
                             ) : (
-                              exp.company
+                              exp.organization?.name
                             )}
                           </span>
                           {exp.location ? (
@@ -385,8 +390,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                               {exp.location}
                             </span>
                           ) : null}
-                          {exp.workMode ? <span className="capitalize">{exp.workMode}</span> : null}
-                          <span className="capitalize">{exp.employmentType.replace('_', ' ')}</span>
+                          {exp.workMode ? <span>{exp.workMode.label}</span> : null}
+                          <span>{exp.employmentType.label}</span>
                         </p>
                       </div>
                     </div>
@@ -397,15 +402,59 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                       </p>
                     ) : null}
 
+                    {exp.responsibilities.length > 0 ? (
+                      <div className="mt-5">
+                        <h4 className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+                          <ListChecks className="h-3.5 w-3.5" />
+                          {t('responsibilities')}
+                        </h4>
+                        <ul className="max-w-[75ch] space-y-2.5">
+                          {exp.responsibilities.map((item, rIdx) => (
+                            <li key={rIdx} className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground sm:text-[15px]">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
                     {exp.achievements.length > 0 ? (
-                      <ul className="mt-4 max-w-[75ch] space-y-2.5">
-                        {exp.achievements.map((item, aIdx) => (
-                          <li key={aIdx} className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground sm:text-[15px]">
-                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="mt-5">
+                        <h4 className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-success">
+                          <Trophy className="h-3.5 w-3.5" />
+                          {t('achievements')}
+                        </h4>
+                        <ul className="max-w-[75ch] space-y-2.5">
+                          {exp.achievements.map((item, aIdx) => (
+                            <li key={aIdx} className="flex items-start gap-2.5 text-sm leading-relaxed text-foreground sm:text-[15px]">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {exp.projects.length > 0 ? (
+                      <div className="mt-5">
+                        <h4 className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                          <FolderGit2 className="h-3.5 w-3.5" />
+                          {t('projectsInRole')}
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {exp.projects.map((p) => (
+                            <Link
+                              key={p.slug}
+                              href={`/projects/${p.slug}`}
+                              className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-border bg-background/80 px-3 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                              <span>{p.title}</span>
+                              <ArrowUpRight className="h-3.5 w-3.5" />
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     ) : null}
 
                     {exp.technologies.length > 0 ? (

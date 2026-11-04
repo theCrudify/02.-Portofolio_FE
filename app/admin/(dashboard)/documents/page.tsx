@@ -11,8 +11,10 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 interface DocRow {
   id: string;
   title: string;
-  type: 'cv' | 'portfolio_pdf' | 'other';
-  locale: 'en' | 'id';
+  /** document_type code */
+  type: string;
+  /** locale code */
+  locale: string;
   version: number;
   isActive: boolean;
   createdAt: string;
@@ -22,8 +24,10 @@ interface PresetRow {
   id: string;
   slug: string;
   name: string;
-  template: 'full' | 'one_page' | 'ats';
-  locale: 'en' | 'id';
+  /** export_template code */
+  template: string;
+  /** locale code */
+  locale: string;
   isPublic: boolean;
 }
 

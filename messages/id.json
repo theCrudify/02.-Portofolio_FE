@@ -81,7 +81,10 @@
       "role": "Peran",
       "teamSize": "Ukuran Tim",
       "client": "Klien",
-      "period": "Periode"
+      "period": "Periode",
+      "company": "Perusahaan & posisi",
+      "responsibilities": "Jobdesk & tanggung jawab",
+      "documents": "Dokumentasi"
     },
     "skills": {
       "eyebrow": "KAPABILITAS",
@@ -104,7 +107,10 @@
       "showGuide": "Tampilkan karakter pemandu",
       "hideGuide": "Sembunyikan karakter pemandu",
       "guideAlt": "Karakter pemandu animasi yang berjalan di sepanjang timeline karier",
-      "now": "Sekarang"
+      "now": "Sekarang",
+      "responsibilities": "Tanggung jawab",
+      "achievements": "Pencapaian",
+      "projectsInRole": "Proyek di posisi ini"
     },
     "education": {
       "eyebrow": "AKADEMIK",
@@ -118,7 +124,8 @@
       "verify": "Verifikasi Kredensial",
       "expired": "Kedaluwarsa",
       "issued": "Diterbitkan",
-      "expires": "Berlaku hingga"
+      "expires": "Berlaku hingga",
+      "all": "Semua"
     },
     "activities": {
       "eyebrow": "KOMUNITAS",
@@ -194,6 +201,19 @@
     "lastUpdated": "Terakhir diperbarui",
     "privacy": "Kebijakan Privasi",
     "rights": "Hak cipta dilindungi."
+  },
+  "cv": {
+    "experience": "Pengalaman Kerja",
+    "projects": "Proyek Pilihan",
+    "education": "Pendidikan",
+    "skills": "Keahlian & Teknologi",
+    "certifications": "Sertifikasi",
+    "responsibilities": "Tanggung jawab",
+    "present": "Sekarang",
+    "gpa": "IPK",
+    "printTitle": "Curriculum vitae siap cetak",
+    "downloadPdf": "Unduh PDF",
+    "openDocument": "Buka / unduh {title}"
   }
 }
 

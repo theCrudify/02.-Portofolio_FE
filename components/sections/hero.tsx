@@ -26,7 +26,9 @@ import type {
   PublicProfile,
   PublicProjectCard,
   PublicSiteSettings,
+  SiteData,
 } from '@/lib/api/types';
+import { pickExportPreset } from '@/lib/export-presets';
 import { track } from '@/lib/events';
 import { cn } from '@/lib/utils';
 
@@ -40,11 +42,13 @@ export interface HeroSectionProps {
   };
   locale: 'en' | 'id';
   projects?: PublicProjectCard[];
+  exportPresets?: SiteData['exportPresets'];
   /** Technology names typed on the laptop screen. */
   stack?: string[];
 }
 
 const NO_STACK: string[] = [];
+const NO_PRESETS: SiteData['exportPresets'] = [];
 
 export function HeroSection({
   profile,
@@ -53,6 +57,7 @@ export function HeroSection({
   locale,
   projects = [],
   stack = NO_STACK,
+  exportPresets = NO_PRESETS,
 }: HeroSectionProps) {
   const t = useTranslations('hero');
   const laptopImages = useMemo(
@@ -65,37 +70,25 @@ export function HeroSection({
       role: profile?.headline ?? '',
       stack,
       location: profile?.location ?? null,
-      available: profile?.availability !== 'not_available',
+      available: profile?.availability.code !== 'not_available',
     }),
     [profile, stack],
   );
 
   if (!profile) return null;
 
-  const availabilityLabel =
-    profile.availability === 'open_to_work'
-      ? t('openToWork')
-      : profile.availability === 'freelance'
-        ? t('freelance')
-        : t('notAvailable');
-
-  const workPrefLabel =
-    profile.workPreference === 'remote'
-      ? t('remote')
-      : profile.workPreference === 'hybrid'
-        ? t('hybrid')
-        : t('onsite');
+  // Labels come from master data in the request's locale.
+  const availabilityLabel = profile.availability.label;
+  const workPrefLabel = profile.workPreference.label;
 
   const showUploadedCv =
     settings.heroCvButtons === 'uploaded' || settings.heroCvButtons === 'both';
   const showExportPdf =
     settings.heroCvButtons === 'export' || settings.heroCvButtons === 'both';
 
-  const exportPresetSlug = locale === 'id' ? 'full-id' : 'full-en';
+  const exportPreset = pickExportPreset(exportPresets, locale);
 
-  const socialEntries = Object.entries(profile.socials ?? {}).filter(
-    ([, url]) => typeof url === 'string' && url.length > 0,
-  );
+  const socialEntries = profile.socials;
 
   const statItems = [
     {
@@ -139,7 +132,7 @@ export function HeroSection({
                   <span
                     className={cn(
                       'h-2.5 w-2.5 rounded-full',
-                      profile.availability !== 'not_available'
+                      profile.availability.code !== 'not_available'
                         ? 'animate-pulse bg-success shadow-[0_0_8px_currentColor]'
                         : 'bg-muted-foreground',
                     )}
@@ -228,10 +221,10 @@ export function HeroSection({
                   </Link>
                 ) : null}
 
-                {showExportPdf ? (
+                {showExportPdf && exportPreset ? (
                   <a
-                    href={`/api/pdf/${exportPresetSlug}?locale=${locale}`}
-                    onClick={() => track('export_download', { target: exportPresetSlug })}
+                    href={`/api/pdf/${exportPreset.slug}?locale=${locale}`}
+                    onClick={() => track('export_download', { target: exportPreset.slug })}
                     className={cn(
                       buttonVariants({
                         variant: showUploadedCv ? 'outline' : 'default',
@@ -259,15 +252,15 @@ export function HeroSection({
 
               {socialEntries.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {socialEntries.slice(0, 4).map(([platform, url]) => (
+                  {socialEntries.slice(0, 4).map(({ platform, url }) => (
                     <a
-                      key={platform}
+                      key={platform.code}
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-background/70 px-3.5 text-xs font-semibold capitalize text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <span>{platform}</span>
+                      <span>{platform.label}</span>
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                   ))}

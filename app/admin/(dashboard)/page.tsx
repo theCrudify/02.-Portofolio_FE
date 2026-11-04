@@ -73,7 +73,7 @@ export default function AdminDashboardPage() {
           <h2 className="text-base font-semibold">Quick Links</h2>
           <div className="mt-3 flex flex-wrap gap-2 text-sm">
             <Link
-              href="/admin/projects/new"
+              href="/admin/content/projects"
               className="rounded-md border border-border px-3 py-1.5 hover:bg-muted"
             >
               + New Project

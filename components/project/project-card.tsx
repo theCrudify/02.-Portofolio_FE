@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpRight, ExternalLink, Images, Layers, Lock } from 'lucide-react';
+import { ArrowUpRight, Building2, ExternalLink, Images, Layers, Lock } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -148,13 +148,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
       <CardHeader className="space-y-2 pb-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="secondary" className="capitalize">
-            {project.type.replace('_', ' ')}
-          </Badge>
-          {project.projectState !== 'live' ? (
-            <Badge variant="outline" className="capitalize">
-              {project.projectState.replace('_', ' ')}
-            </Badge>
+          <Badge variant="secondary">{project.type.label}</Badge>
+          {project.state.code !== 'live' ? (
+            <Badge variant="outline">{project.state.label}</Badge>
           ) : null}
         </div>
         <CardTitle className="line-clamp-1">
@@ -165,6 +161,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
             {project.title}
           </Link>
         </CardTitle>
+        {project.client ? (
+          <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Building2 aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{project.client.name}</span>
+          </p>
+        ) : null}
       </CardHeader>
 
       <CardContent className="flex-1 space-y-4">

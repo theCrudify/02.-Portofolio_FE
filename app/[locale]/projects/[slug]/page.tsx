@@ -1,4 +1,5 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, ExternalLink } from 'lucide-react';
+import { LookupIcon } from '@/components/ui/lookup-icon';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -87,8 +88,12 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
-  const demoVideo = project.media.find((m) => m.role === 'demo_video') ?? null;
-  const galleryItems = project.media.filter((m) => m.role === 'gallery');
+  const demoVideo = project.media.find((m) => m.role.code === 'demo_video') ?? null;
+  const galleryItems = project.media.filter((m) => m.role.code === 'gallery');
+  // PDFs, slide decks and other documents attached to the project.
+  const documents = project.media.filter(
+    (m) => m.kind === 'pdf' || m.kind === 'document' || ['documentation', 'slides'].includes(m.role.code),
+  );
   const siteUrl = getSiteUrl();
 
   const breadcrumbData = buildBreadcrumbJsonLd([
@@ -125,12 +130,8 @@ export default async function ProjectDetailPage({
       <Container className="space-y-12">
         <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="capitalize">
-              {project.type.replace('_', ' ')}
-            </Badge>
-            <Badge variant="outline" className="capitalize">
-              {project.projectState.replace('_', ' ')}
-            </Badge>
+            <Badge variant="secondary">{project.type.label}</Badge>
+            <Badge variant="outline">{project.state.label}</Badge>
           </div>
 
           <h1 className="font-heading text-[32px] font-bold leading-tight tracking-tight text-foreground md:text-[48px]">
@@ -159,7 +160,33 @@ export default async function ProjectDetailPage({
             {project.client ? (
               <div>
                 <p className="text-xs font-medium uppercase text-muted-foreground">{t('client')}</p>
-                <p className="mt-1 font-medium text-foreground">{project.client}</p>
+                <p className="mt-1 font-medium text-foreground">
+                  {project.client.websiteUrl ? (
+                    <a
+                      href={project.client.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary hover:underline"
+                    >
+                      {project.client.name}
+                    </a>
+                  ) : (
+                    project.client.name
+                  )}
+                </p>
+              </div>
+            ) : null}
+            {project.positions.length > 0 ? (
+              <div className="col-span-2">
+                <p className="text-xs font-medium uppercase text-muted-foreground">{t('company')}</p>
+                <ul className="mt-1 space-y-0.5">
+                  {project.positions.map((pos) => (
+                    <li key={pos.id} className="font-medium text-foreground">
+                      {pos.organization?.name}
+                      <span className="text-muted-foreground"> · {pos.role}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : null}
             {project.periodStart ? (
@@ -230,6 +257,22 @@ export default async function ProjectDetailPage({
           </div>
         ) : null}
 
+        {project.responsibilities.length > 0 ? (
+          <div className="space-y-4">
+            <h2 className="font-heading text-2xl font-bold text-foreground">
+              {t('responsibilities')}
+            </h2>
+            <ul className="space-y-2.5">
+              {project.responsibilities.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 text-base leading-relaxed text-foreground">
+                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
         {project.highlights.length > 0 ? (
           <div className="space-y-4">
             <h2 className="font-heading text-2xl font-bold text-foreground">{t('highlights')}</h2>
@@ -266,6 +309,37 @@ export default async function ProjectDetailPage({
                 className="object-contain"
               />
             </div>
+          </div>
+        ) : null}
+
+        {documents.length > 0 ? (
+          <div className="space-y-4">
+            <h2 className="font-heading text-2xl font-bold text-foreground">{t('documents')}</h2>
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {documents.map((doc) => (
+                <li key={doc.id}>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-md border border-border bg-card p-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <LookupIcon name={doc.role.icon} className="h-5 w-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium text-foreground">
+                        {doc.caption ?? doc.title ?? doc.alt ?? doc.role.label}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {doc.role.label} · {doc.kind.toUpperCase()}
+                      </span>
+                    </span>
+                    <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         ) : null}
 

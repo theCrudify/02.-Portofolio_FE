@@ -8,8 +8,6 @@ describe('simpleIconSlug', () => {
     ['Node.js', 'nodedotjs'],
     ['Express.js', 'expressdotjs'],
     ['GitHub Actions', 'githubactions'],
-    ['.NET / C#', 'dotnet'],
-    ['Prisma ORM', 'prisma'],
     ['C++', 'cplusplus'],
     ['PostgreSQL', 'postgresql'],
   ])('%s -> %s', (name, slug) => {

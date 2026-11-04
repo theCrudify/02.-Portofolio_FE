@@ -7,6 +7,8 @@ import { buildPersonJsonLd } from '@/components/seo/json-ld';
 import { formatPeriod } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
 
+const lookup = (code: string, label = code) => ({ code, label, icon: null, color: null });
+
 describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
   it('formats periods in EN and ID with duration', () => {
     const fixedNow = new Date('2026-10-15T00:00:00Z');
@@ -26,13 +28,13 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
         privateLabel="Private repo"
         links={[
           {
-            type: 'demo',
+            type: lookup('demo', 'Live demo'),
             label: 'Live Demo',
             url: 'https://demo.example.com',
             isPrivate: false,
           },
           {
-            type: 'repo',
+            type: lookup('repo_backend', 'Backend repo'),
             label: 'Backend Source',
             url: null,
             isPrivate: true,
@@ -85,10 +87,10 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
       location: 'Jakarta',
       timezone: 'Asia/Jakarta',
       email: 'jidan@example.com',
-      socials: { github: 'https://github.com/jidan' },
-      availability: 'open_to_work',
-      workPreference: 'remote',
-      languages: [{ name: 'English', level: 'professional' }],
+      socials: [{ platform: lookup('github', 'GitHub'), url: 'https://github.com/jidan', handle: null }],
+      availability: lookup('open_to_work', 'Open to work'),
+      workPreference: lookup('remote', 'Remote'),
+      languages: [{ name: 'English', level: lookup('professional', 'Professional') }],
       interests: [],
       referencesNote: null,
       careerStartDate: '2022-01-01',
@@ -97,6 +99,8 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
 
     expect(personLd['@type']).toBe('Person');
     expect(personLd.name).toBe('Jidan Fathilla');
+    expect((personLd as Record<string, unknown>).sameAs).toEqual(['https://github.com/jidan']);
+    expect((personLd as Record<string, unknown>).knowsLanguage).toEqual(['English']);
 
     const robotsConfig = robots();
     expect(robotsConfig.sitemap).toContain('/sitemap.xml');
@@ -113,8 +117,9 @@ describe('T06 & T07 · Public Pages, Formatting, ProjectLinks & SEO', () => {
                   slug: 'cashier-app',
                   title: 'Cashier App',
                   summary: 'POS',
-                  type: 'freelance',
-                  projectState: 'live',
+                  type: { code: 'freelance', label: 'Freelance', icon: null, color: null },
+                  state: { code: 'live', label: 'Live', icon: null, color: null },
+                  client: null,
                   featured: true,
                   cover: null,
                   clip: null,

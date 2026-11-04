@@ -80,6 +80,7 @@ export default function AdminGenericContentPage() {
 
       {editing !== null && (
         <ResourceForm
+          key={String(editing.id ?? 'new')}
           meta={meta}
           initialValues={editing}
           onSubmit={handleSubmit}
@@ -92,7 +93,15 @@ export default function AdminGenericContentPage() {
         primaryColumn={meta.primaryColumn}
         secondaryColumn={meta.secondaryColumn}
         onCreate={() => setEditing({})}
-        onEdit={(item) => setEditing(item)}
+        onEdit={async (item) => {
+          // The list has parent rows only; the detail adds child collections for the form.
+          try {
+            const res = await apiFetch<Record<string, unknown>>(`/v1/admin/${meta.key}/${String(item.id)}`);
+            setEditing(res.data);
+          } catch (err) {
+            setError(err instanceof ApiError ? err.message : 'Failed to load item.');
+          }
+        }}
         onTransition={async (id, action) => {
           await apiFetch(`/v1/admin/${meta.key}/${id}/${action}`, { method: 'POST' });
           await loadItems();

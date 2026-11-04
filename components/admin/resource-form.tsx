@@ -3,10 +3,7 @@
 import * as React from 'react';
 import type { AdminResourceMeta } from '@/lib/admin/resources';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { BilingualField } from './bilingual-field';
+import { FieldInput } from './field-input';
 
 export function ResourceForm({
   meta,
@@ -15,7 +12,7 @@ export function ResourceForm({
   onCancel,
   submitting = false,
 }: {
-  meta: AdminResourceMeta;
+  meta: Pick<AdminResourceMeta, 'title' | 'fields'>;
   initialValues?: Record<string, unknown>;
   onSubmit: (values: Record<string, unknown>) => Promise<void> | void;
   onCancel?: () => void;
@@ -44,84 +41,9 @@ export function ResourceForm({
       </div>
 
       <div className="grid gap-4">
-        {meta.fields.map((field) => {
-          if (field.type === 'bilingual_text' || field.type === 'bilingual_textarea') {
-            const keyId = field.nameId ?? `${field.name}Id`;
-            const keyEn = field.nameEn ?? `${field.name}En`;
-            return (
-              <BilingualField
-                key={field.name}
-                label={field.label}
-                required={field.required}
-                multiline={field.type === 'bilingual_textarea'}
-                valueId={String(values[keyId] ?? '')}
-                valueEn={String(values[keyEn] ?? '')}
-                onChangeId={(v) => setField(keyId, v)}
-                onChangeEn={(v) => setField(keyEn, v)}
-              />
-            );
-          }
-
-          if (field.type === 'select') {
-            return (
-              <div key={field.name} className="space-y-1">
-                <Label htmlFor={`field-${field.name}`}>{field.label}</Label>
-                <select
-                  id={`field-${field.name}`}
-                  value={String(values[field.name] ?? field.options?.[0]?.value ?? '')}
-                  onChange={(e) => setField(field.name, e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                >
-                  {field.options?.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            );
-          }
-
-          if (field.type === 'checkbox') {
-            return (
-              <label key={field.name} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={Boolean(values[field.name])}
-                  onChange={(e) => setField(field.name, e.target.checked)}
-                />
-                <span>{field.label}</span>
-              </label>
-            );
-          }
-
-          if (field.type === 'textarea') {
-            return (
-              <div key={field.name} className="space-y-1">
-                <Label htmlFor={`field-${field.name}`}>{field.label}</Label>
-                <Textarea
-                  id={`field-${field.name}`}
-                  value={String(values[field.name] ?? '')}
-                  onChange={(e) => setField(field.name, e.target.value)}
-                  required={field.required}
-                />
-              </div>
-            );
-          }
-
-          return (
-            <div key={field.name} className="space-y-1">
-              <Label htmlFor={`field-${field.name}`}>{field.label}</Label>
-              <Input
-                id={`field-${field.name}`}
-                type={field.type === 'date' ? 'date' : field.type === 'url' ? 'url' : 'text'}
-                value={String(values[field.name] ?? '')}
-                onChange={(e) => setField(field.name, e.target.value)}
-                required={field.required}
-              />
-            </div>
-          );
-        })}
+        {meta.fields.map((field) => (
+          <FieldInput key={field.name} field={field} values={values} onChange={setField} />
+        ))}
       </div>
 
       <div className="flex justify-end gap-2 pt-4">

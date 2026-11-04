@@ -33,11 +33,11 @@ export function EducationSection({ education, locale, muted }: EducationSectionP
             className="group flex flex-col justify-between overflow-hidden"
           >
             <div>
-              {edu.logo ? (
+              {edu.organization?.logo ? (
                 <div className="relative aspect-16/7 w-full overflow-hidden border-b border-border/80 bg-muted">
                   <Image
-                    src={edu.logo.url}
-                    alt={edu.logo.alt || edu.institution}
+                    src={edu.organization.logo.url}
+                    alt={edu.organization.logo.alt || edu.organization.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -60,7 +60,7 @@ export function EducationSection({ education, locale, muted }: EducationSectionP
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                  <CardTitle className="text-xl sm:text-2xl">{edu.institution}</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl">{edu.organization?.name}</CardTitle>
                   {edu.gpa ? (
                     <Badge variant="default" className="gap-1">
                       <Award className="h-3 w-3" />

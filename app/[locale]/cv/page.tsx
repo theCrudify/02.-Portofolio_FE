@@ -1,6 +1,9 @@
 import { fetchSiteData } from '@/lib/api/server';
+import type { SupportedLocale } from '@/lib/api/types';
 import { CvPrintableView, type CvExportPayload } from '@/components/pdf/cv-templates';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getCvLabels } from '@/lib/cv';
+import { pickExportPreset } from '@/lib/export-presets';
 
 export default async function WebCvPage({
   params,
@@ -10,83 +13,52 @@ export default async function WebCvPage({
   const { locale } = await params;
   // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
   setRequestLocale(locale);
-  const typedLocale = locale === 'id' ? 'id' : 'en';
+  const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
   const site = await fetchSiteData(typedLocale);
 
-  const allSkills = [
-    ...(site.technologies?.frontend ?? []),
-    ...(site.technologies?.backend ?? []),
-    ...(site.technologies?.database ?? []),
-    ...(site.technologies?.devops ?? []),
-    ...(site.technologies?.tools ?? []),
-    ...(site.technologies?.soft_skill ?? []),
-  ];
+  const labels = await getCvLabels(typedLocale);
+  const t = await getTranslations({ locale: typedLocale, namespace: 'cv' });
+  const preset = pickExportPreset(site.exportPresets, typedLocale);
+
+  // Same shape as the API export; sections follow the home-page order set in the admin.
+  const available: Record<string, unknown[]> = {
+    experience: site.experiences,
+    projects: site.featuredProjects,
+    education: site.education,
+    skills: site.technologies,
+    certifications: site.certifications,
+  };
+  const sections = Object.fromEntries(
+    site.settings.sections
+      .filter((s) => s.visible && s.code in available)
+      .map((s) => [s.code, available[s.code]!]),
+  );
 
   const exportPayload: CvExportPayload = {
     preset: {
-      slug: 'full-cv',
-      name: 'Curriculum Vitae',
+      slug: preset?.slug ?? 'cv',
+      name: preset?.name ?? t('printTitle'),
       template: 'full',
       locale: typedLocale,
     },
-    profile: site.profile
-      ? {
-          name: site.profile.name,
-          headline: site.profile.headline,
-          bio: site.profile.bio,
-          email: site.profile.email,
-          location: site.profile.location,
-          socials: site.profile.socials,
-        }
-      : null,
-    sections: {
-      experiences: site.experiences.map((e) => ({
-        id: e.id,
-        company: e.company,
-        role: e.role,
-        location: e.location,
-        startDate: e.startDate,
-        endDate: e.endDate,
-        description: e.description,
-      })),
-      projects: site.featuredProjects.map((p) => ({
-        id: p.slug,
-        title: p.title,
-        summary: p.summary,
-        role: null,
-      })),
-      education: site.education.map((ed) => ({
-        id: ed.id,
-        institution: ed.institution,
-        degree: ed.degree,
-        field: ed.field,
-        startDate: ed.startDate,
-        endDate: ed.endDate,
-        gpa: ed.gpa,
-      })),
-      skills: allSkills.map((s) => ({
-        id: s.slug,
-        name: s.name,
-        category: 'technology',
-      })),
-
-    },
+    profile: site.profile,
+    sections,
   };
 
   return (
     <div className="container mx-auto py-10 print:py-0">
       <div className="mb-6 flex items-center justify-between print:hidden">
-        <h1 className="text-lg font-semibold">Print-Friendly Curriculum Vitae</h1>
-        <div className="flex gap-2">
+        <h1 className="text-lg font-semibold">{t('printTitle')}</h1>
+        {preset ? (
           <a
-            href={`/api/pdf/full-cv?locale=${typedLocale}`}
+            href={`/api/pdf/${preset.slug}?locale=${typedLocale}`}
             className="rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
           >
-            Download Dynamic PDF
+            {t('downloadPdf')}
           </a>
-        </div>
+        ) : null}
       </div>
-      <CvPrintableView data={exportPayload} />
+      <CvPrintableView data={exportPayload} labels={labels} />
     </div>
   );
 }

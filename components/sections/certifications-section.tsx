@@ -49,7 +49,7 @@ export function CertificationsSection({
         )}
       >
         {certifications.map((cert) => {
-          const previewUrl = cert.image?.url ?? cert.issuerLogo?.url ?? null;
+          const previewUrl = cert.image?.url ?? cert.issuer?.logo?.url ?? null;
 
           return (
             <SpotlightCard
@@ -75,16 +75,14 @@ export function CertificationsSection({
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary">
                         <ShieldCheck className="h-4 w-4" />
                       </span>
-                      <Badge variant="secondary" className="capitalize">
-                        {cert.type}
-                      </Badge>
+                      <Badge variant="secondary">{cert.type.label}</Badge>
                     </div>
                     {cert.isExpired ? (
                       <Badge variant="destructive">{t('expired')}</Badge>
                     ) : null}
                   </div>
                   <CardTitle className="pt-1 text-base sm:text-lg">{cert.name}</CardTitle>
-                  <p className="text-sm font-semibold text-primary">{cert.issuer}</p>
+                  <p className="text-sm font-semibold text-primary">{cert.issuer?.name}</p>
                 </CardHeader>
 
                 <CardContent className="space-y-1.5 pt-4 text-xs text-muted-foreground">

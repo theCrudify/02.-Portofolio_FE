@@ -23,7 +23,6 @@ export interface AboutSectionProps {
 
 export function AboutSection({ profile, muted }: AboutSectionProps) {
   const t = useTranslations('sections.about');
-  const tHero = useTranslations('hero');
   if (!profile || !profile.bio) return null;
 
   // Split bio into distinct paragraphs for readable editorial pacing
@@ -32,19 +31,8 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
     .map((p) => p.trim())
     .filter(Boolean);
 
-  const availabilityLabel =
-    profile.availability === 'open_to_work'
-      ? tHero('openToWork')
-      : profile.availability === 'freelance'
-        ? tHero('freelance')
-        : tHero('notAvailable');
-
-  const workPrefLabel =
-    profile.workPreference === 'remote'
-      ? tHero('remote')
-      : profile.workPreference === 'hybrid'
-        ? tHero('hybrid')
-        : tHero('onsite');
+  const availabilityLabel = profile.availability.label;
+  const workPrefLabel = profile.workPreference.label;
 
   return (
     <Section id="about" eyebrow={t('eyebrow')} title={t('title')} muted={muted}>
@@ -137,7 +125,7 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
 
               <div className="space-y-3.5">
                 {profile.languages.map((lang) => {
-                  const isNative = lang.level.toLowerCase().includes('native');
+                  const isNative = lang.level.code === 'native';
                   return (
                     <div
                       key={lang.name}
@@ -151,7 +139,7 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
                           variant={isNative ? 'default' : 'secondary'}
                           className="capitalize text-xs font-semibold"
                         >
-                          {lang.level}
+                          {lang.level.label}
                         </Badge>
                       </div>
 
@@ -185,7 +173,7 @@ export function AboutSection({ profile, muted }: AboutSectionProps) {
                   <span
                     className={cn(
                       'h-2 w-2 rounded-full',
-                      profile.availability !== 'not_available'
+                      profile.availability.code !== 'not_available'
                         ? 'animate-pulse bg-success shadow-[0_0_6px_currentColor]'
                         : 'bg-muted-foreground',
                     )}

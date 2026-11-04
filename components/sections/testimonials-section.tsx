@@ -64,7 +64,7 @@ export function TestimonialsSection({ testimonials, muted }: TestimonialsSection
               <div>
                 <p className="font-heading text-base font-bold text-foreground">{current.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {[current.position, current.company, current.relationship]
+                  {[current.position, current.organization?.name, current.relationship]
                     .filter(Boolean)
                     .join(' · ')}
                 </p>
@@ -129,7 +129,7 @@ export function TestimonialsSection({ testimonials, muted }: TestimonialsSection
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-foreground">{item.name}</p>
                       <p className="truncate text-xs text-primary">
-                        {[item.position, item.company].filter(Boolean).join(' · ')}
+                        {[item.position, item.organization?.name].filter(Boolean).join(' · ')}
                       </p>
                     </div>
                   </div>
