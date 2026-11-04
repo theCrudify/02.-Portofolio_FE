@@ -18,6 +18,84 @@ export interface MediaAssetItem {
   bytes?: number | null;
 }
 
+type UploadKind = 'image' | 'video' | 'document';
+
+interface SignedUpload {
+  cloudName: string;
+  apiKey: string;
+  timestamp: number;
+  folder: string;
+  resourceType: 'image' | 'video' | 'raw';
+  signature: string;
+  maxBytes: number;
+  allowedFormats: string[];
+}
+
+export const UPLOAD_ACCEPT: Record<UploadKind, string> = {
+  image: 'image/jpeg,image/png,image/webp,image/avif,image/svg+xml',
+  video: 'video/mp4,video/webm',
+  document: 'application/pdf',
+};
+
+// Signed direct upload: the browser sends the file straight to Cloudinary, then registers it with the API.
+export async function uploadMedia(file: File, kind: UploadKind): Promise<MediaAssetItem> {
+  const sig = (
+    await apiFetch<SignedUpload>('/v1/admin/media/sign', {
+      method: 'POST',
+      body: JSON.stringify({ kind }),
+    })
+  ).data;
+
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  if (!sig.allowedFormats.includes(ext)) {
+    throw new Error(`File type .${ext} is not allowed. Use: ${sig.allowedFormats.join(', ')}.`);
+  }
+  if (file.size > sig.maxBytes) {
+    throw new Error(`File is too large. Maximum ${Math.round(sig.maxBytes / 1048576)} MB.`);
+  }
+
+  const form = new FormData();
+  form.append('file', file);
+  form.append('api_key', sig.apiKey);
+  form.append('timestamp', String(sig.timestamp));
+  form.append('folder', sig.folder);
+  form.append('signature', sig.signature);
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${sig.cloudName}/${sig.resourceType}/upload`,
+    { method: 'POST', body: form },
+  );
+  const up = (await res.json()) as {
+    public_id?: string;
+    secure_url?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    duration?: number;
+    error?: { message?: string };
+  };
+  if (!res.ok || !up.public_id || !up.secure_url) {
+    throw new Error(up.error?.message ?? 'Upload to Cloudinary failed.');
+  }
+
+  const title = file.name.replace(/\.[^.]+$/, '').slice(0, 160);
+  const registered = await apiFetch<MediaAssetItem>('/v1/admin/media', {
+    method: 'POST',
+    body: JSON.stringify({
+      kind,
+      publicId: up.public_id,
+      url: up.secure_url,
+      mime: file.type || null,
+      width: up.width || null,
+      height: up.height || null,
+      bytes: up.bytes || null,
+      durationSec: up.duration ? Math.round(up.duration) : null,
+      titleEn: title,
+      altEn: title,
+    }),
+  });
+  return registered.data;
+}
+
 export function MediaPicker({
   value,
   onChange,
@@ -35,13 +113,16 @@ export function MediaPicker({
   const [titleEn, setTitleEn] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
+  const [selected, setSelected] = React.useState<MediaAssetItem | null>(null);
 
   const loadLibrary = React.useCallback(async () => {
     try {
       const res = await apiFetch<MediaAssetItem[]>(`/v1/admin/media?kind=${acceptKind}`);
       setLibrary(res.data);
+      return res.data;
     } catch {
       // Ignored if media endpoint not yet populated
+      return [];
     }
   }, [acceptKind]);
 
@@ -50,6 +131,36 @@ export function MediaPicker({
       void loadLibrary();
     }
   }, [open, loadLibrary]);
+
+  // Edit forms only know the saved media ID; look it up once so the preview shows the actual image.
+  React.useEffect(() => {
+    if (!value) {
+      setSelected(null);
+    } else if (selected?.id !== value) {
+      void loadLibrary().then((items) => setSelected(items.find((i) => i.id === value) ?? null));
+    }
+  }, [value, selected?.id, loadLibrary]);
+
+  function pick(asset: MediaAssetItem) {
+    setSelected(asset);
+    onChange(asset.id, asset);
+    setOpen(false);
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setError(null);
+    setBusy(true);
+    try {
+      pick(await uploadMedia(file, acceptKind));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function handleEmbedSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,8 +171,7 @@ export function MediaPicker({
         method: 'POST',
         body: JSON.stringify({ url: embedUrl, titleEn: titleEn || undefined }),
       });
-      onChange(res.data.id, res.data);
-      setOpen(false);
+      pick(res.data);
       setEmbedUrl('');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to embed video URL.');
@@ -87,8 +197,17 @@ export function MediaPicker({
       </div>
 
       {value && (
-        <div className="rounded-md border border-border bg-muted/40 px-3 py-2 font-mono text-xs text-muted-foreground">
-          Selected Media ID: {value}
+        <div className="flex items-center gap-3 rounded-md border border-border bg-muted/40 p-2 text-xs text-muted-foreground">
+          {selected && (selected.thumbnailUrl || selected.kind === 'image') ? (
+            <img
+              src={selected.thumbnailUrl ?? selected.url}
+              alt={selected.altEn ?? ''}
+              className="h-16 w-28 shrink-0 rounded object-cover"
+            />
+          ) : null}
+          <span className="line-clamp-2">
+            {selected?.titleEn || selected?.altEn || `Selected media ID: ${value}`}
+          </span>
         </div>
       )}
 
@@ -117,12 +236,17 @@ export function MediaPicker({
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => {
-                        onChange(item.id, item);
-                        setOpen(false);
-                      }}
-                      className="flex flex-col items-start rounded border border-border p-2 text-left text-xs hover:border-primary"
+                      onClick={() => pick(item)}
+                      className="flex flex-col items-start gap-1 rounded border border-border p-2 text-left text-xs hover:border-primary"
                     >
+                      {item.thumbnailUrl || item.kind === 'image' ? (
+                        <img
+                          src={item.thumbnailUrl ?? item.url}
+                          alt=""
+                          loading="lazy"
+                          className="aspect-video w-full rounded object-cover"
+                        />
+                      ) : null}
                       <span className="line-clamp-1 font-medium">
                         {item.titleEn || item.altEn || item.id.slice(0, 8)}
                       </span>
@@ -134,10 +258,25 @@ export function MediaPicker({
             </TabsContent>
 
             <TabsContent value="upload">
-              <p className="text-xs text-muted-foreground">
-                Uploads directly to Cloudinary using a signed upload signature from{' '}
-                <code>/v1/admin/media/sign</code>.
-              </p>
+              <div className="space-y-2">
+                <Label htmlFor={`upload-${acceptKind}`}>Choose a file to upload</Label>
+                <Input
+                  id={`upload-${acceptKind}`}
+                  type="file"
+                  accept={UPLOAD_ACCEPT[acceptKind]}
+                  onChange={handleFileUpload}
+                  disabled={busy}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {busy
+                    ? 'Uploading…'
+                    : acceptKind === 'image'
+                      ? 'JPG, PNG, WebP, AVIF or SVG, max 10 MB. Landscape 16:9 (e.g. 1600×900) looks best as a cover.'
+                      : acceptKind === 'video'
+                        ? 'MP4 or WebM, max 25 MB.'
+                        : 'PDF, max 15 MB.'}
+                </p>
+              </div>
             </TabsContent>
 
             <TabsContent value="embed">

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { RoleGate } from '@/components/admin/role-gate';
-import type { MediaAssetItem } from '@/components/admin/media-picker';
+import { UPLOAD_ACCEPT, uploadMedia, type MediaAssetItem } from '@/components/admin/media-picker';
 
 export default function AdminMediaPage() {
   const [items, setItems] = React.useState<MediaAssetItem[]>([]);
@@ -49,6 +49,27 @@ export default function AdminMediaPage() {
     }
   }
 
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const kind = file.type.startsWith('image/')
+      ? 'image'
+      : file.type.startsWith('video/')
+        ? 'video'
+        : 'document';
+    setError(null);
+    setStatusMsg(`Uploading ${file.name}…`);
+    try {
+      await uploadMedia(file, kind);
+      setStatusMsg(`${file.name} uploaded.`);
+      await loadMedia();
+    } catch (err) {
+      setStatusMsg(null);
+      setError(err instanceof Error ? err.message : 'Upload failed.');
+    }
+  }
+
   async function handleDelete(id: string) {
     setError(null);
     setStatusMsg(null);
@@ -86,6 +107,17 @@ export default function AdminMediaPage() {
           {error}
         </div>
       )}
+
+      <div className="rounded-lg border border-border bg-card p-4">
+        <Label htmlFor="media-upload">Upload file (image max 10 MB, MP4/WebM max 25 MB, PDF max 15 MB)</Label>
+        <Input
+          id="media-upload"
+          type="file"
+          accept={Object.values(UPLOAD_ACCEPT).join(',')}
+          onChange={handleUpload}
+          className="mt-1"
+        />
+      </div>
 
       <form
         onSubmit={handleAddEmbed}
