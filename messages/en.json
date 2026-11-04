@@ -86,7 +86,15 @@
     "experience": {
       "eyebrow": "CAREER",
       "title": "Work Experience",
-      "present": "Present"
+      "present": "Present",
+      "jumpToYear": "Jump to year",
+      "milestone": "Milestone",
+      "prevMilestone": "Previous milestone",
+      "nextMilestone": "Next milestone",
+      "showGuide": "Show guide character",
+      "hideGuide": "Hide guide character",
+      "guideAlt": "Animated guide character walking along the career timeline",
+      "now": "Now"
     },
     "education": {
       "eyebrow": "ACADEMIC",

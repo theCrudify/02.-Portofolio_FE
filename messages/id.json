@@ -86,7 +86,15 @@
     "experience": {
       "eyebrow": "KARIER",
       "title": "Pengalaman Kerja",
-      "present": "Sekarang"
+      "present": "Sekarang",
+      "jumpToYear": "Lompat ke tahun",
+      "milestone": "Milestone",
+      "prevMilestone": "Milestone sebelumnya",
+      "nextMilestone": "Milestone berikutnya",
+      "showGuide": "Tampilkan karakter pemandu",
+      "hideGuide": "Sembunyikan karakter pemandu",
+      "guideAlt": "Karakter pemandu animasi yang berjalan di sepanjang timeline karier",
+      "now": "Sekarang"
     },
     "education": {
       "eyebrow": "AKADEMIK",

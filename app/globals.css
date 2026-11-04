@@ -197,6 +197,63 @@ body {
   background-size: 18px 18px;
 }
 
+/* Chibi guide character motion */
+@keyframes chibi-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-2px) scaleY(1.015);
+  }
+}
+
+@keyframes chibi-step {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-1.5deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(1.5deg);
+  }
+}
+
+@keyframes chibi-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chibi-breathing {
+  transform-origin: 50% 100%;
+  animation: chibi-breathe 2.6s ease-in-out infinite;
+}
+
+.chibi-walking {
+  transform-origin: 50% 100%;
+  animation: chibi-step 0.34s ease-in-out infinite;
+}
+
+.chibi-bubble {
+  animation: chibi-bubble-in 0.22s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chibi-breathing,
+  .chibi-walking,
+  .chibi-bubble {
+    animation: none;
+  }
+}
+
 @media print {
   .no-print {
     display: none !important;
