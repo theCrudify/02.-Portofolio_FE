@@ -177,7 +177,8 @@
       "attachments": "Attachments",
       "links": "Links",
       "file": "Document",
-      "private": "Private"
+      "private": "Private",
+      "back": "Back"
     }
   },
   "common": {

@@ -177,7 +177,8 @@
       "attachments": "Lampiran",
       "links": "Tautan",
       "file": "Dokumen",
-      "private": "Privat"
+      "private": "Privat",
+      "back": "Kembali"
     }
   },
   "common": {

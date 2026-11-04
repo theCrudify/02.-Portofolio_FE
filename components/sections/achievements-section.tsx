@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
-import { PortfolioExtras } from '@/components/sections/portfolio-extras';
+import { DetailLink } from '@/components/sections/portfolio-detail';
 import { Badge } from '@/components/ui/badge';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { PublicAchievement, SupportedLocale } from '@/lib/api/types';
@@ -126,17 +126,7 @@ export function AchievementsSection({
                   </p>
                 </CardContent>
               ) : null}
-              <PortfolioExtras
-                {...ach}
-                trackId={`achievement-${ach.id}`}
-                cover={ach.certificate}
-                meta={[
-                  ach.issuer?.name,
-                  ach.eventName,
-                  ach.rank,
-                  ach.date ? formatDate(ach.date, locale) : null,
-                ]}
-              />
+              <DetailLink href={`/achievements/${ach.id}`} />
             </SpotlightCard>
           );
         })}

@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
-import { PortfolioExtras } from '@/components/sections/portfolio-extras';
+import { DetailLink } from '@/components/sections/portfolio-detail';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -124,17 +124,7 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                 </ul>
               ) : null}
             </CardContent>
-            <PortfolioExtras
-              {...act}
-              trackId={`activity-${act.id}`}
-              title={act.role}
-              cover={act.media}
-              meta={[
-                act.organization?.name,
-                act.eventName,
-                act.startDate ? formatPeriod(act.startDate, act.endDate, locale) : null,
-              ]}
-            />
+            <DetailLink href={`/activities/${act.id}`} />
           </SpotlightCard>
         ))}
       </div>

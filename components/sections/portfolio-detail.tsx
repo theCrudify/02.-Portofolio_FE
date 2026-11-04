@@ -1,33 +1,52 @@
-import { CheckCircle2, FileText } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { ProjectLinks } from '@/components/project/project-links';
 import { TechLogo } from '@/components/project/tech-logo';
-import { DetailDialog } from '@/components/sections/detail-dialog';
+import { Container } from '@/components/layout/container';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import type { PublicImage, PublicPortfolioExtras } from '@/lib/api/types';
+import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
-export interface PortfolioExtrasProps extends Partial<PublicPortfolioExtras> {
-  /** Dialog title (certificate name, role, award title). */
+/** "View details" link on a certificate / activity / award card. */
+export function DetailLink({ href }: { href: string }) {
+  const t = useTranslations('sections.extras');
+  return (
+    <div className="border-t border-border/60 px-5 py-3">
+      <Link href={href} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'min-h-11')}>
+        {t('details')}
+      </Link>
+    </div>
+  );
+}
+
+export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras> {
   title: string;
+  /** Type label shown as a badge (certificate type, activity type, rank…). */
+  badges?: (string | null | undefined)[];
+  backHref: string;
   /** Used as the analytics target id for link clicks. */
   trackId: string;
   cover?: PublicImage | null;
   /** Short facts under the title: issuer, event, period, credential id… */
   meta?: (string | null | undefined)[];
   description?: string | null;
-  className?: string;
+  /** Extra actions (verify credential, external link…). */
+  actions?: ReactNode;
 }
 
 /**
- * "View details" button on a certificate / activity / award card, opening a dialog with the cover,
- * full description, tasks & achievements, tools/skills, attachments (images + PDFs) and links.
+ * Detail page of a certificate, activity or award: cover, full description, tasks & achievements,
+ * tools/skills, attachments (images + PDFs) and links.
  */
 // Extras default to [] so the page survives an API that doesn't send them yet.
-export function PortfolioExtras({
+export function PortfolioDetailPage({
   title,
+  badges = [],
+  backHref,
   trackId,
   cover,
   meta = [],
@@ -36,41 +55,54 @@ export function PortfolioExtras({
   technologies = [],
   attachments = [],
   links = [],
-  className,
-}: PortfolioExtrasProps) {
+  actions,
+}: PortfolioDetailPageProps) {
   const t = useTranslations('sections.extras');
   const images = attachments.filter((a) => a.kind === 'image');
   const files = attachments.filter((a) => a.kind !== 'image');
   const facts = meta.filter(Boolean);
 
   return (
-    <div className={cn('border-t border-border/60 px-5 py-3', className)}>
-      <DetailDialog title={title} label={t('details')}>
-        <div className="space-y-5 text-sm">
-          {cover ? (
-            <a href={cover.url} target="_blank" rel="noopener noreferrer" className="block">
-              <Image
-                src={cover.url}
-                alt={cover.alt || title}
-                width={cover.width ?? 1200}
-                height={cover.height ?? 800}
-                sizes="(max-width: 768px) 100vw, 640px"
-                className="h-auto w-full rounded-lg border border-border/60"
-              />
-            </a>
-          ) : null}
+    <article className="py-12 md:py-20">
+      <Container className="max-w-3xl space-y-8">
+        <Link href={backHref} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary">
+          <ArrowLeft className="h-4 w-4" />
+          {t('back')}
+        </Link>
 
-          {facts.length > 0 ? (
-            <p className="font-semibold text-primary">{facts.join(' · ')}</p>
-          ) : null}
+        <header className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {badges.filter(Boolean).map((b) => (
+              <Badge key={b} variant="secondary">{b}</Badge>
+            ))}
+          </div>
+          <h1 className="font-heading text-[28px] font-bold leading-tight tracking-tight md:text-[40px]">{title}</h1>
+          {facts.length > 0 ? <p className="font-semibold text-primary">{facts.join(' · ')}</p> : null}
+          {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+        </header>
 
+        {cover ? (
+          <a href={cover.url} target="_blank" rel="noopener noreferrer" className="block">
+            <Image
+              src={cover.url}
+              alt={cover.alt || title}
+              width={cover.width ?? 1200}
+              height={cover.height ?? 800}
+              sizes="(max-width: 768px) 100vw, 768px"
+              priority
+              className="h-auto w-full rounded-lg border border-border/60"
+            />
+          </a>
+        ) : null}
+
+        <div className="space-y-8 text-base">
           {description ? (
             <p className="whitespace-pre-line leading-relaxed text-muted-foreground">{description}</p>
           ) : null}
 
           {achievements.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t('achievements')}</h3>
+              <h2 className="text-sm font-semibold uppercase text-muted-foreground">{t('achievements')}</h2>
               <ul className="space-y-2">
                 {achievements.map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
@@ -84,7 +116,7 @@ export function PortfolioExtras({
 
           {technologies.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t('skills')}</h3>
+              <h2 className="text-sm font-semibold uppercase text-muted-foreground">{t('skills')}</h2>
               <div className="flex flex-wrap gap-2">
                 {technologies.map((tech) => (
                   <Badge key={tech.slug} variant="outline" className="gap-1.5">
@@ -98,7 +130,7 @@ export function PortfolioExtras({
 
           {attachments.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t('attachments')}</h3>
+              <h2 className="text-sm font-semibold uppercase text-muted-foreground">{t('attachments')}</h2>
               {images.length > 0 ? (
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {images.map((img) => (
@@ -141,12 +173,12 @@ export function PortfolioExtras({
 
           {links.length > 0 ? (
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t('links')}</h3>
+              <h2 className="text-sm font-semibold uppercase text-muted-foreground">{t('links')}</h2>
               <ProjectLinks links={links} projectSlug={trackId} privateLabel={t('private')} />
             </div>
           ) : null}
         </div>
-      </DetailDialog>
-    </div>
+      </Container>
+    </article>
   );
 }

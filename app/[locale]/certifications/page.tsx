@@ -2,7 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Section } from '@/components/layout/section';
-import { PortfolioExtras } from '@/components/sections/portfolio-extras';
+import { DetailLink } from '@/components/sections/portfolio-detail';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -107,17 +107,7 @@ export default async function CertificationsPage({
               ) : null}
               {cert.credentialId ? <p className="mt-1 font-mono">ID: {cert.credentialId}</p> : null}
             </CardContent>
-            <PortfolioExtras
-              {...cert}
-              trackId={`cert-${cert.id}`}
-              title={cert.name}
-              cover={cert.image}
-              meta={[
-                cert.issuer?.name,
-                cert.issueDate ? formatMonthYear(cert.issueDate, typedLocale) : null,
-                cert.credentialId,
-              ]}
-            />
+            <DetailLink href={`/certifications/${cert.id}`} />
 
             {cert.credentialUrl ? (
               <CardFooter className="border-t border-border pt-3">
