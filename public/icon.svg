@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="50%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- High-contrast rounded squircle container -->
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle inner border for crisp definition against dark/light browser tab bars -->
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="#ffffff" stroke-opacity="0.2" stroke-width="1.5" fill="none"/>
+
+  <!-- Geometric JF Monogram with drop shadow for legibility -->
+  <g filter="url(#subtleGlow)">
+    <!-- J letterform -->
+    <path d="M18 19 H30 V37 C30 42.5 26.5 45.5 21.5 45.5 H17.5 V40.5 H21 C23 40.5 24 39.5 24 36.5 V24.5 H18 Z" fill="#ffffff"/>
+    
+    <!-- F letterform -->
+    <path d="M34 19 H48 V24.5 H40 V30.5 H46.5 V35.5 H40 V45.5 H34 Z" fill="#ffffff"/>
+    
+    <!-- Vibrant cyan terminal accent dot -->
+    <circle cx="48" cy="43" r="3.2" fill="#38bdf8"/>
+  </g>
+</svg>

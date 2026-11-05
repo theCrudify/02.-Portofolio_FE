@@ -203,66 +203,53 @@ body {
   background-size: 18px 18px;
 }
 
-/* Chibi guide character motion */
+/* Chibi guide character motion: smooth, organic & non-jittery */
 @keyframes chibi-breathe {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-5px) rotate(-1.5deg) scale(1.02);
+    transform: translateY(0px);
   }
   50% {
-    transform: translateY(-9px) rotate(0deg) scale(1.04);
-  }
-  75% {
-    transform: translateY(-4px) rotate(1.5deg) scale(1.01);
+    transform: translateY(-4px);
   }
 }
 
 @keyframes chibi-shadow-pulse {
   0%, 100% {
     transform: translateX(-50%) scale(1);
-    opacity: 0.25;
+    opacity: 0.22;
   }
   50% {
-    transform: translateX(-50%) scale(0.65);
+    transform: translateX(-50%) scale(0.8);
     opacity: 0.12;
   }
 }
 
 @keyframes chibi-step {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-8px) rotate(-3.5deg) scaleY(1.03);
+    transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-2px) rotate(0deg);
-  }
-  75% {
-    transform: translateY(-8px) rotate(3.5deg) scaleY(1.03);
+    transform: translateY(-5px) scale(1.02);
   }
 }
 
 @keyframes chibi-hop {
   0% { transform: scale(1) translateY(0); }
-  25% { transform: scale(0.9, 1.15) translateY(-20px) rotate(-4deg); }
-  50% { transform: scale(1.15, 0.9) translateY(-6px) rotate(3deg); }
-  75% { transform: scale(0.95, 1.05) translateY(-10px) rotate(-1deg); }
-  100% { transform: scale(1) translateY(0) rotate(0deg); }
+  35% { transform: scale(1.04, 0.96) translateY(-16px); }
+  70% { transform: scale(0.98, 1.02) translateY(2px); }
+  100% { transform: scale(1) translateY(0); }
 }
 
 @keyframes chibi-sparkle {
-  0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 0; }
-  35% { transform: translateY(-10px) scale(1.3) rotate(45deg); opacity: 1; }
-  100% { transform: translateY(-28px) scale(0) rotate(90deg); opacity: 0; }
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  35% { transform: translateY(-8px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-24px) scale(0); opacity: 0; }
 }
 
 @keyframes chibi-bubble-in {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.85);
+    transform: translateY(6px) scale(0.92);
   }
   to {
     opacity: 1;
@@ -272,16 +259,16 @@ body {
 
 .chibi-breathing {
   transform-origin: 50% 100%;
-  animation: chibi-breathe 2.4s ease-in-out infinite;
+  animation: chibi-breathe 2.8s ease-in-out infinite;
 }
 
 .chibi-shadow {
-  animation: chibi-shadow-pulse 2.4s ease-in-out infinite;
+  animation: chibi-shadow-pulse 2.8s ease-in-out infinite;
 }
 
 .chibi-walking {
   transform-origin: 50% 100%;
-  animation: chibi-step 0.28s ease-in-out infinite;
+  animation: chibi-step 0.45s ease-in-out infinite;
 }
 
 .chibi-hopping {

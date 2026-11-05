@@ -74,7 +74,6 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
   const [walking, setWalking] = useState(false);
   const [hopping, setHopping] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const [stepFrame, setStepFrame] = useState<'walk-a' | 'walk-b'>('walk-a');
   const [movingUp, setMovingUp] = useState(false);
   const [guideVisible, setGuideVisible] = useState(true);
 
@@ -101,15 +100,6 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
     if (stopTimer.current) window.clearTimeout(stopTimer.current);
     stopTimer.current = window.setTimeout(() => setWalking(false), 260);
   });
-
-  useEffect(() => {
-    if (!walking) return;
-    const id = window.setInterval(
-      () => setStepFrame((f) => (f === 'walk-a' ? 'walk-b' : 'walk-a')),
-      170,
-    );
-    return () => window.clearInterval(id);
-  }, [walking]);
 
   useEffect(
     () => () => {
@@ -188,7 +178,7 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
   // job, and present (point at the card) for everything in between.
   const restingPose: ChibiPose =
     activeIndex === 0 ? 'wave' : active.endDate === null ? 'laptop' : 'point';
-  const pose: ChibiPose = walking ? stepFrame : restingPose;
+  const pose: ChibiPose = walking ? 'walk-a' : restingPose;
   // Sprites face right; the "point" sprite points left, so mirror it to point at the cards.
   const flipped = walking ? movingUp : restingPose === 'point';
 
