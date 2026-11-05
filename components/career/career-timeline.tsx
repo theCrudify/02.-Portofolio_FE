@@ -11,6 +11,7 @@ import {
   FolderGit2,
   ListChecks,
   MapPin,
+  Sparkles,
   Trophy,
 } from 'lucide-react';
 import {
@@ -71,6 +72,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [walking, setWalking] = useState(false);
+  const [hopping, setHopping] = useState(false);
+  const [quoteIndex, setQuoteIndex] = useState(0);
   const [stepFrame, setStepFrame] = useState<'walk-a' | 'walk-b'>('walk-a');
   const [movingUp, setMovingUp] = useState(false);
   const [guideVisible, setGuideVisible] = useState(true);
@@ -163,6 +166,23 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
 
   const active = milestones[activeIndex] ?? milestones[0]!;
   const activeYear = yearOf(active.startDate);
+
+  const DEV_QUOTES = useMemo(
+    () => [
+      active.description || 'Scroll terus untuk menjelajahi seluruh jejak rekam karier Jidan!',
+      'Membangun fondasi arsitektur enterprise modular & scalable!',
+      'Integrasi sistem kompleks: SAP, Bea Cukai CEISA, & auto-payment!',
+      '100% type-safe TypeScript, clean database schema & index optimal!',
+      'Ingin berdiskusi atau kolaborasi proyek? Kirim pesan lewat form kontak ya! ✨',
+    ],
+    [active.description],
+  );
+
+  const handleGuideClick = useCallback(() => {
+    setHopping(true);
+    setQuoteIndex((prev) => (prev + 1) % 5);
+    setTimeout(() => setHopping(false), 550);
+  }, []);
 
   // Resting reaction per milestone: greet at the start, code at the current
   // job, and present (point at the card) for everything in between.
@@ -276,17 +296,35 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
           {guideVisible ? (
             <motion.div
               style={{ top: guideTop, width: GUIDE_SIZE, height: GUIDE_SIZE }}
-              className="pointer-events-none absolute left-14 z-10 hidden -translate-x-1/2 sm:block"
+              className="pointer-events-auto absolute left-14 z-20 hidden -translate-x-1/2 sm:block cursor-pointer"
             >
               {!walking ? (
                 <div
-                  key={active.id}
-                  className="chibi-bubble absolute bottom-full left-1/2 mb-1 max-w-[180px] -translate-x-1/2 rounded-xl border border-border bg-popover px-3 py-1.5 text-center text-xs font-semibold text-popover-foreground shadow-lg"
+                  key={`${active.id}-${quoteIndex}`}
+                  className="chibi-bubble absolute bottom-full left-1/2 mb-2 w-52 -translate-x-1/2 rounded-2xl border border-primary/30 bg-popover/95 p-2.5 text-center text-xs shadow-xl backdrop-blur-sm transition-transform hover:scale-105"
+                  onClick={handleGuideClick}
                 >
-                  <span className="line-clamp-2">{active.organization?.name}</span>
+                  <div className="flex items-center justify-between gap-1 mb-1 border-b border-border/50 pb-1">
+                    <span className="font-heading text-[10px] font-bold text-primary flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      {t('guideTitle')}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground font-mono">
+                      {String(activeIndex + 1).padStart(2, '0')}/{String(milestones.length).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <p className="font-bold text-foreground line-clamp-1 text-xs">
+                    {active.role}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5 leading-snug">
+                    {DEV_QUOTES[quoteIndex] || active.organization?.name}
+                  </p>
+                  <div className="mt-1.5 pt-1 border-t border-border/40 flex items-center justify-center gap-1 text-[10px] font-medium text-primary">
+                    <span>{t('tapGuideHint')}</span>
+                  </div>
                   <span
                     aria-hidden="true"
-                    className="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 border-r border-b border-border bg-popover"
+                    className="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1 rotate-45 border-r border-b border-primary/30 bg-popover"
                   />
                 </div>
               ) : null}
@@ -294,6 +332,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                 pose={pose}
                 flipped={flipped}
                 walking={walking}
+                hopping={hopping}
+                onClick={handleGuideClick}
                 alt={t('guideAlt')}
                 className="h-full w-full"
               />

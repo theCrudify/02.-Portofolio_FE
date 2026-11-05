@@ -205,32 +205,64 @@ body {
 
 /* Chibi guide character motion */
 @keyframes chibi-breathe {
-  0%,
-  100% {
-    transform: translateY(0) scaleY(1);
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-1.5deg) scale(1.02);
   }
   50% {
-    transform: translateY(-2px) scaleY(1.015);
+    transform: translateY(-9px) rotate(0deg) scale(1.04);
+  }
+  75% {
+    transform: translateY(-4px) rotate(1.5deg) scale(1.01);
+  }
+}
+
+@keyframes chibi-shadow-pulse {
+  0%, 100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.65);
+    opacity: 0.12;
   }
 }
 
 @keyframes chibi-step {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0) rotate(0deg);
   }
   25% {
-    transform: translateY(-5px) rotate(-1.5deg);
+    transform: translateY(-8px) rotate(-3.5deg) scaleY(1.03);
+  }
+  50% {
+    transform: translateY(-2px) rotate(0deg);
   }
   75% {
-    transform: translateY(-5px) rotate(1.5deg);
+    transform: translateY(-8px) rotate(3.5deg) scaleY(1.03);
   }
+}
+
+@keyframes chibi-hop {
+  0% { transform: scale(1) translateY(0); }
+  25% { transform: scale(0.9, 1.15) translateY(-20px) rotate(-4deg); }
+  50% { transform: scale(1.15, 0.9) translateY(-6px) rotate(3deg); }
+  75% { transform: scale(0.95, 1.05) translateY(-10px) rotate(-1deg); }
+  100% { transform: scale(1) translateY(0) rotate(0deg); }
+}
+
+@keyframes chibi-sparkle {
+  0% { transform: translateY(0) scale(0) rotate(0deg); opacity: 0; }
+  35% { transform: translateY(-10px) scale(1.3) rotate(45deg); opacity: 1; }
+  100% { transform: translateY(-28px) scale(0) rotate(90deg); opacity: 0; }
 }
 
 @keyframes chibi-bubble-in {
   from {
     opacity: 0;
-    transform: translateY(4px) scale(0.92);
+    transform: translateY(8px) scale(0.85);
   }
   to {
     opacity: 1;
@@ -240,16 +272,24 @@ body {
 
 .chibi-breathing {
   transform-origin: 50% 100%;
-  animation: chibi-breathe 2.6s ease-in-out infinite;
+  animation: chibi-breathe 2.4s ease-in-out infinite;
+}
+
+.chibi-shadow {
+  animation: chibi-shadow-pulse 2.4s ease-in-out infinite;
 }
 
 .chibi-walking {
   transform-origin: 50% 100%;
-  animation: chibi-step 0.34s ease-in-out infinite;
+  animation: chibi-step 0.28s ease-in-out infinite;
+}
+
+.chibi-hopping {
+  animation: chibi-hop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .chibi-bubble {
-  animation: chibi-bubble-in 0.22s ease-out both;
+  animation: chibi-bubble-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Hero name: a slow light sweep across the gradient. */

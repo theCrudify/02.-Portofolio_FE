@@ -108,6 +108,8 @@
       "showGuide": "Show guide character",
       "hideGuide": "Hide guide character",
       "guideAlt": "Animated guide character walking along the career timeline",
+      "guideTitle": "Career Guide",
+      "tapGuideHint": "Tap me! ✨",
       "now": "Now",
       "responsibilities": "Responsibilities",
       "achievements": "Achievements",
