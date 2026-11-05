@@ -150,7 +150,18 @@
       "committee": "Committee",
       "organization": "Organization",
       "roles": "roles",
-      "years": "years active"
+      "years": "years active",
+      "mapView": "Journey Map",
+      "timelineView": "Milestone Roadmap",
+      "journeyProgress": "Journey Route & Milestone Stations",
+      "stationProgress": "Station {current} of {total}",
+      "stationHint": "Click a station above to explore the milestone",
+      "prevStation": "Previous Station",
+      "nextStation": "Next Station",
+      "keyAchievements": "Key Achievements & Responsibilities",
+      "viewDetails": "View activity details",
+      "officialRecord": "Official Record",
+      "roleLevel": "Role Tier"
     },
     "achievements": {
       "eyebrow": "RECOGNITION",

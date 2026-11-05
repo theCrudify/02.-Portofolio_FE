@@ -150,7 +150,18 @@
       "committee": "Kepanitiaan",
       "organization": "Organisasi",
       "roles": "peran",
-      "years": "tahun aktif"
+      "years": "tahun aktif",
+      "mapView": "Peta Jalur (Map)",
+      "timelineView": "Alur Waktu (Roadmap)",
+      "journeyProgress": "Alur Perjalanan & Stasiun Milestone",
+      "stationProgress": "Stasiun {current} dari {total}",
+      "stationHint": "Klik stasiun di atas untuk melihat detail perjalanan",
+      "prevStation": "Stasiun Sebelumnya",
+      "nextStation": "Stasiun Berikutnya",
+      "keyAchievements": "Capaian & Tanggung Jawab Kunci",
+      "viewDetails": "Lihat detail aktivitas",
+      "officialRecord": "Tercatat Resmi",
+      "roleLevel": "Jenjang Peran"
     },
     "achievements": {
       "eyebrow": "PENGHARGAAN",
