@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowUpRight, Globe2, Mail, MapPin, Send } from 'lucide-react';
+import { ArrowUpRight, Globe2, Mail, MapPin, Send, Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -132,25 +132,61 @@ export function ContactSection({ profile, locale, muted }: ContactSectionProps) 
 
           {profile?.socials && profile.socials.length > 0 ? (
             <SpotlightCard className="flex-1">
-              <CardContent className="flex h-full flex-wrap items-center gap-2.5 p-5 sm:p-6">
-                {profile.socials.map(({ platform, url }) =>
-                  url ? (
-                    <a
-                      key={platform.code}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 rounded-xl border border-border bg-background/90 px-4 py-2.5 text-xs font-semibold capitalize text-foreground shadow-2xs transition-all hover:border-primary hover:text-primary hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <SocialIcon
-                        platform={platform}
-                        className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110"
-                      />
-                      <span>{platform.label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
-                    </a>
-                  ) : null,
-                )}
+              <CardContent className="flex h-full flex-col justify-between p-5 sm:p-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-heading text-sm font-bold text-foreground">
+                      {t('socialsTitle')}
+                    </h3>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {t('socialsSubtitle')}
+                    </p>
+                  </div>
+
+                  {/* Dynamic branded platform tiles */}
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    {profile.socials.map(({ platform, url, handle }) =>
+                      url ? (
+                        <a
+                          key={platform.code}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-center justify-between gap-3 rounded-xl border border-border/80 bg-background/90 p-3 shadow-2xs transition-all hover:border-primary/50 hover:bg-background hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-transform group-hover:scale-105">
+                              <SocialIcon platform={platform} className="h-4 w-4" />
+                            </span>
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                                {platform.label}
+                              </p>
+                              {handle ? (
+                                <p className="truncate font-mono text-[11px] text-muted-foreground">
+                                  {handle.startsWith('@') ? handle : `@${handle}`}
+                                </p>
+                              ) : null}
+                            </div>
+                          </div>
+                          <ArrowUpRight className="h-3.5 w-3.5 shrink-0 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                        </a>
+                      ) : null,
+                    )}
+                  </div>
+                </div>
+
+                {/* Telemetry / Availability highlights */}
+                <div className="mt-5 space-y-2 border-t border-border/60 pt-4 text-[11px]">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_6px_currentColor]" />
+                    <span className="font-medium">{t('responseTime')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    <span>{t('openForCollab')}</span>
+                  </div>
+                </div>
               </CardContent>
             </SpotlightCard>
           ) : null}

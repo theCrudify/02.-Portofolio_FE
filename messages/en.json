@@ -185,7 +185,11 @@
       "send": "Send Message",
       "sending": "Sending...",
       "success": "Thank you! Your message has been sent.",
-      "rateLimited": "Too many messages sent recently. Please try again in an hour."
+      "rateLimited": "Too many messages sent recently. Please try again in an hour.",
+      "socialsTitle": "Socials & Professional Networks",
+      "socialsSubtitle": "Connect on other platforms or follow my engineering updates.",
+      "responseTime": "Typical response time: < 24 hours",
+      "openForCollab": "Open for collaborations & roles"
     },
     "extras": {
       "details": "View details",

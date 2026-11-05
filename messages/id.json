@@ -185,7 +185,11 @@
       "send": "Kirim Pesan",
       "sending": "Mengirim...",
       "success": "Terima kasih! Pesan Anda telah terkirim.",
-      "rateLimited": "Terlalu banyak pesan terkirim baru-baru ini. Silakan coba lagi dalam satu jam."
+      "rateLimited": "Terlalu banyak pesan terkirim baru-baru ini. Silakan coba lagi dalam satu jam.",
+      "socialsTitle": "Media Sosial & Jejaring",
+      "socialsSubtitle": "Terhubung di platform lain atau ikuti aktivitas profesional saya.",
+      "responseTime": "Estimasi balasan: < 24 jam",
+      "openForCollab": "Terbuka untuk kolaborasi proyek"
     },
     "extras": {
       "details": "Lihat detail",
