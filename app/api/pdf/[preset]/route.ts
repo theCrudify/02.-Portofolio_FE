@@ -11,7 +11,15 @@ export async function GET(
 
   const upstream = await fetch(
     `${API_BASE.replace(/\/$/, '')}/v1/export/${encodeURIComponent(preset)}?locale=${encodeURIComponent(locale)}`,
-    { cache: 'no-store' }
+    {
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        ...(process.env.INTERNAL_API_SECRET
+          ? { 'x-internal-secret': process.env.INTERNAL_API_SECRET }
+          : {}),
+      },
+    }
   );
 
   if (!upstream.ok) {

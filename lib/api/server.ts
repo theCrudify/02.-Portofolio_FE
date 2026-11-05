@@ -75,6 +75,10 @@ export async function apiGet<T>(
   const headers: Record<string, string> = {
     Accept: 'application/json',
   };
+  const internalSecret = process.env.INTERNAL_API_SECRET;
+  if (internalSecret) {
+    headers['x-internal-secret'] = internalSecret;
+  }
   if (options.cookieHeader) {
     headers.Cookie = options.cookieHeader;
   }

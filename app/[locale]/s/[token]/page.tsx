@@ -34,6 +34,12 @@ export default async function ShareTokenPage({
   try {
     const res = await fetch(`${API_BASE.replace(/\/$/, '')}/v1/share/${encodeURIComponent(token)}`, {
       cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+        ...(process.env.INTERNAL_API_SECRET
+          ? { 'x-internal-secret': process.env.INTERNAL_API_SECRET }
+          : {}),
+      },
     });
     status = res.status;
     if (res.ok) {
