@@ -8,6 +8,7 @@ const apiOrigin = process.env.API_ORIGIN || 'http://localhost:8787';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
   webpack: (config) => {
     // lucide-react 0.475 maps "./dynamic" to a CJS file it doesn't ship; use the ESM build.
     config.resolve.alias['lucide-react/dynamic$'] = path.resolve(
@@ -53,6 +54,7 @@ const nextConfig: NextConfig = {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      "frame-ancestors 'self'",
     ].join('; ');
 
     return [
@@ -65,6 +67,7 @@ const nextConfig: NextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload',
           },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           {
             key: 'Permissions-Policy',

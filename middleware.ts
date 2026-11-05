@@ -14,6 +14,11 @@ export default function middleware(request: NextRequest): NextResponse {
     if (internalSecret) {
       requestHeaders.set('x-internal-secret', internalSecret);
     }
+    // The API sees Vercel's IP; pass the visitor's (Vercel overwrites these, so a client can't spoof them).
+    const visitorIp =
+      request.headers.get('x-real-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+    if (visitorIp) requestHeaders.set('x-client-ip', visitorIp);
+    else requestHeaders.delete('x-client-ip');
     return NextResponse.next({
       request: {
         headers: requestHeaders,
