@@ -175,7 +175,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
             {/* Natural flow spacer so parent container dynamically sizes to card content without cutting off */}
             <div
               aria-hidden="true"
-              className="invisible pointer-events-none select-none w-full max-w-lg opacity-0"
+              className="invisible pointer-events-none select-none w-full max-w-lg rounded-2xl opacity-0"
               tabIndex={-1}
             >
               <ProjectCard project={projects[activeSlideIndex] ?? projects[0]!} />
@@ -217,9 +217,9 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
                     transition: 'all 500ms cubic-bezier(0.25, 1, 0.5, 1)',
                   }}
                   className={cn(
-                    'absolute w-full max-w-lg cursor-pointer transition-all duration-500',
+                    'absolute w-full max-w-lg rounded-2xl cursor-pointer transition-all duration-500',
                     isCurrent
-                      ? 'cursor-default ring-2 ring-primary/40 shadow-2xl'
+                      ? 'cursor-default ring-2 ring-primary/50 shadow-2xl'
                       : 'hover:opacity-85 [&_a]:pointer-events-none [&_button]:pointer-events-none',
                   )}
                 >

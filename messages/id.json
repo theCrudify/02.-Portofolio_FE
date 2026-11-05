@@ -133,7 +133,14 @@
       "all": "Semua",
       "active": "Aktif",
       "lifetime": "Tanpa masa berlaku",
-      "details": "Lihat detail"
+      "details": "Lihat detail",
+      "slider": "Slide",
+      "grid": "Grid",
+      "prev": "Sebelumnya",
+      "next": "Berikutnya",
+      "perPage": "Per tampilan",
+      "showing": "Menampilkan {start}–{end} dari {total} sertifikat",
+      "emptyFilter": "Tidak ada sertifikat dalam kategori ini"
     },
     "activities": {
       "eyebrow": "KOMUNITAS",

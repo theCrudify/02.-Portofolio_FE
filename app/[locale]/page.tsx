@@ -17,7 +17,7 @@ import {
   buildWebSiteJsonLd,
   JsonLdScript,
 } from '@/components/seo/json-ld';
-import { fetchSiteData } from '@/lib/api/server';
+import { fetchCertificationsList, fetchSiteData } from '@/lib/api/server';
 import type { SectionKey, SupportedLocale } from '@/lib/api/types';
 import { buildMetadata } from '@/lib/seo';
 import { setRequestLocale } from 'next-intl/server';
@@ -59,7 +59,10 @@ export default async function HomePage({
   // Without this next-intl reads the locale from headers, which breaks on-demand static rendering.
   setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const site = await fetchSiteData(typedLocale);
+  const [site, allCertifications] = await Promise.all([
+    fetchSiteData(typedLocale),
+    fetchCertificationsList(typedLocale),
+  ]);
 
   // Order and visibility come from the site_sections table (admin → Appearance).
   const orderedSections: SectionKey[] = site.settings.sections
@@ -141,7 +144,9 @@ export default async function HomePage({
             return (
               <CertificationsSection
                 key="certifications"
-                certifications={site.certifications}
+                certifications={
+                  allCertifications.length > 0 ? allCertifications : site.certifications
+                }
                 locale={typedLocale}
                 muted={isMuted}
               />

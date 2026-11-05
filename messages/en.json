@@ -133,7 +133,14 @@
       "all": "All",
       "active": "Active",
       "lifetime": "No expiry",
-      "details": "View details"
+      "details": "View details",
+      "slider": "Slider",
+      "grid": "Grid",
+      "prev": "Previous",
+      "next": "Next",
+      "perPage": "Per page",
+      "showing": "Showing {start}–{end} of {total} credentials",
+      "emptyFilter": "No credentials found in this category"
     },
     "activities": {
       "eyebrow": "COMMUNITY",
