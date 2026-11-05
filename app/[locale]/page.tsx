@@ -109,7 +109,6 @@ export default async function HomePage({
                 key="projects"
                 projects={site.featuredProjects}
                 muted={isMuted}
-                inverted
               />
             );
           case 'skills':
@@ -163,7 +162,6 @@ export default async function HomePage({
                 achievements={site.achievements}
                 locale={typedLocale}
                 muted={isMuted}
-                inverted
               />
             );
           case 'publications':
@@ -184,7 +182,14 @@ export default async function HomePage({
               />
             );
           case 'github':
-            return <GithubSection key="github" github={site.github} muted={isMuted} />;
+            return (
+              <GithubSection
+                key="github"
+                github={site.github}
+                profile={site.profile}
+                muted={isMuted}
+              />
+            );
           case 'contact':
             return (
               <ContactSection
