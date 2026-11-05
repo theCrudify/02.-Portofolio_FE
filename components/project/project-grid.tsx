@@ -166,12 +166,21 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
 
       {/* 3D Coverflow Slide Carousel Mode */}
       {layoutMode === '3d' ? (
-        <div className="relative overflow-hidden py-4">
+        <div className="relative overflow-hidden px-2 py-8 sm:py-12 md:py-14">
           {/* 3D Perspective Viewport */}
           <div
-            className="relative mx-auto flex min-h-[500px] w-full max-w-5xl items-center justify-center px-4"
+            className="relative mx-auto flex min-h-[580px] sm:min-h-[620px] lg:min-h-[660px] w-full max-w-5xl items-center justify-center px-4"
             style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
           >
+            {/* Natural flow spacer so parent container dynamically sizes to card content without cutting off */}
+            <div
+              aria-hidden="true"
+              className="invisible pointer-events-none select-none w-full max-w-lg opacity-0"
+              tabIndex={-1}
+            >
+              <ProjectCard project={projects[activeSlideIndex] ?? projects[0]!} />
+            </div>
+
             {projects.map((project, idx) => {
               const diff = (idx - activeSlideIndex + projectCount) % projectCount;
               // Map diff to relative offset centered at 0: 0 is active, 1 is next, -1 is prev
@@ -208,8 +217,10 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
                     transition: 'all 500ms cubic-bezier(0.25, 1, 0.5, 1)',
                   }}
                   className={cn(
-                    'absolute w-full max-w-lg cursor-pointer transition-shadow duration-500',
-                    isCurrent ? 'cursor-default ring-2 ring-primary/40 shadow-2xl' : 'hover:opacity-85',
+                    'absolute w-full max-w-lg cursor-pointer transition-all duration-500',
+                    isCurrent
+                      ? 'cursor-default ring-2 ring-primary/40 shadow-2xl'
+                      : 'hover:opacity-85 [&_a]:pointer-events-none [&_button]:pointer-events-none',
                   )}
                 >
                   <ProjectCard project={project} />
@@ -220,7 +231,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
 
           {/* Directional Slide Navigation Arrows Overlay */}
           {projectCount > 1 ? (
-            <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
+            <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-40 flex items-center justify-between px-2 sm:px-4">
               <Button
                 type="button"
                 variant="outline"
@@ -246,7 +257,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
 
           {/* Slide Indicator Dots & Pointers */}
           {projectCount > 1 ? (
-            <div className="mt-6 flex flex-col items-center justify-center gap-2">
+            <div className="mt-8 flex flex-col items-center justify-center gap-2">
               <div className="flex items-center gap-2 rounded-full border border-border/80 bg-background/85 px-4 py-2 shadow-xs backdrop-blur-md">
                 {projects.map((proj, idx) => (
                   <button
