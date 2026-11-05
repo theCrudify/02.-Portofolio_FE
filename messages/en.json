@@ -160,7 +160,8 @@
       "nextStation": "Next Station",
       "keyAchievements": "Key Achievements & Responsibilities",
       "viewDetails": "View activity details",
-      "officialRecord": "Official Record",
+      "officialRecord": "Verification Status",
+      "verified": "Verified Record",
       "roleLevel": "Role Tier"
     },
     "achievements": {

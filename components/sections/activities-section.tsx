@@ -8,7 +8,6 @@ import {
   ListTree,
   MapPin,
   Route,
-  Sparkles,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -172,7 +171,6 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
           const safeActiveIndex = Math.min(activeStationIndex, items.length - 1);
           const activeItem = items[safeActiveIndex] ?? items[0]!;
           const activeTier = getRoleTier(activeItem.role, safeActiveIndex, locale);
-          const progressPercent = items.length > 1 ? (safeActiveIndex / (items.length - 1)) * 100 : 100;
 
           return (
             <SpotlightCard key={org?.slug ?? items[0]!.id} className="overflow-hidden">
@@ -184,15 +182,9 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                   className="h-14 w-14 rounded-2xl text-lg shadow-sm"
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl">
-                      {org?.name}
-                    </h3>
-                    <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary text-xs font-semibold">
-                      <Sparkles className="mr-1 h-3 w-3" />
-                      {t('journeyProgress')}
-                    </Badge>
-                  </div>
+                  <h3 className="font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl">
+                    {org?.name}
+                  </h3>
                   <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                     {org?.type ? <span>{org.type.label}</span> : null}
                     {org?.location ? (
@@ -241,37 +233,29 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                       </span>
                     </div>
 
-                    {/* Horizontal Metro Route */}
-                    <div className="overflow-x-auto pb-4 pt-2 -mx-2 px-2 scrollbar-thin">
-                      <div className="min-w-[620px] relative px-6 py-2">
-                        {/* Background track line */}
-                        <div className="absolute left-8 right-8 top-6 h-1 bg-muted/80 rounded-full" />
-                        {/* Active Progress gradient line */}
-                        <div
-                          className="absolute left-8 top-6 h-1 bg-gradient-to-r from-primary via-primary to-primary/80 rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `calc(${progressPercent}% * 0.9 + 4px)` }}
-                        />
+                    {/* Horizontal Segmented Metro Route */}
+                    <div className="overflow-x-auto pb-4 pt-3 -mx-2 px-2 scrollbar-thin">
+                      <div className="min-w-[680px] flex items-center justify-between px-3">
+                        {items.map((act, idx) => {
+                          const isCurrent = idx === safeActiveIndex;
+                          const isPassed = idx < safeActiveIndex;
+                          const tier = getRoleTier(act.role, idx, locale);
 
-                        {/* Station nodes */}
-                        <div className="relative z-10 flex items-center justify-between w-full">
-                          {items.map((act, idx) => {
-                            const isCurrent = idx === safeActiveIndex;
-                            const isPassed = idx < safeActiveIndex;
-                            const tier = getRoleTier(act.role, idx, locale);
-
-                            return (
+                          return (
+                            <div key={act.id} className="flex flex-1 items-center last:flex-initial">
+                              {/* Station Node Button */}
                               <button
-                                key={act.id}
                                 type="button"
                                 onClick={() => setActiveStationIndex(idx)}
-                                className="group flex flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl p-1 transition-transform hover:scale-105"
+                                className="group relative flex flex-col items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl p-1 transition-all"
                               >
+                                {/* Circle Node */}
                                 <div
-                                  className={`relative flex h-9 w-9 items-center justify-center rounded-full border-2 font-mono text-xs font-bold transition-all duration-300 ${
+                                  className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 font-mono text-xs font-bold transition-all duration-300 ${
                                     isCurrent
-                                      ? 'border-background bg-primary text-primary-foreground shadow-lg ring-4 ring-primary/30 scale-110'
+                                      ? 'border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-4 ring-primary/25 scale-110'
                                       : isPassed
-                                        ? 'border-primary bg-primary/20 text-primary'
+                                        ? 'border-primary/80 bg-primary/10 text-primary group-hover:bg-primary/20'
                                         : 'border-border bg-card text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground'
                                   }`}
                                 >
@@ -281,20 +265,43 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                                     <span>{String(idx + 1).padStart(2, '0')}</span>
                                   )}
                                 </div>
-                                <span
-                                  className={`mt-2 font-mono text-[11px] whitespace-nowrap transition-colors ${
-                                    isCurrent ? 'font-bold text-primary' : 'text-muted-foreground'
-                                  }`}
-                                >
-                                  {activityPeriod(act, locale)}
-                                </span>
-                                <span className="mt-0.5 text-[11px] font-medium text-foreground max-w-[85px] truncate text-center hidden md:block">
-                                  {tier.shortLabel}
-                                </span>
+
+                                {/* Date & Role Label */}
+                                <div className="mt-2 flex flex-col items-center text-center">
+                                  <span
+                                    className={`font-mono text-[11px] font-semibold transition-colors ${
+                                      isCurrent ? 'text-primary' : 'text-muted-foreground'
+                                    }`}
+                                  >
+                                    {activityPeriod(act, locale)}
+                                  </span>
+                                  <span
+                                    className={`mt-0.5 max-w-[80px] truncate text-[11px] font-medium transition-colors ${
+                                      isCurrent
+                                        ? 'font-bold text-foreground'
+                                        : 'text-muted-foreground/80 group-hover:text-foreground'
+                                    }`}
+                                  >
+                                    {tier.shortLabel}
+                                  </span>
+                                </div>
                               </button>
-                            );
-                          })}
-                        </div>
+
+                              {/* Segment Connector Rail between stations */}
+                              {idx < items.length - 1 && (
+                                <div className="relative mx-2 h-1.5 flex-1 self-start mt-6 -translate-y-1/2 rounded-full overflow-hidden bg-muted/80">
+                                  <div
+                                    className={`h-full w-full rounded-full transition-all duration-500 ${
+                                      idx < safeActiveIndex
+                                        ? 'bg-gradient-to-r from-primary to-primary'
+                                        : 'bg-transparent'
+                                    }`}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -405,18 +412,18 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                       {/* Right Meta Telemetry Box */}
                       <div className="w-full lg:w-60 shrink-0 rounded-xl border border-border/80 bg-muted/40 p-4 space-y-3.5 text-xs">
                         <div>
-                          <span className="text-muted-foreground block">{t('organization')}</span>
-                          <span className="font-bold text-foreground text-sm">{org?.name}</span>
+                          <span className="text-muted-foreground block text-[11px] uppercase tracking-wider">{t('organization')}</span>
+                          <span className="font-bold text-foreground text-sm block mt-0.5">{org?.name}</span>
                         </div>
                         <div className="border-t border-border/60 pt-2.5">
-                          <span className="text-muted-foreground block">{t('officialRecord')}</span>
-                          <span className="font-semibold text-primary inline-flex items-center gap-1.5 mt-0.5">
-                            <span className="h-2 w-2 rounded-full bg-primary" />
-                            {t('officialRecord')}
+                          <span className="text-muted-foreground block text-[11px] uppercase tracking-wider">{t('officialRecord')}</span>
+                          <span className="font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5 mt-0.5">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            {t('verified')}
                           </span>
                         </div>
                         <div className="border-t border-border/60 pt-2.5">
-                          <span className="text-muted-foreground block">{t('roleLevel')}</span>
+                          <span className="text-muted-foreground block text-[11px] uppercase tracking-wider">{t('roleLevel')}</span>
                           <span className="font-semibold text-foreground block mt-0.5">
                             {activeTier.tier}
                           </span>
@@ -424,7 +431,7 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                         <div className="border-t border-border/60 pt-2.5">
                           <Link
                             href={`/activities/${activeItem.id}`}
-                            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background py-2 px-3 font-semibold text-foreground hover:bg-muted transition-colors text-center"
+                            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-border bg-background py-2 px-3 font-semibold text-foreground hover:bg-muted transition-colors text-center shadow-xs"
                           >
                             <span>{t('viewDetails')}</span>
                             <ArrowUpRight className="h-3.5 w-3.5" />

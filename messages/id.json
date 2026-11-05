@@ -160,7 +160,8 @@
       "nextStation": "Stasiun Berikutnya",
       "keyAchievements": "Capaian & Tanggung Jawab Kunci",
       "viewDetails": "Lihat detail aktivitas",
-      "officialRecord": "Tercatat Resmi",
+      "officialRecord": "Status Verifikasi",
+      "verified": "Terverifikasi",
       "roleLevel": "Jenjang Peran"
     },
     "achievements": {
