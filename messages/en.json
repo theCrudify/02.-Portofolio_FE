@@ -113,7 +113,8 @@
       "now": "Now",
       "responsibilities": "Responsibilities",
       "achievements": "Achievements",
-      "projectsInRole": "Projects in this role"
+      "projectsInRole": "Projects in this role",
+      "details": "View details"
     },
     "education": {
       "eyebrow": "ACADEMIC",
@@ -233,7 +234,11 @@
       "prev": "Previous",
       "next": "Next",
       "more": "More entries",
-      "empty": "More details coming soon."
+      "empty": "More details coming soon.",
+      "responsibilities": "Responsibilities",
+      "projects": "Projects",
+      "workMode": "Work mode",
+      "location": "Location"
     }
   },
   "common": {

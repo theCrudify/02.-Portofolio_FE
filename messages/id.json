@@ -113,7 +113,8 @@
       "now": "Sekarang",
       "responsibilities": "Tanggung jawab",
       "achievements": "Pencapaian",
-      "projectsInRole": "Proyek di posisi ini"
+      "projectsInRole": "Proyek di posisi ini",
+      "details": "Lihat detail"
     },
     "education": {
       "eyebrow": "AKADEMIK",
@@ -233,7 +234,11 @@
       "prev": "Sebelumnya",
       "next": "Berikutnya",
       "more": "Entri lainnya",
-      "empty": "Detail lengkap segera ditambahkan."
+      "empty": "Detail lengkap segera ditambahkan.",
+      "responsibilities": "Tanggung jawab",
+      "projects": "Proyek",
+      "workMode": "Mode kerja",
+      "location": "Lokasi"
     }
   },
   "common": {

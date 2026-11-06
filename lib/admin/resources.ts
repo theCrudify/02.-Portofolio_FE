@@ -109,6 +109,25 @@ const bullets = (name: string, label: string, help?: string): ResourceFieldDef =
   itemFields: [{ ...bi('text', 'Text', { multiline: true, required: true }) }],
 });
 /** Tools/skills, links to other platforms and uploaded images/PDFs (certificates, activities). */
+const attachments = (label = 'Attachments (certificate PDF, photos, documents)'): ResourceFieldDef[] => [
+  {
+    name: 'media',
+    label,
+    type: 'repeater',
+    itemFields: [media('mediaId', 'File (image or PDF)', 'any'), bi('caption', 'Caption')],
+  },
+  {
+    name: 'links',
+    label: 'Links (LinkedIn, Instagram, YouTube, article…)',
+    type: 'repeater',
+    itemFields: [
+      lookup('typeId', 'Type', 'link_type'),
+      text('label', 'Label', true),
+      { name: 'url', label: 'URL', type: 'url' },
+      { name: 'isPrivate', label: 'Private', type: 'checkbox' },
+    ],
+  },
+];
 const extras = (): ResourceFieldDef[] => [
   {
     name: 'technologies',
@@ -126,23 +145,7 @@ const extras = (): ResourceFieldDef[] => [
       },
     ],
   },
-  {
-    name: 'media',
-    label: 'Attachments (certificate PDF, photos, documents)',
-    type: 'repeater',
-    itemFields: [media('mediaId', 'File (image or PDF)', 'any'), bi('caption', 'Caption')],
-  },
-  {
-    name: 'links',
-    label: 'Links (LinkedIn, Instagram, YouTube, article…)',
-    type: 'repeater',
-    itemFields: [
-      lookup('typeId', 'Type', 'link_type'),
-      text('label', 'Label', true),
-      { name: 'url', label: 'URL', type: 'url' },
-      { name: 'isPrivate', label: 'Private', type: 'checkbox' },
-    ],
-  },
+  ...attachments(),
 ];
 const sortOrder: ResourceFieldDef = { name: 'sortOrder', label: 'Sort order', type: 'number' };
 
@@ -219,6 +222,7 @@ export const ADMIN_RESOURCES: Record<AdminResourceKey, AdminResourceMeta> = {
           },
         ],
       },
+      ...attachments('Attachments (photos while working, documents)'),
       sortOrder,
     ],
   },

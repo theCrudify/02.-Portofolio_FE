@@ -175,7 +175,7 @@ export interface PublicProjectDetail {
   next: PublicProjectRef | null;
 }
 
-export interface PublicExperience {
+export interface PublicExperience extends PublicPortfolioExtras {
   id: string;
   organization: PublicOrganization | null;
   role: string;
@@ -186,8 +186,6 @@ export interface PublicExperience {
   endDate: string | null;
   description: string | null;
   responsibilities: string[];
-  achievements: string[];
-  technologies: PublicTechChip[];
   projects: PublicProjectRef[];
 }
 

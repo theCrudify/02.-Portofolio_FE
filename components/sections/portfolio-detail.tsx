@@ -18,7 +18,12 @@ import { TechLogo } from '@/components/project/tech-logo';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
-import type { PublicImage, PublicOrganization, PublicPortfolioExtras } from '@/lib/api/types';
+import type {
+  PublicImage,
+  PublicOrganization,
+  PublicPortfolioExtras,
+  PublicProjectRef,
+} from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
 /** "View details" link on a certificate / activity / award card. */
@@ -61,6 +66,13 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   /** Heading of the organization card: Organization / Issuer / Organizer. */
   organizationLabel?: string;
   description?: string | null;
+  /** Work experience only: job description bullets, shown before achievements. */
+  responsibilities?: string[];
+  responsibilitiesTitle?: string;
+  achievementsTitle?: string;
+  /** Work experience only: projects delivered in this role (links to their case studies). */
+  projects?: PublicProjectRef[];
+  projectsTitle?: string;
   /** Extra actions (verify credential, external link…). */
   actions?: ReactNode;
   prev?: DetailNavItem | null;
@@ -89,7 +101,12 @@ export function PortfolioDetailPage({
   organization,
   organizationLabel,
   description,
+  responsibilities = [],
+  responsibilitiesTitle,
   achievements = [],
+  achievementsTitle,
+  projects = [],
+  projectsTitle,
   technologies = [],
   attachments = [],
   links = [],
@@ -102,7 +119,8 @@ export function PortfolioDetailPage({
   const documents = attachments.filter((a) => a.kind !== 'image');
   const shownFacts = facts.filter((f) => f.value);
   const hasSidebar = Boolean(organization || technologies.length || links.length);
-  const isEmpty = !description && !achievements.length && !attachments.length;
+  const isEmpty =
+    !description && !responsibilities.length && !achievements.length && !projects.length && !attachments.length;
 
   return (
     <article className="py-10 md:py-16">
@@ -193,9 +211,20 @@ export function PortfolioDetailPage({
               </section>
             ) : null}
 
+            {responsibilities.length > 0 ? (
+              <section className="space-y-4">
+                <SectionTitle>{responsibilitiesTitle ?? t('responsibilities')}</SectionTitle>
+                <ul className="max-w-[70ch] list-disc space-y-2 pl-5 text-base leading-[1.8] text-muted-foreground marker:text-primary">
+                  {responsibilities.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
             {achievements.length > 0 ? (
               <section className="space-y-4">
-                <SectionTitle>{t('achievements')}</SectionTitle>
+                <SectionTitle>{achievementsTitle ?? t('achievements')}</SectionTitle>
                 <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {achievements.map((item, i) => (
                     <li
@@ -204,6 +233,25 @@ export function PortfolioDetailPage({
                     >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                       <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {projects.length > 0 ? (
+              <section className="space-y-4">
+                <SectionTitle>{projectsTitle ?? t('projects')}</SectionTitle>
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {projects.map((p) => (
+                    <li key={p.slug}>
+                      <Link
+                        href={`/projects/${p.slug}`}
+                        className="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 font-medium text-foreground transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <span className="min-w-0 truncate">{p.title}</span>
+                        <ArrowRight className="h-4 w-4 shrink-0 text-primary" />
+                      </Link>
                     </li>
                   ))}
                 </ul>
