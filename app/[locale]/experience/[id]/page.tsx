@@ -1,3 +1,4 @@
+import { BriefcaseBusiness } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -51,12 +52,14 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
       backLabel={tSection('title')}
       trackId={`experience-${exp.id}`}
       badges={[exp.employmentType.label]}
+      watermark={BriefcaseBusiness}
+      kicker={formatPeriod(exp.startDate, exp.endDate, typedLocale)}
       organization={exp.organization}
       responsibilitiesTitle={tSection('responsibilities')}
       achievementsTitle={tSection('achievements')}
       projectsTitle={tSection('projectsInRole')}
       facts={[
-        { label: t('period'), value: formatPeriod(exp.startDate, exp.endDate, typedLocale) },
+        { label: t('type'), value: exp.employmentType.label },
         { label: t('workMode'), value: exp.workMode?.label },
         // The organization line already shows its own location.
         { label: t('location'), value: exp.location !== exp.organization?.location ? exp.location : null },

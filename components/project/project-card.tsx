@@ -33,17 +33,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   return (
     <SpotlightCard className="group flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
       {/* Browser-window chrome so every preview reads as a product screenshot */}
-      <div
-        aria-hidden="true"
-        className="flex items-center gap-1.5 border-b border-border/60 bg-muted/70 px-3 py-2"
-      >
-        <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
-        <span className="ml-2 min-w-0 flex-1 truncate rounded-md bg-background/80 px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground">
-          /{project.slug}
-        </span>
-      </div>
+      <BrowserChrome path={`/${project.slug}`} />
       <div className="relative aspect-video w-full overflow-hidden border-b border-border/60 bg-muted">
         <Link
           href={`/projects/${project.slug}`}
@@ -220,5 +210,22 @@ export function ProjectCard({ project }: ProjectCardProps) {
         ) : null}
       </CardFooter>
     </SpotlightCard>
+  );
+}
+
+/** Window-chrome bar (traffic lights + path) above product previews. */
+export function BrowserChrome({ path, className }: { path: string; className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn('flex items-center gap-1.5 border-b border-border/60 bg-muted/70 px-3 py-2', className)}
+    >
+      <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
+      <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
+      <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
+      <span className="ml-2 min-w-0 flex-1 truncate rounded-md bg-background/80 px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+        {path}
+      </span>
+    </div>
   );
 }

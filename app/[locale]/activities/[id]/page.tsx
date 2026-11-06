@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -54,6 +54,8 @@ export default async function ActivityDetailPage({ params }: { params: Params })
       trackId={`activity-${act.id}`}
       cover={act.media}
       badges={[act.type.label]}
+      watermark={Users}
+      kicker={activityPeriod(act, typedLocale) || null}
       organization={act.organization}
       facts={[
         {

@@ -1,4 +1,4 @@
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, ShieldCheck } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -48,7 +48,15 @@ export default async function CertificationDetailPage({ params }: { params: Para
       backLabel={tCert('title')}
       trackId={`cert-${cert.id}`}
       cover={cert.image}
-      badges={[cert.type.label, cert.isExpired ? tCert('expired') : null]}
+      badges={[cert.type.label]}
+      watermark={ShieldCheck}
+      chips={[
+        cert.isExpired
+          ? { label: tCert('expired'), tone: 'danger' }
+          : cert.expiryDate
+            ? { label: tCert('active'), tone: 'success' }
+            : { label: tCert('lifetime'), tone: 'primary' },
+      ]}
       organization={cert.issuer}
       coverFit="contain"
       facts={[
@@ -60,7 +68,7 @@ export default async function CertificationDetailPage({ params }: { params: Para
           label: tCert('expires'),
           value: cert.expiryDate ? formatMonthYear(cert.expiryDate, typedLocale) : t('noExpiry'),
         },
-        { label: t('credentialId'), value: cert.credentialId, mono: true },
+        { label: t('credentialId'), value: cert.credentialId, mono: true, wide: true },
       ]}
       actions={
         cert.credentialUrl ? (

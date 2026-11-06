@@ -73,18 +73,7 @@ export function Section({
       <Container className="relative z-10">
         {eyebrow || title || actions ? (
           <div className="mb-8 border-b border-border/80 pb-6 md:mb-10">
-            {eyebrow ? (
-              <div className="mb-3 flex items-center gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/35 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary shadow-2xs">
-                  <Sparkles className="h-3 w-3" />
-                  <span>{eyebrow}</span>
-                </span>
-                <div
-                  aria-hidden="true"
-                  className="h-px flex-1 bg-gradient-to-r from-primary/35 via-border/80 to-transparent"
-                />
-              </div>
-            ) : null}
+            {eyebrow ? <SectionEyebrow className="mb-3">{eyebrow}</SectionEyebrow> : null}
 
             <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
               <div className="space-y-2">
@@ -107,5 +96,21 @@ export function Section({
         {children}
       </Container>
     </section>
+  );
+}
+
+/** Pill label with a fading rule, used above section and page titles. */
+export function SectionEyebrow({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={cn('flex items-center gap-3', className)}>
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/35 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary shadow-2xs">
+        <Sparkles className="h-3 w-3" />
+        <span>{children}</span>
+      </span>
+      <div
+        aria-hidden="true"
+        className="h-px flex-1 bg-gradient-to-r from-primary/35 via-border/80 to-transparent"
+      />
+    </div>
   );
 }
