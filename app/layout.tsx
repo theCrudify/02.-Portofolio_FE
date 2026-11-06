@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={allFontVariables}>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
-        <Toaster position="bottom-right" richColors />
+        <Toaster position="top-right" richColors closeButton duration={3500} offset={{ top: 80, right: 16 }} />
       </body>
     </html>
   );

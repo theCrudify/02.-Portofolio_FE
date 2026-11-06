@@ -8,6 +8,8 @@ import { useAdminList } from '@/lib/admin/use-admin-list';
 import { DataTable, type DataRow, type SortChoice, type StatusFilter } from '@/components/admin/data-table';
 import { Pager } from '@/components/admin/pager';
 import { ResourceForm } from '@/components/admin/resource-form';
+import { useConfirm } from '@/components/admin/confirm-dialog';
+import { toast } from 'sonner';
 
 /** Column header from the form field that edits it ("roleEn" -> "Role / position"). */
 function columnLabel(meta: AdminResourceMeta, column: string | undefined) {
@@ -23,7 +25,7 @@ export default function AdminGenericContentPage() {
   const [status, setStatus] = React.useState<StatusFilter>('all');
   const [sort, setSort] = React.useState<SortChoice>('default');
   const [editing, setEditing] = React.useState<Record<string, unknown> | null>(null);
-  const [actionError, setActionError] = React.useState<string | null>(null);
+  const confirm = useConfirm();
 
   const list = useAdminList<DataRow>(`/v1/admin/${meta?.key ?? params.resource}`, {
     status: status === 'all' ? undefined : status,
@@ -45,28 +47,42 @@ export default function AdminGenericContentPage() {
     return <div className="p-4 text-sm text-destructive">Unknown content resource.</div>;
   }
 
-  async function run(action: () => Promise<unknown>, failure: string) {
-    setActionError(null);
+  const singular = meta.title.replace(/ies$/, 'y').replace(/s$/, '');
+
+  /** Runs an API action, refreshes the list and reports the outcome as a toast. */
+  async function run(action: () => Promise<unknown>, failure: string, success?: string) {
     try {
       await action();
+      if (success) toast.success(success);
       await list.reload();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : failure);
+      toast.error(failure, { description: err instanceof ApiError ? err.message : undefined });
     }
   }
 
+  const TRANSITIONS = {
+    publish: 'Published — now live on the site.',
+    unpublish: 'Unpublished — moved back to draft.',
+    archive: 'Archived.',
+    restore: 'Restored to draft.',
+  } as const;
+
   async function handleSubmit(values: Record<string, unknown>) {
-    await run(async () => {
-      const id = editing?.id ? `/${String(editing.id)}` : '';
-      await apiFetch(`/v1/admin/${meta.key}${id}`, {
-        method: id ? 'PUT' : 'POST',
-        body: JSON.stringify(values),
-      });
-      setEditing(null);
-    }, 'Failed to save item.');
+    const id = editing?.id ? `/${String(editing.id)}` : '';
+    await run(
+      async () => {
+        await apiFetch(`/v1/admin/${meta.key}${id}`, {
+          method: id ? 'PUT' : 'POST',
+          body: JSON.stringify(values),
+        });
+        setEditing(null);
+      },
+      `Could not save this ${singular.toLowerCase()}.`,
+      id ? `${singular} saved.` : `${singular} created as a draft.`,
+    );
   }
 
-  const error = actionError ?? list.error;
+  const error = list.error;
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
@@ -118,17 +134,30 @@ export default function AdminGenericContentPage() {
             }, 'Failed to load item.')
           }
           onTransition={(id, action) =>
-            void run(() => apiFetch(`/v1/admin/${meta.key}/${id}/${action}`, { method: 'POST' }), `Failed to ${action}.`)
-          }
-          onSoftDelete={(id) =>
-            void run(() => apiFetch(`/v1/admin/${meta.key}/${id}`, { method: 'DELETE' }), 'Failed to move to trash.')
-          }
-          onPermanentDelete={(id) =>
             void run(
-              () => apiFetch(`/v1/admin/${meta.key}/${id}/permanent`, { method: 'DELETE' }),
-              'Failed to delete.',
+              () => apiFetch(`/v1/admin/${meta.key}/${id}/${action}`, { method: 'POST' }),
+              `Could not ${action} this ${singular.toLowerCase()}.`,
+              TRANSITIONS[action],
             )
           }
+          onSoftDelete={async (id) => {
+            const ok = await confirm({
+              tone: 'warning',
+              title: `Move this ${singular.toLowerCase()} to trash?`,
+              description: 'It disappears from the site. You can restore it later from the archive.',
+              confirmLabel: 'Move to trash',
+            });
+            if (ok) await run(() => apiFetch(`/v1/admin/${meta.key}/${id}`, { method: 'DELETE' }), 'Could not move to trash.', 'Moved to trash.');
+          }}
+          onPermanentDelete={async (id) => {
+            const ok = await confirm({
+              tone: 'danger',
+              title: 'Delete forever?',
+              description: `This ${singular.toLowerCase()} and everything attached to it will be removed permanently. This cannot be undone.`,
+              confirmLabel: 'Delete forever',
+            });
+            if (ok) await run(() => apiFetch(`/v1/admin/${meta.key}/${id}/permanent`, { method: 'DELETE' }), 'Could not delete.', 'Deleted permanently.');
+          }}
         />
         <Pager page={list.page} total={list.total} limit={list.limit} onPage={list.setPage} onLimit={list.setLimit} />
       </div>

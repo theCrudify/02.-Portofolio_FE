@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { TableSearch } from '@/components/admin/data-table';
 import { Pager } from '@/components/admin/pager';
 import { useAdminList } from '@/lib/admin/use-admin-list';
+import { toast } from 'sonner';
 
 interface ContactMessageRow {
   id: string;
@@ -26,8 +27,7 @@ export default function AdminMessagesPage() {
     isRead: filter === 'unread' ? false : undefined,
     isArchived: filter === 'archived' ? true : undefined,
   });
-  const [actionError, setActionError] = React.useState<string | null>(null);
-  const error = actionError ?? list.error;
+  const error = list.error;
 
   async function handlePatch(id: string, patch: { isRead?: boolean; isArchived?: boolean }) {
     try {
@@ -35,9 +35,14 @@ export default function AdminMessagesPage() {
         method: 'PATCH',
         body: JSON.stringify(patch),
       });
+      toast.success(
+        patch.isArchived !== undefined
+          ? patch.isArchived ? 'Message archived.' : 'Message moved back to the inbox.'
+          : patch.isRead ? 'Marked as read.' : 'Marked as unread.',
+      );
       await list.reload();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to update message.');
+      toast.error('Could not update the message.', { description: err instanceof ApiError ? err.message : undefined });
     }
   }
 

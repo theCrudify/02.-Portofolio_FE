@@ -5,6 +5,8 @@ import { apiFetch, ApiError } from '@/lib/api/client';
 import { TableSearch } from '@/components/admin/data-table';
 import { Pager } from '@/components/admin/pager';
 import { useAdminList } from '@/lib/admin/use-admin-list';
+import { useConfirm } from '@/components/admin/confirm-dialog';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,8 +26,10 @@ interface AdminUserRow {
 export default function AdminUsersPage() {
   const list = useAdminList<AdminUserRow>('/v1/admin/users');
   const { items: users, loading } = list;
-  const [actionError, setError] = React.useState<string | null>(null);
-  const error = actionError ?? list.error;
+  const error = list.error;
+  const confirm = useConfirm();
+  const fail = (title: string, err: unknown) =>
+    toast.error(title, { description: err instanceof ApiError ? err.message : undefined });
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -35,7 +39,6 @@ export default function AdminUsersPage() {
 
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     try {
       await apiFetch('/v1/admin/users', {
         method: 'POST',
@@ -44,30 +47,50 @@ export default function AdminUsersPage() {
       setEmail('');
       setName('');
       setPassword('');
+      toast.success(`${name} added as ${role}.`);
       await loadUsers();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to create user.');
+      fail('Could not add the user.', err);
     }
   }
 
   async function handleToggleActive(u: AdminUserRow) {
+    if (
+      u.isActive &&
+      !(await confirm({
+        tone: 'warning',
+        title: `Deactivate ${u.name}?`,
+        description: 'They are signed out and cannot log in until reactivated.',
+        confirmLabel: 'Deactivate',
+      }))
+    )
+      return;
     try {
       await apiFetch(`/v1/admin/users/${u.id}`, {
         method: 'PUT',
         body: JSON.stringify({ isActive: !u.isActive }),
       });
+      toast.success(u.isActive ? `${u.name} deactivated.` : `${u.name} activated.`);
       await loadUsers();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to update user.');
+      fail('Could not update the user.', err);
     }
   }
 
-  async function handleDeleteUser(id: string) {
+  async function handleDeleteUser(u: AdminUserRow) {
+    const ok = await confirm({
+      tone: 'danger',
+      title: `Delete ${u.name}?`,
+      description: `${u.email} loses access to the admin permanently. This cannot be undone.`,
+      confirmLabel: 'Delete user',
+    });
+    if (!ok) return;
     try {
-      await apiFetch(`/v1/admin/users/${id}`, { method: 'DELETE' });
+      await apiFetch(`/v1/admin/users/${u.id}`, { method: 'DELETE' });
+      toast.success(`${u.name} deleted.`);
       await loadUsers();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to delete user.');
+      fail('Could not delete the user.', err);
     }
   }
 
@@ -188,7 +211,7 @@ export default function AdminUsersPage() {
                     <Button variant="outline" size="sm" onClick={() => handleToggleActive(u)}>
                       {u.isActive ? 'Deactivate' : 'Activate'}
                     </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u.id)}>
+                    <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u)}>
                       Delete
                     </Button>
                   </td>

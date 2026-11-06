@@ -13,6 +13,8 @@ import {
   type AdminLookupValue,
 } from '@/lib/admin/master-data';
 import { apiFetch, ApiError } from '@/lib/api/client';
+import { useConfirm } from '@/components/admin/confirm-dialog';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 type Draft = Pick<AdminLookupValue, 'labelEn' | 'labelId' | 'icon' | 'color' | 'isActive' | 'sortOrder'>;
@@ -36,12 +38,14 @@ function ValueRow({
   onError: (msg: string) => void;
 }) {
   const [draft, setDraft] = React.useState<Draft>(() => toDraft(value));
+  const confirm = useConfirm();
   const dirty = JSON.stringify(draft) !== JSON.stringify(toDraft(value));
   const set = <K extends keyof Draft>(key: K, v: Draft[K]) => setDraft((d) => ({ ...d, [key]: v }));
 
   async function save() {
     try {
       await apiFetch(`/v1/admin/lookups/${value.id}`, { method: 'PUT', body: JSON.stringify(draft) });
+      toast.success(`"${draft.labelEn}" saved.`);
       onSaved();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to save value.');
@@ -49,9 +53,16 @@ function ValueRow({
   }
 
   async function remove() {
-    if (!window.confirm(`Delete "${value.labelEn}"?`)) return;
+    const ok = await confirm({
+      tone: 'danger',
+      title: `Delete "${value.labelEn}"?`,
+      description: 'Values still used by content cannot be deleted.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await apiFetch(`/v1/admin/lookups/${value.id}`, { method: 'DELETE' });
+      toast.success(`"${value.labelEn}" deleted.`);
       onSaved();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to delete value.');
@@ -134,6 +145,7 @@ function AddValueForm({ group, onSaved, onError }: { group: AdminLookupGroup; on
       setCode('');
       setLabelEn('');
       setLabelId('');
+      toast.success(`"${labelEn}" added.`);
       onSaved();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to add value.');
@@ -235,7 +247,7 @@ export default function AdminMasterDataPage() {
                 </thead>
                 <tbody>
                   {active.values.map((v) => (
-                    <ValueRow key={`${v.id}-${v.sortOrder}-${v.labelEn}`} value={v} onSaved={refresh} onError={setError} />
+                    <ValueRow key={`${v.id}-${v.sortOrder}-${v.labelEn}`} value={v} onSaved={refresh} onError={(message) => toast.error(message)} />
                   ))}
                 </tbody>
               </table>
@@ -245,7 +257,7 @@ export default function AdminMasterDataPage() {
                 This group is used by the code; new values can&apos;t be added here.
               </p>
             ) : (
-              <AddValueForm group={active} onSaved={refresh} onError={setError} />
+              <AddValueForm group={active} onSaved={refresh} onError={(message) => toast.error(message)} />
             )}
           </section>
         ) : null}

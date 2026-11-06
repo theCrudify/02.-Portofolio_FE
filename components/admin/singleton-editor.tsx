@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { ResourceForm } from '@/components/admin/resource-form';
 import type { ResourceFieldDef } from '@/lib/admin/resources';
+import { toast } from 'sonner';
 import { apiFetch, ApiError } from '@/lib/api/client';
 
 /**
@@ -22,7 +23,6 @@ export function SingletonEditor({
 }) {
   const [values, setValues] = React.useState<Record<string, unknown> | null>(null);
   const [saving, setSaving] = React.useState(false);
-  const [statusMsg, setStatusMsg] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -43,8 +43,6 @@ export function SingletonEditor({
 
   async function handleSubmit(next: Record<string, unknown>) {
     setSaving(true);
-    setError(null);
-    setStatusMsg(null);
     try {
       const body = Object.fromEntries(ownKeys.filter((k) => k in next).map((k) => [k, next[k]]));
       const res = await apiFetch<Record<string, unknown>>(endpoint, {
@@ -52,9 +50,9 @@ export function SingletonEditor({
         body: JSON.stringify(body),
       });
       setValues(res.data ?? next);
-      setStatusMsg('Saved. The public site is revalidated.');
+      toast.success(`${title} saved.`, { description: 'The public site is updated.' });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : `Failed to save ${title}.`);
+      toast.error(`Could not save ${title}.`, { description: err instanceof ApiError ? err.message : undefined });
     } finally {
       setSaving(false);
     }
@@ -66,11 +64,6 @@ export function SingletonEditor({
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      {statusMsg ? (
-        <div role="status" className="rounded-md border border-border bg-muted p-3 text-sm">
-          {statusMsg}
-        </div>
-      ) : null}
       {error ? (
         <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
           {error}

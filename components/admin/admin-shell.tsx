@@ -29,6 +29,7 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
+import { ConfirmProvider } from '@/components/admin/confirm-dialog';
 import { UserProvider } from '@/components/admin/role-gate';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Badge } from '@/components/ui/badge';
@@ -93,6 +94,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
 
   return (
     <UserProvider user={user}>
+      <ConfirmProvider>
       <div className="flex min-h-screen bg-muted/30 text-foreground">
         <aside
           aria-label="Admin sidebar"
@@ -196,6 +198,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
           <main className="flex-1 p-4 md:p-8">{children}</main>
         </div>
       </div>
+      </ConfirmProvider>
     </UserProvider>
   );
 }

@@ -4,6 +4,8 @@ import Image from 'next/image';
 import * as React from 'react';
 import { UPLOAD_ACCEPT, uploadMedia, type MediaAssetItem } from '@/components/admin/media-picker';
 import { Pager } from '@/components/admin/pager';
+import { useConfirm } from '@/components/admin/confirm-dialog';
+import { toast } from 'sonner';
 import { useAdminList } from '@/lib/admin/use-admin-list';
 import { RoleGate } from '@/components/admin/role-gate';
 import { Badge } from '@/components/ui/badge';
@@ -24,15 +26,12 @@ export default function AdminMediaPage() {
   const { items, search, setSearch } = list;
   const [embedUrl, setEmbedUrl] = React.useState('');
   const [embedTitle, setEmbedTitle] = React.useState('');
-  const [error, setError] = React.useState<string | null>(null);
-  const [statusMsg, setStatusMsg] = React.useState<string | null>(null);
+  const confirm = useConfirm();
 
   const loadMedia = list.reload;
 
   async function handleAddEmbed(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setStatusMsg(null);
     try {
       await apiFetch('/v1/admin/media/embed', {
         method: 'POST',
@@ -40,10 +39,10 @@ export default function AdminMediaPage() {
       });
       setEmbedUrl('');
       setEmbedTitle('');
-      setStatusMsg('External video embedded into Media Library.');
+      toast.success('Video added to the Media Library.');
       await loadMedia();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to add video embed.');
+      toast.error('Could not add the video.', { description: err instanceof ApiError ? err.message : undefined });
     }
   }
 
@@ -56,32 +55,34 @@ export default function AdminMediaPage() {
       : file.type.startsWith('video/')
         ? 'video'
         : 'document';
-    setError(null);
-    setStatusMsg(`Uploading ${file.name}…`);
+    const pending = toast.loading(`Uploading ${file.name}…`);
     try {
       await uploadMedia(file, kind);
-      setStatusMsg(`${file.name} uploaded.`);
+      toast.success(`${file.name} uploaded.`, { id: pending });
       await loadMedia();
     } catch (err) {
-      setStatusMsg(null);
-      setError(err instanceof Error ? err.message : 'Upload failed.');
+      toast.error('Upload failed.', { id: pending, description: err instanceof Error ? err.message : undefined });
     }
   }
 
   async function handleDelete(id: string) {
-    setError(null);
-    setStatusMsg(null);
+    const ok = await confirm({
+      tone: 'danger',
+      title: 'Delete this file?',
+      description: 'It is removed from the Media Library. Files still used by content cannot be deleted.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
     try {
       await apiFetch(`/v1/admin/media/${id}`, { method: 'DELETE' });
-      setStatusMsg('Media asset removed.');
+      toast.success('File deleted.');
       await loadMedia();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) {
-        const usageInfo = err.details?.map((d) => d.message).join(', ') ?? '';
-        setError(`${err.message} ${usageInfo}`);
-      } else {
-        setError(err instanceof ApiError ? err.message : 'Failed to delete media.');
-      }
+      // 409: still referenced; the details name where it is used.
+      const usage = err instanceof ApiError ? err.details?.map((d) => d.message).join(', ') : undefined;
+      toast.error(err instanceof ApiError && err.status === 409 ? 'This file is still in use.' : 'Could not delete the file.', {
+        description: usage || (err instanceof ApiError ? err.message : undefined),
+      });
     }
   }
 
@@ -94,15 +95,12 @@ export default function AdminMediaPage() {
         </p>
       </div>
 
-      {statusMsg && (
-        <div className="rounded-md border border-border bg-muted p-3 text-sm">{statusMsg}</div>
-      )}
-      {(error ?? list.error) && (
+      {list.error && (
         <div
           role="alert"
           className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
         >
-          {error ?? list.error}
+          {list.error}
         </div>
       )}
 

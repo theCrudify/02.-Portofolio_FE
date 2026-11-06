@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PAGE_SIZE, Pager } from '@/components/admin/pager';
+import { useConfirm } from '@/components/admin/confirm-dialog';
+import { toast } from 'sonner';
 
 interface AuditLogEntry {
   id: string;
@@ -26,8 +28,10 @@ export default function AdminSettingsPage() {
   const [totpCode, setTotpCode] = React.useState('');
   const [disablePassword, setDisablePassword] = React.useState('');
   const [disableCode, setDisableCode] = React.useState('');
-  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  // Outcomes are reported as toasts; null clears nothing.
+  const setStatusMessage = (message: string | null) => message && toast.success(message);
+  const setError = (message: string | null) => message && toast.error(message);
+  const confirm = useConfirm();
   const [auditLogs, setAuditLogs] = React.useState<AuditLogEntry[]>([]);
   const [auditPage, setAuditPage] = React.useState(1);
   const [auditTotal, setAuditTotal] = React.useState(0);
@@ -94,7 +98,13 @@ export default function AdminSettingsPage() {
   }
 
   async function handleLogoutAll() {
-    setError(null);
+    const ok = await confirm({
+      tone: 'warning',
+      title: 'Sign out everywhere?',
+      description: 'Every session on every device is ended, including this one. You will need to log in again.',
+      confirmLabel: 'Sign out all',
+    });
+    if (!ok) return;
     try {
       await apiFetch('/v1/auth/logout-all', { method: 'POST' });
       window.location.href = '/admin/login';
@@ -125,19 +135,6 @@ export default function AdminSettingsPage() {
         </p>
       </div>
 
-      {statusMessage && (
-        <div className="rounded-md border border-border bg-muted p-3 text-sm text-foreground">
-          {statusMessage}
-        </div>
-      )}
-      {error && (
-        <div
-          role="alert"
-          className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
-        >
-          {error}
-        </div>
-      )}
 
       <Tabs defaultValue="security">
         <TabsList>

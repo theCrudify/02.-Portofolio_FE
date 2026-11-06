@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,15 +74,15 @@ export default function AdminDocumentsPage() {
   async function handleActivateDoc(id: string) {
     try {
       await apiFetch(`/v1/admin/documents/${id}/activate`, { method: 'POST' });
+      toast.success('Document set as active.');
       await loadAll();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to activate document.');
+      toast.error('Could not activate the document.', { description: err instanceof ApiError ? err.message : undefined });
     }
   }
 
   async function handleCreateShareLink(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     try {
       await apiFetch('/v1/admin/share-links', {
         method: 'POST',
@@ -91,9 +92,10 @@ export default function AdminDocumentsPage() {
         }),
       });
       setShareLabel('');
+      toast.success('Share link created.', { description: 'Copy it from the list below.' });
       await loadAll();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to create share link.');
+      toast.error('Could not create the share link.', { description: err instanceof ApiError ? err.message : undefined });
     }
   }
 
