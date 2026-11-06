@@ -23,7 +23,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     description: exp?.description ?? '',
     path: `/experience/${id}`,
     locale: typedLocale,
-    image: exp?.attachments.find((a) => a.kind === 'image')?.url,
+    // Optional chain: tolerates an API that predates experience attachments.
+    image: exp?.attachments?.find((a) => a.kind === 'image')?.url,
     noIndex: !exp,
   });
 }
