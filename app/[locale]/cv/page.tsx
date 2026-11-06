@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+import { AutoPrint, PrintCvButton } from '@/components/pdf/print-controls';
 import { fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { CvPrintableView, type CvExportPayload } from '@/components/pdf/cv-templates';
@@ -20,18 +22,18 @@ export default async function WebCvPage({
   const t = await getTranslations({ locale: typedLocale, namespace: 'cv' });
   const preset = pickExportPreset(site.exportPresets, typedLocale);
 
-  // Same shape as the API export; sections follow the home-page order set in the admin.
+  // Same shape as the API export. A CV reads experience first, whatever the home-page order;
+  // sections hidden in the admin stay hidden.
   const available: Record<string, unknown[]> = {
     experience: site.experiences,
     projects: site.featuredProjects,
-    education: site.education,
     skills: site.technologies,
+    education: site.education,
     certifications: site.certifications,
   };
+  const visible = new Set(site.settings.sections.filter((s) => s.visible).map((s) => s.code));
   const sections = Object.fromEntries(
-    site.settings.sections
-      .filter((s) => s.visible && s.code in available)
-      .map((s) => [s.code, available[s.code]!]),
+    Object.entries(available).filter(([code]) => visible.has(code)),
   );
 
   const exportPayload: CvExportPayload = {
@@ -49,15 +51,11 @@ export default async function WebCvPage({
     <div className="container mx-auto py-10 print:py-0">
       <div className="mb-6 flex items-center justify-between print:hidden">
         <h1 className="text-lg font-semibold">{t('printTitle')}</h1>
-        {preset ? (
-          <a
-            href={`/api/pdf/${preset.slug}?locale=${typedLocale}`}
-            className="rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
-          >
-            {t('downloadPdf')}
-          </a>
-        ) : null}
+        <PrintCvButton label={t('downloadPdf')} />
       </div>
+      <Suspense>
+        <AutoPrint />
+      </Suspense>
       <CvPrintableView data={exportPayload} labels={labels} />
     </div>
   );
