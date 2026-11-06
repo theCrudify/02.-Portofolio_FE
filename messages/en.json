@@ -238,7 +238,8 @@
       "responsibilities": "Responsibilities",
       "projects": "Projects",
       "workMode": "Work mode",
-      "location": "Location"
+      "location": "Location",
+      "duration": "Duration"
     }
   },
   "common": {

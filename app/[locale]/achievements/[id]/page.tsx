@@ -1,4 +1,4 @@
-import { ExternalLink, Trophy } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -53,7 +53,6 @@ export default async function AchievementDetailPage({ params }: { params: Params
       trackId={`achievement-${ach.id}`}
       cover={ach.certificate}
       badges={[ach.rank]}
-      watermark={Trophy}
       kicker={ach.date ? formatDate(ach.date, typedLocale) : null}
       organization={ach.issuer}
       coverFit="contain"

@@ -1,18 +1,7 @@
+import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 import {
-  AlignLeft,
-  ArrowRight,
-  FileText,
-  FolderGit2,
-  Images,
-  ListChecks,
-  Trophy,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react";
-import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
-import {
-  DetailArticle,
   DetailBulletList,
   DetailHeader,
   DetailNumberedList,
@@ -20,40 +9,35 @@ import {
   DetailProse,
   DetailRowList,
   DetailSection,
-  DetailSections,
-  DetailSummaryCard,
+  DetailStatPanel,
   DetailTechList,
   type DetailChip,
   type DetailFact,
   type DetailNavItem,
-} from "@/components/detail/detail-layout";
-import { MultiImageShowcase } from "@/components/media/multi-image-showcase";
-import { ProjectLinks } from "@/components/project/project-links";
-import { buttonVariants } from "@/components/ui/button";
-import { Link } from "@/i18n/routing";
+} from '@/components/detail/detail-layout';
+import { MultiImageShowcase } from '@/components/media/multi-image-showcase';
+import { ProjectCard } from '@/components/project/project-card';
+import { ProjectLinks } from '@/components/project/project-links';
+import { buttonVariants } from '@/components/ui/button';
+import { Link } from '@/i18n/routing';
 import type {
   PublicImage,
   PublicOrganization,
   PublicPortfolioExtras,
+  PublicProjectCard,
   PublicProjectRef,
-} from "@/lib/api/types";
-import { cn } from "@/lib/utils";
+} from '@/lib/api/types';
+import { cn } from '@/lib/utils';
 
 export type { DetailChip, DetailFact, DetailNavItem };
 
 /** "View details" link on a certificate / activity / award card. */
 export function DetailLink({ href }: { href: string }) {
-  const t = useTranslations("sections.extras");
+  const t = useTranslations('sections.extras');
   return (
     <div className="border-t border-border/60 px-5 py-3">
-      <Link
-        href={href}
-        className={cn(
-          buttonVariants({ variant: "outline", size: "sm" }),
-          "min-h-11",
-        )}
-      >
-        {t("details")}
+      <Link href={href} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'min-h-11')}>
+        {t('details')}
         <ArrowRight className="h-4 w-4" />
       </Link>
     </div>
@@ -68,18 +52,16 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   badges?: (string | null | undefined)[];
   /** Mono line above the title (period, date). */
   kicker?: string | null;
-  /** Status chips on the summary card band (active, expired…). */
+  /** Status chips in the hero panel (active, expired…). */
   chips?: DetailChip[];
-  /** Big faint icon on the summary card band when there is no image. */
-  watermark: LucideIcon;
   backHref: string;
   backLabel: string;
   /** Used as the analytics target id for link clicks. */
   trackId: string;
   cover?: PublicImage | null;
   /** Certificates and scans are shown whole instead of cropped. */
-  coverFit?: "cover" | "contain";
-  /** Key facts on the summary card (period, credential id…); empty values are skipped. */
+  coverFit?: 'cover' | 'contain';
+  /** Stat tiles in the hero panel; the first one is accented. Empty values are skipped. */
   facts?: DetailFact[];
   organization?: PublicOrganization | null;
   description?: string | null;
@@ -87,8 +69,10 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   responsibilities?: string[];
   responsibilitiesTitle?: string;
   achievementsTitle?: string;
-  /** Work experience only: projects delivered in this role (links to their case studies). */
+  /** Work experience only: projects delivered in this role. */
   projects?: PublicProjectRef[];
+  /** Full cards for those projects (cover, stack); falls back to plain links when missing. */
+  projectCards?: PublicProjectCard[];
   projectsTitle?: string;
   /** Extra actions (verify credential, external link…). */
   actions?: ReactNode;
@@ -102,12 +86,11 @@ export function PortfolioDetailPage({
   badges = [],
   kicker,
   chips = [],
-  watermark,
   backHref,
   backLabel,
   trackId,
   cover,
-  coverFit = "cover",
+  coverFit = 'cover',
   facts = [],
   organization,
   description,
@@ -116,6 +99,7 @@ export function PortfolioDetailPage({
   achievements = [],
   achievementsTitle,
   projects = [],
+  projectCards = [],
   projectsTitle,
   technologies = [],
   attachments = [],
@@ -124,30 +108,96 @@ export function PortfolioDetailPage({
   prev,
   next,
 }: PortfolioDetailPageProps) {
-  const t = useTranslations("sections.extras");
-  const images = attachments.filter((a) => a.kind === "image");
-  const documents = attachments.filter((a) => a.kind !== "image");
-  const isEmpty =
-    !description &&
-    !responsibilities.length &&
-    !achievements.length &&
-    !projects.length &&
-    !attachments.length &&
-    !technologies.length;
+  const t = useTranslations('sections.extras');
+  const images = attachments.filter((a) => a.kind === 'image');
+  const documents = attachments.filter((a) => a.kind !== 'image');
   const headerActions =
     actions || links.length ? (
       <>
         {actions}
-        <ProjectLinks
-          links={links}
-          projectSlug={trackId}
-          privateLabel={t("private")}
-        />
+        <ProjectLinks links={links} projectSlug={trackId} privateLabel={t('private')} />
       </>
     ) : null;
 
+  // Each block becomes a full-width Section; backgrounds alternate like the home page.
+  const blocks: { key: string; title: string; body: ReactNode }[] = [];
+  if (description) {
+    blocks.push({ key: 'description', title: t('description'), body: <DetailProse>{description}</DetailProse> });
+  }
+  if (responsibilities.length) {
+    blocks.push({
+      key: 'responsibilities',
+      title: responsibilitiesTitle ?? t('responsibilities'),
+      body: <DetailBulletList items={responsibilities} />,
+    });
+  }
+  if (achievements.length) {
+    blocks.push({
+      key: 'achievements',
+      title: achievementsTitle ?? t('achievements'),
+      body: <DetailNumberedList items={achievements} />,
+    });
+  }
+  if (projects.length) {
+    blocks.push({
+      key: 'projects',
+      title: projectsTitle ?? t('projects'),
+      body:
+        projectCards.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {projectCards.map((p) => (
+              <ProjectCard key={p.slug} project={p} />
+            ))}
+          </div>
+        ) : (
+          <DetailRowList rows={projects.map((p) => ({ key: p.slug, href: `/projects/${p.slug}`, title: p.title }))} />
+        ),
+    });
+  }
+  if (images.length) {
+    blocks.push({
+      key: 'gallery',
+      title: t('gallery'),
+      body: (
+        <MultiImageShowcase
+          defaultLayout={images.length > 2 ? 'bento' : 'grid'}
+          items={images.map((img, i) => ({
+            id: img.id,
+            url: img.url,
+            alt: img.alt || img.caption || `${title} ${i + 1}`,
+            title: img.caption ?? img.title,
+            caption: img.caption,
+            width: img.width,
+            height: img.height,
+          }))}
+        />
+      ),
+    });
+  }
+  if (documents.length) {
+    blocks.push({
+      key: 'documents',
+      title: t('documents'),
+      body: (
+        <DetailRowList
+          rows={documents.map((doc) => ({
+            key: doc.id,
+            href: doc.url,
+            title: doc.caption || doc.title || t('file'),
+            meta: doc.kind.toUpperCase(),
+            external: true,
+            icon: doc.kind === 'video' ? 'video' : 'file',
+          }))}
+        />
+      ),
+    });
+  }
+  if (technologies.length) {
+    blocks.push({ key: 'skills', title: t('skills'), body: <DetailTechList technologies={technologies} /> });
+  }
+
   return (
-    <DetailArticle>
+    <article>
       <DetailHeader
         backHref={backHref}
         backLabel={backLabel}
@@ -158,113 +208,23 @@ export function PortfolioDetailPage({
         byline={subtitle}
         actions={headerActions}
         aside={
-          <DetailSummaryCard
-            watermark={watermark}
-            image={cover}
-            imageFit={coverFit}
-            organization={organization}
-            fallbackName={organization?.name ?? title}
-            chips={chips}
-            facts={facts}
-          />
+          <DetailStatPanel image={cover} imageFit={coverFit} imageAlt={title} chips={chips} facts={facts} />
         }
       />
 
-      <DetailSections
-        aside={
-          technologies.length > 0 ? (
-            <DetailSection title={t("skills")} icon={Wrench}>
-              <DetailTechList technologies={technologies} />
-            </DetailSection>
-          ) : null
-        }
-      >
-        {description ? (
-          <DetailSection title={t("description")} icon={AlignLeft}>
-            <DetailProse>{description}</DetailProse>
-          </DetailSection>
-        ) : null}
+      {blocks.map((b, i) => (
+        <DetailSection key={b.key} title={b.title} muted={i % 2 === 0}>
+          {b.body}
+        </DetailSection>
+      ))}
+      {blocks.length === 0 ? (
+        <DetailSection title={t('description')} muted>
+          <p className="text-muted-foreground">{t('empty')}</p>
+        </DetailSection>
+      ) : null}
 
-        {responsibilities.length > 0 ? (
-          <DetailSection
-            title={responsibilitiesTitle ?? t("responsibilities")}
-            icon={ListChecks}
-          >
-            <DetailBulletList items={responsibilities} />
-          </DetailSection>
-        ) : null}
-
-        {achievements.length > 0 ? (
-          <DetailSection
-            title={achievementsTitle ?? t("achievements")}
-            icon={Trophy}
-          >
-            <DetailNumberedList items={achievements} />
-          </DetailSection>
-        ) : null}
-
-        {projects.length > 0 ? (
-          <DetailSection
-            title={projectsTitle ?? t("projects")}
-            icon={FolderGit2}
-          >
-            <DetailRowList
-              rows={projects.map((p) => ({
-                key: p.slug,
-                href: `/projects/${p.slug}`,
-                title: p.title,
-              }))}
-            />
-          </DetailSection>
-        ) : null}
-
-        {images.length > 0 ? (
-          <DetailSection title={t("gallery")} icon={Images}>
-            <MultiImageShowcase
-              defaultLayout={images.length > 2 ? "bento" : "grid"}
-              items={images.map((img, i) => ({
-                id: img.id,
-                url: img.url,
-                alt: img.alt || img.caption || `${title} ${i + 1}`,
-                title: img.caption ?? img.title,
-                caption: img.caption,
-                width: img.width,
-                height: img.height,
-              }))}
-            />
-          </DetailSection>
-        ) : null}
-
-        {documents.length > 0 ? (
-          <DetailSection title={t("documents")} icon={FileText}>
-            <DetailRowList
-              rows={documents.map((doc) => ({
-                key: doc.id,
-                href: doc.url,
-                title: doc.caption || doc.title || t("file"),
-                meta: doc.kind.toUpperCase(),
-                external: true,
-                icon: doc.kind === "video" ? "video" : "file",
-              }))}
-            />
-          </DetailSection>
-        ) : null}
-
-        {isEmpty ? (
-          <p className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-center text-muted-foreground">
-            {t("empty")}
-          </p>
-        ) : null}
-      </DetailSections>
-
-      <DetailPager
-        prev={prev}
-        next={next}
-        prevLabel={t("prev")}
-        nextLabel={t("next")}
-        label={t("more")}
-      />
-    </DetailArticle>
+      <DetailPager prev={prev} next={next} prevLabel={t('prev')} nextLabel={t('next')} label={t('more')} />
+    </article>
   );
 }
 
@@ -276,7 +236,6 @@ export function neighbours<T>(
 ): { prev: DetailNavItem | null; next: DetailNavItem | null } {
   return {
     prev: index > 0 ? toItem(list[index - 1]!) : null,
-    next:
-      index >= 0 && index < list.length - 1 ? toItem(list[index + 1]!) : null,
+    next: index >= 0 && index < list.length - 1 ? toItem(list[index + 1]!) : null,
   };
 }

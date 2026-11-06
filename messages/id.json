@@ -238,7 +238,8 @@
       "responsibilities": "Tanggung jawab",
       "projects": "Proyek",
       "workMode": "Mode kerja",
-      "location": "Lokasi"
+      "location": "Lokasi",
+      "duration": "Durasi"
     }
   },
   "common": {

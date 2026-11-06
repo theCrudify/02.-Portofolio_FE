@@ -1,11 +1,10 @@
-import { BriefcaseBusiness } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { neighbours, PortfolioDetailPage } from '@/components/sections/portfolio-detail';
-import { fetchSiteData } from '@/lib/api/server';
+import { fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
-import { formatPeriod } from '@/lib/format';
+import { formatDuration, formatPeriod } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
 
 type Params = Promise<{ locale: string; id: string }>;
@@ -34,14 +33,17 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
   const { locale, id } = await params;
   setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const [t, tSection, list] = await Promise.all([
+  const [t, tSection, list, allProjects] = await Promise.all([
     getTranslations({ locale: typedLocale, namespace: 'sections.extras' }),
     getTranslations({ locale: typedLocale, namespace: 'sections.experience' }),
     loadExperiences(typedLocale),
+    fetchProjectsList({ locale: typedLocale, all: true, limit: 100 }),
   ]);
   const index = list.findIndex((e) => e.id === id);
   const exp = list[index];
   if (!exp) notFound();
+  // Full cards (cover, stack) for the projects of this role, in the role's order.
+  const projectCards = exp.projects.flatMap((ref) => allProjects.data.find((p) => p.slug === ref.slug) ?? []);
 
   return (
     <PortfolioDetailPage
@@ -52,14 +54,16 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
       backLabel={tSection('title')}
       trackId={`experience-${exp.id}`}
       badges={[exp.employmentType.label]}
-      watermark={BriefcaseBusiness}
       kicker={formatPeriod(exp.startDate, exp.endDate, typedLocale)}
       organization={exp.organization}
       responsibilitiesTitle={tSection('responsibilities')}
       achievementsTitle={tSection('achievements')}
       projectsTitle={tSection('projectsInRole')}
+      projectCards={projectCards}
       facts={[
-        { label: t('type'), value: exp.employmentType.label },
+        { label: t('duration'), value: formatDuration(exp.startDate, exp.endDate, typedLocale) },
+        { label: t('projects'), value: exp.projects.length || null },
+        { label: tSection('achievements'), value: exp.achievements.length || null },
         { label: t('workMode'), value: exp.workMode?.label },
         // The organization line already shows its own location.
         { label: t('location'), value: exp.location !== exp.organization?.location ? exp.location : null },

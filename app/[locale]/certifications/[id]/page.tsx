@@ -1,4 +1,4 @@
-import { ExternalLink, ShieldCheck } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -49,7 +49,6 @@ export default async function CertificationDetailPage({ params }: { params: Para
       trackId={`cert-${cert.id}`}
       cover={cert.image}
       badges={[cert.type.label]}
-      watermark={ShieldCheck}
       chips={[
         cert.isExpired
           ? { label: tCert('expired'), tone: 'danger' }
