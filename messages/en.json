@@ -239,7 +239,9 @@
       "projects": "Projects",
       "workMode": "Work mode",
       "location": "Location",
-      "duration": "Duration"
+      "duration": "Duration",
+      "relatedCertifications": "Related certificates",
+      "relatedExperiences": "Related work experience"
     }
   },
   "common": {

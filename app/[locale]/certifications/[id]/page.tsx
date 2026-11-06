@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { neighbours, PortfolioDetailPage } from '@/components/sections/portfolio-detail';
 import { buttonVariants } from '@/components/ui/button';
-import { fetchCertificationsList } from '@/lib/api/server';
+import { fetchCertificationsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { formatMonthYear } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
@@ -30,10 +30,11 @@ export default async function CertificationDetailPage({ params }: { params: Para
   const { locale, id } = await params;
   setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const [t, tCert, list] = await Promise.all([
+  const [t, tCert, list, site] = await Promise.all([
     getTranslations({ locale: typedLocale, namespace: 'sections.extras' }),
     getTranslations({ locale: typedLocale, namespace: 'sections.certifications' }),
     fetchCertificationsList(typedLocale),
+    fetchSiteData(typedLocale),
   ]);
   const index = list.findIndex((c) => c.id === id);
   const cert = list[index];
@@ -58,6 +59,10 @@ export default async function CertificationDetailPage({ params }: { params: Para
       ]}
       organization={cert.issuer}
       coverFit="contain"
+      // Related by organization: positions held at the issuer (e.g. the internship behind a training).
+      relatedExperiences={site.experiences.filter(
+        (e) => cert.issuer && e.organization?.slug === cert.issuer.slug,
+      )}
       facts={[
         {
           label: tCert('issued'),

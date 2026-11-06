@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import {
   DetailBulletList,
@@ -17,10 +17,13 @@ import {
 } from '@/components/detail/detail-layout';
 import { MultiImageShowcase } from '@/components/media/multi-image-showcase';
 import { ProjectCard } from '@/components/project/project-card';
+import { CertificationCard } from '@/components/sections/certification-card';
 import { ProjectLinks } from '@/components/project/project-links';
 import { buttonVariants } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
 import type {
+  PublicCertification,
+  PublicExperience,
   PublicImage,
   PublicOrganization,
   PublicPortfolioExtras,
@@ -74,6 +77,10 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   /** Full cards for those projects (cover, stack); falls back to plain links when missing. */
   projectCards?: PublicProjectCard[];
   projectsTitle?: string;
+  /** Certificates earned at the same organization (e.g. an internship's training certificate). */
+  relatedCertifications?: PublicCertification[];
+  /** Positions held at the same organization, shown on a certificate. */
+  relatedExperiences?: PublicExperience[];
   /** Extra actions (verify credential, external link…). */
   actions?: ReactNode;
   prev?: DetailNavItem | null;
@@ -101,6 +108,8 @@ export function PortfolioDetailPage({
   projects = [],
   projectCards = [],
   projectsTitle,
+  relatedCertifications = [],
+  relatedExperiences = [],
   technologies = [],
   attachments = [],
   links = [],
@@ -109,6 +118,7 @@ export function PortfolioDetailPage({
   next,
 }: PortfolioDetailPageProps) {
   const t = useTranslations('sections.extras');
+  const locale = useLocale() === 'id' ? 'id' : 'en';
   const images = attachments.filter((a) => a.kind === 'image');
   const documents = attachments.filter((a) => a.kind !== 'image');
   const headerActions =
@@ -152,6 +162,35 @@ export function PortfolioDetailPage({
         ) : (
           <DetailRowList rows={projects.map((p) => ({ key: p.slug, href: `/projects/${p.slug}`, title: p.title }))} />
         ),
+    });
+  }
+  if (relatedCertifications.length) {
+    blocks.push({
+      key: 'certifications',
+      title: t('relatedCertifications'),
+      body: (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {relatedCertifications.map((c) => (
+            <CertificationCard key={c.id} cert={c} locale={locale} />
+          ))}
+        </div>
+      ),
+    });
+  }
+  if (relatedExperiences.length) {
+    blocks.push({
+      key: 'experiences',
+      title: t('relatedExperiences'),
+      body: (
+        <DetailRowList
+          rows={relatedExperiences.map((e) => ({
+            key: e.id,
+            href: `/experience/${e.id}`,
+            title: e.role,
+            meta: [e.organization?.name, e.employmentType.label].filter(Boolean).join(' · '),
+          }))}
+        />
+      ),
     });
   }
   if (images.length) {

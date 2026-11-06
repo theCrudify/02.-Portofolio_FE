@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { neighbours, PortfolioDetailPage } from '@/components/sections/portfolio-detail';
-import { fetchProjectsList, fetchSiteData } from '@/lib/api/server';
+import { fetchCertificationsList, fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { formatDuration, formatPeriod } from '@/lib/format';
 import { buildMetadata } from '@/lib/seo';
@@ -33,11 +33,12 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
   const { locale, id } = await params;
   setRequestLocale(locale);
   const typedLocale: SupportedLocale = locale === 'id' ? 'id' : 'en';
-  const [t, tSection, list, allProjects] = await Promise.all([
+  const [t, tSection, list, allProjects, allCerts] = await Promise.all([
     getTranslations({ locale: typedLocale, namespace: 'sections.extras' }),
     getTranslations({ locale: typedLocale, namespace: 'sections.experience' }),
     loadExperiences(typedLocale),
     fetchProjectsList({ locale: typedLocale, all: true, limit: 100 }),
+    fetchCertificationsList(typedLocale),
   ]);
   const index = list.findIndex((e) => e.id === id);
   const exp = list[index];
@@ -60,6 +61,10 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
       achievementsTitle={tSection('achievements')}
       projectsTitle={tSection('projectsInRole')}
       projectCards={projectCards}
+      // Related by organization: certificates the same company issued (e.g. internship training).
+      relatedCertifications={allCerts.filter(
+        (c) => c.issuer && c.issuer.slug === exp.organization?.slug,
+      )}
       facts={[
         { label: t('duration'), value: formatDuration(exp.startDate, exp.endDate, typedLocale) },
         { label: t('projects'), value: exp.projects.length || null },

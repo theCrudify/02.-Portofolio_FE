@@ -239,7 +239,9 @@
       "projects": "Proyek",
       "workMode": "Mode kerja",
       "location": "Lokasi",
-      "duration": "Durasi"
+      "duration": "Durasi",
+      "relatedCertifications": "Sertifikat terkait",
+      "relatedExperiences": "Pengalaman kerja terkait"
     }
   },
   "common": {
