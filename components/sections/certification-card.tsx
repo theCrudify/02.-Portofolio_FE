@@ -28,22 +28,23 @@ export function CertificationCard({
     <SpotlightCard className="group relative flex h-full flex-col transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0">
       {/* Band: the certificate image, or a branded gradient with a shield watermark. */}
       <div className="relative h-28 overflow-hidden border-b border-border/60 bg-linear-to-br from-primary/25 via-primary/10 to-transparent">
+        <div className="bg-dot-matrix absolute inset-0 opacity-60" />
         {cert.image ? (
-          <Image
-            src={cert.image.url}
-            alt={cert.image.alt || cert.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <>
-            <div className="bg-dot-matrix absolute inset-0 opacity-60" />
-            <ShieldCheck
-              aria-hidden="true"
-              className="absolute -right-4 -top-6 h-40 w-40 rotate-12 text-primary/15"
+          // The scan reads as a paper certificate pinned to the band; cropping it as a cover made it illegible.
+          <div className="absolute -bottom-3 right-5 aspect-[1.414] h-[104px] rotate-[5deg] overflow-hidden rounded-md border border-border bg-background shadow-lg ring-1 ring-black/5 transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[2deg] motion-reduce:transition-none">
+            <Image
+              src={cert.image.url}
+              alt={cert.image.alt || cert.name}
+              fill
+              sizes="160px"
+              className="object-cover object-top"
             />
-          </>
+          </div>
+        ) : (
+          <ShieldCheck
+            aria-hidden="true"
+            className="absolute -right-4 -top-6 h-40 w-40 rotate-12 text-primary/15"
+          />
         )}
         <div className="absolute left-5 top-4 flex flex-wrap items-center gap-2">
           <Badge variant="secondary" className="bg-background/90 backdrop-blur">

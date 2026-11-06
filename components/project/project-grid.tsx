@@ -100,7 +100,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
               onClick={() => setLayoutMode('2')}
               aria-label={t('modeGrid2')}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all',
+                'hidden items-center md:inline-flex gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all',
                 layoutMode === '2'
                   ? 'border border-primary/30 bg-background text-primary shadow-xs'
                   : 'text-muted-foreground hover:text-foreground',
@@ -115,7 +115,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
               onClick={() => setLayoutMode('3')}
               aria-label={t('modeGrid3')}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all',
+                'hidden items-center md:inline-flex gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all',
                 layoutMode === '3'
                   ? 'border border-primary/30 bg-background text-primary shadow-xs'
                   : 'text-muted-foreground hover:text-foreground',

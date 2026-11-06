@@ -193,7 +193,8 @@ export async function fetchCertificationsList(
     const res = await apiGet<PublicCertification[]>('/certifications', {
       locale,
       tags: ['certifications'],
-      query: { type, search, sortBy, sortOrder },
+      // all: the API's shared query schema otherwise pages at 20 items.
+      query: { type, search, sortBy, sortOrder, all: true },
     });
     return res.data;
   } catch {
