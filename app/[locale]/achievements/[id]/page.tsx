@@ -47,18 +47,16 @@ export default async function AchievementDetailPage({ params }: { params: Params
     <PortfolioDetailPage
       {...ach}
       {...neighbours(list, index, (a) => ({ href: `/achievements/${a.id}`, title: a.title }))}
-      subtitle={[ach.issuer?.name, ach.eventName].filter(Boolean).join(' · ')}
+      subtitle={ach.eventName}
       backHref="/#achievements"
       backLabel={tSection('title')}
       trackId={`achievement-${ach.id}`}
       cover={ach.certificate}
       badges={[ach.rank]}
       organization={ach.issuer}
-      organizationLabel={t('organizer')}
+      coverFit="contain"
       facts={[
         { label: t('rank'), value: ach.rank },
-        { label: t('event'), value: ach.eventName },
-        { label: t('organizer'), value: ach.issuer?.name },
         { label: t('date'), value: ach.date ? formatDate(ach.date, typedLocale) : null },
       ]}
       actions={

@@ -48,7 +48,7 @@ export default async function ActivityDetailPage({ params }: { params: Params })
       {...act}
       {...neighbours(list, index, (a) => ({ href: `/activities/${a.id}`, title: a.role }))}
       title={act.role}
-      subtitle={[act.organization?.name, act.eventName].filter(Boolean).join(' · ')}
+      subtitle={act.eventName}
       backHref="/#activities"
       backLabel={tSection('title')}
       trackId={`activity-${act.id}`}
@@ -56,8 +56,6 @@ export default async function ActivityDetailPage({ params }: { params: Params })
       badges={[act.type.label]}
       organization={act.organization}
       facts={[
-        { label: t('role'), value: act.role },
-        { label: t('event'), value: act.eventName },
         {
           label: t('period'),
           value: activityPeriod(act, typedLocale) || null,

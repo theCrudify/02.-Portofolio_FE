@@ -1,24 +1,30 @@
-import { ArrowLeft, ArrowRight, CheckCircle2, ExternalLink } from 'lucide-react';
-import { LookupIcon } from '@/components/ui/lookup-icon';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { Container } from '@/components/layout/container';
+import {
+  DetailArticle,
+  DetailBulletList,
+  DetailFacts,
+  DetailFigure,
+  DetailHeader,
+  DetailNumberedList,
+  DetailPager,
+  DetailProse,
+  DetailRowList,
+  DetailSection,
+  DetailSections,
+  DetailTechList,
+} from '@/components/detail/detail-layout';
 import { getEmbedIframeUrl, VideoEmbed } from '@/components/media/video-embed';
-import { MetricBadgeGrid } from '@/components/project/metric-badge';
 import { ProjectGallery } from '@/components/project/project-gallery';
 import { ProjectLinks } from '@/components/project/project-links';
-import { TechStackGroup } from '@/components/project/tech-stack-group';
 import {
   buildBreadcrumbJsonLd,
   buildProjectCreativeWorkJsonLd,
   buildVideoObjectJsonLd,
   JsonLdScript,
 } from '@/components/seo/json-ld';
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
 import { fetchProjectDetail, fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
 import { formatPeriod } from '@/lib/format';
@@ -94,6 +100,7 @@ export default async function ProjectDetailPage({
   const documents = project.media.filter(
     (m) => m.kind === 'pdf' || m.kind === 'document' || ['documentation', 'slides'].includes(m.role.code),
   );
+  const techGroups = project.technologies.filter((g) => g.items.length > 0);
   const siteUrl = getSiteUrl();
 
   const breadcrumbData = buildBreadcrumbJsonLd([
@@ -103,7 +110,7 @@ export default async function ProjectDetailPage({
   ]);
 
   return (
-    <article className="py-12 md:py-20">
+    <DetailArticle>
       <JsonLdScript
         data={buildProjectCreativeWorkJsonLd(
           project,
@@ -127,272 +134,167 @@ export default async function ProjectDetailPage({
         />
       ) : null}
 
-      <Container className="space-y-12">
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">{project.type.label}</Badge>
-            <Badge variant="outline">{project.state.label}</Badge>
-          </div>
+      <DetailHeader
+        backHref="/projects"
+        backLabel={t('title')}
+        eyebrow={[project.type.label, project.state.label]}
+        title={project.title}
+        lede={project.summary}
+        organization={project.client}
+        actions={
+          project.links.length > 0 ? (
+            <ProjectLinks links={project.links} projectSlug={project.slug} privateLabel={t('privateRepo')} />
+          ) : null
+        }
+      />
 
-          <h1 className="font-heading text-[32px] font-bold leading-tight tracking-tight text-foreground md:text-[48px]">
-            {project.title}
-          </h1>
+      <DetailFacts
+        facts={[
+          { label: t('role'), value: project.role },
+          { label: t('teamSize'), value: project.teamSize },
+          {
+            label: t('period'),
+            value: project.periodStart ? formatPeriod(project.periodStart, project.periodEnd, typedLocale) : null,
+          },
+        ]}
+      />
 
-          <p className="max-w-[65ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-            {project.summary}
-          </p>
+      {project.cover ? <DetailFigure image={project.cover} alt={project.title} /> : null}
 
-          <div className="grid grid-cols-2 gap-4 rounded-md border border-border bg-muted/40 p-4 text-sm sm:grid-cols-4">
-            {project.role ? (
-              <div>
-                <p className="text-xs font-medium uppercase text-muted-foreground">{t('role')}</p>
-                <p className="mt-1 font-medium text-foreground">{project.role}</p>
-              </div>
-            ) : null}
-            {project.teamSize ? (
-              <div>
-                <p className="text-xs font-medium uppercase text-muted-foreground">
-                  {t('teamSize')}
-                </p>
-                <p className="mt-1 font-medium text-foreground">{project.teamSize}</p>
-              </div>
-            ) : null}
-            {project.client ? (
-              <div>
-                <p className="text-xs font-medium uppercase text-muted-foreground">{t('client')}</p>
-                <p className="mt-1 font-medium text-foreground">
-                  {project.client.websiteUrl ? (
-                    <a
-                      href={project.client.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary hover:underline"
-                    >
-                      {project.client.name}
-                    </a>
-                  ) : (
-                    project.client.name
-                  )}
-                </p>
-              </div>
-            ) : null}
-            {project.positions.length > 0 ? (
-              <div className="col-span-2">
-                <p className="text-xs font-medium uppercase text-muted-foreground">{t('company')}</p>
-                <ul className="mt-1 space-y-0.5">
-                  {project.positions.map((pos) => (
-                    <li key={pos.id} className="font-medium text-foreground">
-                      {pos.organization?.name}
-                      <span className="text-muted-foreground"> · {pos.role}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {project.periodStart ? (
-              <div>
-                <p className="text-xs font-medium uppercase text-muted-foreground">{t('period')}</p>
-                <p className="mt-1 font-mono text-xs text-foreground">
-                  {formatPeriod(project.periodStart, project.periodEnd, typedLocale)}
-                </p>
-              </div>
-            ) : null}
-          </div>
-
-          <ProjectLinks
-            links={project.links}
+      {demoVideo ? (
+        <div className="mt-10 md:mt-14">
+          <VideoEmbed
+            provider={demoVideo.provider}
+            embedId={demoVideo.embedId}
+            url={demoVideo.url}
+            thumbnailUrl={demoVideo.thumbnailUrl}
+            title={demoVideo.title ?? project.title}
             projectSlug={project.slug}
-            privateLabel={t('privateRepo')}
           />
         </div>
+      ) : null}
 
-        {project.cover ? (
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-muted">
-            <Image
-              src={project.cover.url}
-              alt={project.cover.alt || project.title}
-              fill
-              priority
-              sizes="(max-width: 1120px) 100vw, 1120px"
-              className="object-cover"
-            />
-          </div>
+      <DetailSections>
+        {project.problem ? (
+          <DetailSection title={t('problem')}>
+            <DetailProse>{project.problem}</DetailProse>
+          </DetailSection>
         ) : null}
 
-        {demoVideo ? (
-          <div className="space-y-3">
-            <VideoEmbed
-              provider={demoVideo.provider}
-              embedId={demoVideo.embedId}
-              url={demoVideo.url}
-              thumbnailUrl={demoVideo.thumbnailUrl}
-              title={demoVideo.title ?? project.title}
-              projectSlug={project.slug}
-            />
-          </div>
+        {project.solution ? (
+          <DetailSection title={t('solution')}>
+            <DetailProse>{project.solution}</DetailProse>
+          </DetailSection>
         ) : null}
 
-        <MetricBadgeGrid metrics={project.metrics} />
-
-        {project.problem || project.solution || project.result ? (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {project.problem ? (
-              <div className="space-y-2 rounded-md border border-border bg-card p-6">
-                <h2 className="text-lg font-semibold text-foreground">{t('problem')}</h2>
-                <p className="text-sm leading-[1.7] text-muted-foreground">{project.problem}</p>
-              </div>
+        {project.result || project.metrics.length > 0 ? (
+          <DetailSection title={t('result')}>
+            {project.result ? <DetailProse>{project.result}</DetailProse> : null}
+            {project.metrics.length > 0 ? (
+              <dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-8 first:mt-0 sm:grid-cols-3">
+                {project.metrics.map((metric, idx) => (
+                  <div key={`${metric.label}-${idx}`} className="border-l-2 border-primary pl-4">
+                    <dd className="font-heading text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                      {metric.value}
+                    </dd>
+                    <dt className="mt-1 text-sm text-muted-foreground">{metric.label}</dt>
+                  </div>
+                ))}
+              </dl>
             ) : null}
-            {project.solution ? (
-              <div className="space-y-2 rounded-md border border-border bg-card p-6">
-                <h2 className="text-lg font-semibold text-foreground">{t('solution')}</h2>
-                <p className="text-sm leading-[1.7] text-muted-foreground">{project.solution}</p>
-              </div>
-            ) : null}
-            {project.result ? (
-              <div className="space-y-2 rounded-md border border-border bg-card p-6">
-                <h2 className="text-lg font-semibold text-foreground">{t('result')}</h2>
-                <p className="text-sm leading-[1.7] text-muted-foreground">{project.result}</p>
-              </div>
-            ) : null}
-          </div>
+          </DetailSection>
         ) : null}
 
         {project.responsibilities.length > 0 ? (
-          <div className="space-y-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">
-              {t('responsibilities')}
-            </h2>
-            <ul className="space-y-2.5">
-              {project.responsibilities.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-base leading-relaxed text-foreground">
-                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-primary" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <DetailSection title={t('responsibilities')}>
+            <DetailBulletList items={project.responsibilities} />
+          </DetailSection>
         ) : null}
 
         {project.highlights.length > 0 ? (
-          <div className="space-y-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">{t('highlights')}</h2>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {project.highlights.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-start gap-2.5 rounded-md border border-border bg-card p-4 text-sm text-foreground"
-                >
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <DetailSection title={t('highlights')}>
+            <DetailNumberedList items={project.highlights} />
+          </DetailSection>
         ) : null}
 
-        <div className="space-y-4">
-          <h2 className="font-heading text-2xl font-bold text-foreground">{t('techStack')}</h2>
-          <TechStackGroup technologies={project.technologies} />
-        </div>
+        {project.challenges ? (
+          <DetailSection title={t('challenges')}>
+            <DetailProse>{project.challenges}</DetailProse>
+          </DetailSection>
+        ) : null}
 
         {project.architecture ? (
-          <div className="space-y-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">
-              {t('architecture')}
-            </h2>
+          <DetailSection title={t('architecture')}>
             <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-muted">
               <Image
                 src={project.architecture.url}
                 alt={project.architecture.alt || `${project.title} architecture`}
                 fill
-                sizes="(max-width: 1120px) 100vw, 1120px"
-                className="object-contain"
+                sizes="(max-width: 1180px) 100vw, 880px"
+                className="object-contain p-4"
               />
             </div>
-          </div>
+          </DetailSection>
         ) : null}
 
-        {documents.length > 0 ? (
-          <div className="space-y-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">{t('documents')}</h2>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {documents.map((doc) => (
-                <li key={doc.id}>
-                  <a
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-md border border-border bg-card p-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <LookupIcon name={doc.role.icon} className="h-5 w-5" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium text-foreground">
-                        {doc.caption ?? doc.title ?? doc.alt ?? doc.role.label}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {doc.role.label} · {doc.kind.toUpperCase()}
-                      </span>
-                    </span>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  </a>
-                </li>
+        {techGroups.length > 0 ? (
+          <DetailSection title={t('techStack')}>
+            <div className="space-y-6">
+              {techGroups.map(({ group, items }) => (
+                <div key={group.code} className="grid grid-cols-1 gap-3 sm:grid-cols-[140px_minmax(0,1fr)]">
+                  <p className="text-sm text-muted-foreground">{group.label}</p>
+                  <DetailTechList technologies={items} />
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          </DetailSection>
+        ) : null}
+
+        {project.positions.length > 0 ? (
+          <DetailSection title={t('company')}>
+            <DetailRowList
+              rows={project.positions.map((pos) => ({
+                key: pos.id,
+                href: `/experience/${pos.id}`,
+                title: pos.role,
+                meta: [pos.organization?.name, formatPeriod(pos.startDate, pos.endDate, typedLocale)]
+                  .filter(Boolean)
+                  .join(' · '),
+              }))}
+            />
+          </DetailSection>
         ) : null}
 
         {galleryItems.length > 0 ? (
-          <div className="space-y-4">
-            <h2 className="font-heading text-2xl font-bold text-foreground">{t('gallery')}</h2>
+          <DetailSection title={t('gallery')}>
             <ProjectGallery items={galleryItems} />
-          </div>
+          </DetailSection>
         ) : null}
 
-        {project.challenges ? (
-          <div className="space-y-3 rounded-md border border-border bg-muted/50 p-6">
-            <h2 className="text-xl font-semibold text-foreground">{t('challenges')}</h2>
-            <p className="max-w-[65ch] text-base leading-[1.7] text-muted-foreground">
-              {project.challenges}
-            </p>
-          </div>
+        {documents.length > 0 ? (
+          <DetailSection title={t('documents')}>
+            <DetailRowList
+              rows={documents.map((doc) => ({
+                key: doc.id,
+                href: doc.url,
+                title: doc.caption ?? doc.title ?? doc.alt ?? doc.role.label,
+                meta: `${doc.role.label} · ${doc.kind.toUpperCase()}`,
+                external: true,
+                icon: doc.kind === 'video' ? 'video' : 'file',
+              }))}
+            />
+          </DetailSection>
         ) : null}
+      </DetailSections>
 
-        {project.prev || project.next ? (
-          <nav
-            aria-label="Project navigation"
-            className="flex flex-col justify-between gap-4 border-t border-border pt-8 sm:flex-row"
-          >
-            {project.prev ? (
-              <Link
-                href={`/projects/${project.prev.slug}`}
-                className={buttonVariants({ variant: 'outline' })}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>
-                  {t('prevProject')}: {project.prev.title}
-                </span>
-              </Link>
-            ) : (
-              <span />
-            )}
-
-            {project.next ? (
-              <Link
-                href={`/projects/${project.next.slug}`}
-                className={buttonVariants({ variant: 'outline' })}
-              >
-                <span>
-                  {t('nextProject')}: {project.next.title}
-                </span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            ) : null}
-          </nav>
-        ) : null}
-      </Container>
-    </article>
+      <DetailPager
+        prev={project.prev ? { href: `/projects/${project.prev.slug}`, title: project.prev.title } : null}
+        next={project.next ? { href: `/projects/${project.next.slug}`, title: project.next.title } : null}
+        prevLabel={t('prevProject')}
+        nextLabel={t('nextProject')}
+        label={t('title')}
+      />
+    </DetailArticle>
   );
 }
 

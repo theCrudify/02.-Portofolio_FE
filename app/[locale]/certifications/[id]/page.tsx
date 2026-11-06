@@ -44,16 +44,14 @@ export default async function CertificationDetailPage({ params }: { params: Para
       {...cert}
       {...neighbours(list, index, (c) => ({ href: `/certifications/${c.id}`, title: c.name }))}
       title={cert.name}
-      subtitle={cert.issuer?.name}
       backHref="/certifications"
       backLabel={tCert('title')}
       trackId={`cert-${cert.id}`}
       cover={cert.image}
       badges={[cert.type.label, cert.isExpired ? tCert('expired') : null]}
       organization={cert.issuer}
-      organizationLabel={t('issuer')}
+      coverFit="contain"
       facts={[
-        { label: t('issuer'), value: cert.issuer?.name },
         {
           label: tCert('issued'),
           value: cert.issueDate ? formatMonthYear(cert.issueDate, typedLocale) : null,

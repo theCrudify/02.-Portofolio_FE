@@ -47,20 +47,19 @@ export default async function ExperienceDetailPage({ params }: { params: Params 
       {...exp}
       {...neighbours(list, index, (e) => ({ href: `/experience/${e.id}`, title: e.role }))}
       title={exp.role}
-      subtitle={exp.organization?.name}
       backHref="/#experience"
       backLabel={tSection('title')}
       trackId={`experience-${exp.id}`}
-      badges={[exp.employmentType.label, exp.workMode?.label]}
+      badges={[exp.employmentType.label]}
       organization={exp.organization}
       responsibilitiesTitle={tSection('responsibilities')}
       achievementsTitle={tSection('achievements')}
       projectsTitle={tSection('projectsInRole')}
       facts={[
         { label: t('period'), value: formatPeriod(exp.startDate, exp.endDate, typedLocale) },
-        { label: t('type'), value: exp.employmentType.label },
         { label: t('workMode'), value: exp.workMode?.label },
-        { label: t('location'), value: exp.location },
+        // The organization line already shows its own location.
+        { label: t('location'), value: exp.location !== exp.organization?.location ? exp.location : null },
       ]}
     />
   );
