@@ -364,7 +364,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
 
                   <article
                     className={cn(
-                      'rounded-2xl border p-5 transition-all duration-500 sm:p-7',
+                      // relative: the title link stretches over the whole card
+                      'relative rounded-2xl border p-5 transition-all duration-500 hover:border-primary/60 sm:p-7',
                       isActive
                         ? 'border-primary/40 bg-card shadow-xl'
                         : 'border-transparent bg-transparent opacity-70 hover:opacity-100',
@@ -396,7 +397,12 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                       ) : null}
                       <div className="min-w-0">
                         <h3 className="font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl">
-                          {exp.role}
+                          <Link
+                            href={`/experience/${exp.id}`}
+                            className="rounded-sm transition-colors after:absolute after:inset-0 after:rounded-2xl after:content-[''] hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {exp.role}
+                          </Link>
                         </h3>
                         <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                           <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
@@ -406,7 +412,7 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                                 href={exp.organization.websiteUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="hover:text-primary hover:underline"
+                                className="relative z-10 hover:text-primary hover:underline"
                               >
                                 {exp.organization.name}
                               </a>
@@ -477,7 +483,7 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                             <Link
                               key={p.slug}
                               href={`/projects/${p.slug}`}
-                              className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-border bg-background/80 px-3 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                              className="relative z-10 inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-border bg-background/80 px-3 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             >
                               <span>{p.title}</span>
                               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -503,7 +509,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
                     <div className="mt-5">
                       <Link
                         href={`/experience/${exp.id}`}
-                        className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-background/80 px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        tabIndex={-1}
+                        className="relative z-10 inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-background/80 px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         {t('details')}
                         <ArrowUpRight className="h-4 w-4" />
