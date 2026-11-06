@@ -4,7 +4,9 @@ import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PAGE_SIZE, Pager } from '@/components/admin/pager';
+import { TableSearch } from '@/components/admin/data-table';
+import { Pager } from '@/components/admin/pager';
+import { useAdminList } from '@/lib/admin/use-admin-list';
 
 interface ContactMessageRow {
   id: string;
@@ -19,26 +21,13 @@ interface ContactMessageRow {
 }
 
 export default function AdminMessagesPage() {
-  const [messages, setMessages] = React.useState<ContactMessageRow[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const loadMessages = React.useCallback(async () => {
-    try {
-      const res = await apiFetch<ContactMessageRow[]>(
-        `/v1/admin/messages?page=${page}&limit=${PAGE_SIZE}`
-      );
-      setMessages(res.data);
-      setTotal(res.meta?.total ?? res.data.length);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load messages.');
-    }
-  }, [page]);
-
-  React.useEffect(() => {
-    void loadMessages();
-  }, [loadMessages]);
+  const [filter, setFilter] = React.useState<'all' | 'unread' | 'archived'>('all');
+  const list = useAdminList<ContactMessageRow>('/v1/admin/messages', {
+    isRead: filter === 'unread' ? false : undefined,
+    isArchived: filter === 'archived' ? true : undefined,
+  });
+  const [actionError, setActionError] = React.useState<string | null>(null);
+  const error = actionError ?? list.error;
 
   async function handlePatch(id: string, patch: { isRead?: boolean; isArchived?: boolean }) {
     try {
@@ -46,9 +35,9 @@ export default function AdminMessagesPage() {
         method: 'PATCH',
         body: JSON.stringify(patch),
       });
-      await loadMessages();
+      await list.reload();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to update message.');
+      setActionError(err instanceof ApiError ? err.message : 'Failed to update message.');
     }
   }
 
@@ -70,20 +59,46 @@ export default function AdminMessagesPage() {
         </div>
       )}
 
-      <div className="space-y-3">
-        {messages.length === 0 ? (
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="inline-flex w-fit rounded-lg border border-border bg-muted p-1 text-xs" role="tablist">
+          {(['all', 'unread', 'archived'] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={filter === tab}
+              onClick={() => setFilter(tab)}
+              className={`rounded-md px-3 py-1.5 font-medium capitalize transition-colors ${
+                filter === tab ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <TableSearch value={list.search} onChange={list.setSearch} placeholder="Search name, email, subject…" />
+      </div>
+
+      <div className={`space-y-3 ${list.loading && list.items.length > 0 ? 'opacity-60' : ''}`}>
+        {!list.loading && list.items.length === 0 ? (
           <div className="rounded-lg border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-            No messages received yet.
+            {list.search || filter !== 'all' ? 'No messages match this search.' : 'No messages received yet.'}
           </div>
         ) : (
-          messages.map((msg) => (
+          list.items.map((msg, i) => (
             <div key={msg.id} className="rounded-lg border border-border bg-card p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                    #{list.offset + i + 1}
+                  </span>
                   <span className="font-semibold text-foreground">{msg.name}</span>
                   <span className="text-xs text-muted-foreground">&lt;{msg.email}&gt;</span>
                   {!msg.isRead && <Badge variant="default">Unread</Badge>}
                   {msg.isArchived && <Badge variant="secondary">Archived</Badge>}
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(msg.createdAt).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -112,7 +127,7 @@ export default function AdminMessagesPage() {
           ))
         )}
       </div>
-      <Pager page={page} total={total} onPage={setPage} />
+      <Pager page={list.page} total={list.total} limit={list.limit} onPage={list.setPage} onLimit={list.setLimit} />
     </div>
   );
 }

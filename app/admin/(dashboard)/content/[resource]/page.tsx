@@ -3,82 +3,87 @@
 import * as React from 'react';
 import { useParams } from 'next/navigation';
 import { apiFetch, ApiError } from '@/lib/api/client';
-import { ADMIN_RESOURCES, type AdminResourceKey } from '@/lib/admin/resources';
-import { DataTable, type DataRow } from '@/components/admin/data-table';
-import { PAGE_SIZE, Pager } from '@/components/admin/pager';
+import { ADMIN_RESOURCES, type AdminResourceKey, type AdminResourceMeta } from '@/lib/admin/resources';
+import { useAdminList } from '@/lib/admin/use-admin-list';
+import { DataTable, type DataRow, type SortChoice, type StatusFilter } from '@/components/admin/data-table';
+import { Pager } from '@/components/admin/pager';
 import { ResourceForm } from '@/components/admin/resource-form';
+
+/** Column header from the form field that edits it ("roleEn" -> "Role / position"). */
+function columnLabel(meta: AdminResourceMeta, column: string | undefined) {
+  if (!column) return undefined;
+  const field = meta.fields.find((f) => f.name === column || f.nameEn === column);
+  return field?.label.split(' (')[0];
+}
 
 export default function AdminGenericContentPage() {
   const params = useParams<{ resource: string }>();
-  const resourceKey = params.resource as AdminResourceKey;
-  const meta = ADMIN_RESOURCES[resourceKey];
+  const meta = ADMIN_RESOURCES[params.resource as AdminResourceKey];
 
-  const [items, setItems] = React.useState<DataRow[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
+  const [status, setStatus] = React.useState<StatusFilter>('all');
+  const [sort, setSort] = React.useState<SortChoice>('default');
   const [editing, setEditing] = React.useState<Record<string, unknown> | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
+  const [actionError, setActionError] = React.useState<string | null>(null);
 
-  const loadItems = React.useCallback(async () => {
-    if (!meta) return;
-    try {
-      const res = await apiFetch<DataRow[]>(`/v1/admin/${meta.key}?page=${page}&limit=${PAGE_SIZE}`);
-      setItems(res.data);
-      setTotal(res.meta?.total ?? res.data.length);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : `Failed to load ${meta.title}.`);
-    }
-  }, [meta, page]);
+  const list = useAdminList<DataRow>(`/v1/admin/${meta?.key ?? params.resource}`, {
+    status: status === 'all' ? undefined : status,
+    // "default" keeps the API's display order (sortOrder, then newest).
+    sortBy: sort === 'default' ? undefined : meta?.primaryColumn,
+    sortOrder: sort === 'default' ? undefined : sort,
+  });
 
-  // The route segment changes without remounting, so start each resource at page 1.
-  React.useEffect(() => setPage(1), [resourceKey]);
-
+  // The route segment changes without remounting: start each resource fresh.
   React.useEffect(() => {
-    void loadItems();
-  }, [loadItems]);
+    setStatus('all');
+    setSort('default');
+    setEditing(null);
+    list.setSearch('');
+    // Reset only when the resource changes (list.setSearch is stable).
+  }, [params.resource]);
 
   if (!meta) {
     return <div className="p-4 text-sm text-destructive">Unknown content resource.</div>;
   }
 
-  async function handleSubmit(values: Record<string, unknown>) {
-    setError(null);
+  async function run(action: () => Promise<unknown>, failure: string) {
+    setActionError(null);
     try {
-      if (editing?.id) {
-        await apiFetch(`/v1/admin/${meta.key}/${String(editing.id)}`, {
-          method: 'PUT',
-          body: JSON.stringify(values),
-        });
-      } else {
-        await apiFetch(`/v1/admin/${meta.key}`, {
-          method: 'POST',
-          body: JSON.stringify(values),
-        });
-      }
-      setEditing(null);
-      await loadItems();
+      await action();
+      await list.reload();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to save item.');
+      setActionError(err instanceof ApiError ? err.message : failure);
     }
   }
 
+  async function handleSubmit(values: Record<string, unknown>) {
+    await run(async () => {
+      const id = editing?.id ? `/${String(editing.id)}` : '';
+      await apiFetch(`/v1/admin/${meta.key}${id}`, {
+        method: id ? 'PUT' : 'POST',
+        body: JSON.stringify(values),
+      });
+      setEditing(null);
+    }, 'Failed to save item.');
+  }
+
+  const error = actionError ?? list.error;
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">{meta.title}</h1>
         <p className="text-sm text-muted-foreground">{meta.description}</p>
       </div>
 
-      {error && (
+      {error ? (
         <div
           role="alert"
           className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
         >
           {error}
         </div>
-      )}
+      ) : null}
 
-      {editing !== null && (
+      {editing !== null ? (
         <ResourceForm
           key={String(editing.id ?? 'new')}
           meta={meta}
@@ -86,37 +91,47 @@ export default function AdminGenericContentPage() {
           onSubmit={handleSubmit}
           onCancel={() => setEditing(null)}
         />
-      )}
+      ) : null}
 
-      <DataTable
-        items={items}
-        primaryColumn={meta.primaryColumn}
-        secondaryColumn={meta.secondaryColumn}
-        onCreate={() => setEditing({})}
-        onEdit={async (item) => {
-          // The list has parent rows only; the detail adds child collections for the form.
-          try {
-            const res = await apiFetch<Record<string, unknown>>(`/v1/admin/${meta.key}/${String(item.id)}`);
-            setEditing(res.data);
-          } catch (err) {
-            setError(err instanceof ApiError ? err.message : 'Failed to load item.');
+      <div className="space-y-4">
+        <DataTable
+          items={list.items}
+          offset={list.offset}
+          loading={list.loading}
+          primaryColumn={meta.primaryColumn}
+          secondaryColumn={meta.secondaryColumn}
+          primaryLabel={columnLabel(meta, meta.primaryColumn)}
+          secondaryLabel={columnLabel(meta, meta.secondaryColumn)}
+          status={status}
+          onStatus={setStatus}
+          search={list.search}
+          onSearch={list.setSearch}
+          sort={sort}
+          onSort={setSort}
+          onCreate={() => setEditing({})}
+          onEdit={(item) =>
+            // The list has parent rows only; the detail adds child collections for the form.
+            void run(async () => {
+              const res = await apiFetch<Record<string, unknown>>(`/v1/admin/${meta.key}/${item.id}`);
+              setEditing(res.data);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 'Failed to load item.')
           }
-        }}
-        onTransition={async (id, action) => {
-          await apiFetch(`/v1/admin/${meta.key}/${id}/${action}`, { method: 'POST' });
-          await loadItems();
-        }}
-        onSoftDelete={async (id) => {
-          await apiFetch(`/v1/admin/${meta.key}/${id}`, { method: 'DELETE' });
-          await loadItems();
-        }}
-        onPermanentDelete={async (id) => {
-          await apiFetch(`/v1/admin/${meta.key}/${id}/permanent`, { method: 'DELETE' });
-          await loadItems();
-        }}
-      />
-      <Pager page={page} total={total} onPage={setPage} />
+          onTransition={(id, action) =>
+            void run(() => apiFetch(`/v1/admin/${meta.key}/${id}/${action}`, { method: 'POST' }), `Failed to ${action}.`)
+          }
+          onSoftDelete={(id) =>
+            void run(() => apiFetch(`/v1/admin/${meta.key}/${id}`, { method: 'DELETE' }), 'Failed to move to trash.')
+          }
+          onPermanentDelete={(id) =>
+            void run(
+              () => apiFetch(`/v1/admin/${meta.key}/${id}/permanent`, { method: 'DELETE' }),
+              'Failed to delete.',
+            )
+          }
+        />
+        <Pager page={list.page} total={list.total} limit={list.limit} onPage={list.setPage} onLimit={list.setLimit} />
+      </div>
     </div>
   );
 }
-

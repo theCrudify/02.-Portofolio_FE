@@ -3,48 +3,31 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { UPLOAD_ACCEPT, uploadMedia, type MediaAssetItem } from '@/components/admin/media-picker';
-import { PAGE_SIZE, Pager } from '@/components/admin/pager';
+import { Pager } from '@/components/admin/pager';
+import { useAdminList } from '@/lib/admin/use-admin-list';
 import { RoleGate } from '@/components/admin/role-gate';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FrontendQueryBuilder } from '@/core/query';
 import { apiFetch, ApiError } from '@/lib/api/client';
 
 export default function AdminMediaPage() {
-  const [items, setItems] = React.useState<MediaAssetItem[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
   const [filterKind, setFilterKind] = React.useState<'all' | 'image' | 'video' | 'document'>('all');
-  const [search, setSearch] = React.useState('');
   const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('desc');
+  // Server-side page, debounced search and filters; 24 fills the 2/3/4-column grid evenly.
+  const list = useAdminList<MediaAssetItem>(
+    '/v1/admin/media',
+    { kind: filterKind === 'all' ? undefined : filterKind, sortBy: 'createdAt', sortOrder },
+    24,
+  );
+  const { items, search, setSearch } = list;
   const [embedUrl, setEmbedUrl] = React.useState('');
   const [embedTitle, setEmbedTitle] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
   const [statusMsg, setStatusMsg] = React.useState<string | null>(null);
 
-  const loadMedia = React.useCallback(async () => {
-    try {
-      const qs = FrontendQueryBuilder.toQueryString({
-        page,
-        limit: PAGE_SIZE,
-        kind: filterKind === 'all' ? undefined : filterKind,
-        search: search.trim() || undefined,
-        sortBy: 'createdAt',
-        sortOrder,
-      });
-      const res = await apiFetch<MediaAssetItem[]>(`/v1/admin/media${qs}`);
-      setItems(res.data);
-      setTotal(res.meta?.total ?? res.data.length);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load media library.');
-    }
-  }, [filterKind, page, search, sortOrder]);
-
-  React.useEffect(() => {
-    void loadMedia();
-  }, [loadMedia]);
+  const loadMedia = list.reload;
 
   async function handleAddEmbed(e: React.FormEvent) {
     e.preventDefault();
@@ -114,12 +97,12 @@ export default function AdminMediaPage() {
       {statusMsg && (
         <div className="rounded-md border border-border bg-muted p-3 text-sm">{statusMsg}</div>
       )}
-      {error && (
+      {(error ?? list.error) && (
         <div
           role="alert"
           className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
         >
-          {error}
+          {error ?? list.error}
         </div>
       )}
 
@@ -178,7 +161,6 @@ export default function AdminMediaPage() {
               size="sm"
               onClick={() => {
                 setFilterKind(k);
-                setPage(1);
               }}
             >
               {k.toUpperCase()}
@@ -191,7 +173,6 @@ export default function AdminMediaPage() {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setPage(1);
             }}
             placeholder="Search media..."
             className="h-9 w-48 text-xs sm:w-64"
@@ -251,7 +232,7 @@ export default function AdminMediaPage() {
           </div>
         ))}
       </div>
-      <Pager page={page} total={total} onPage={setPage} />
+      <Pager page={list.page} total={list.total} limit={list.limit} onPage={list.setPage} onLimit={list.setLimit} />
     </div>
   );
 }

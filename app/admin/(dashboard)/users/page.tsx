@@ -2,6 +2,9 @@
 
 import * as React from 'react';
 import { apiFetch, ApiError } from '@/lib/api/client';
+import { TableSearch } from '@/components/admin/data-table';
+import { Pager } from '@/components/admin/pager';
+import { useAdminList } from '@/lib/admin/use-admin-list';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,29 +22,16 @@ interface AdminUserRow {
 }
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = React.useState<AdminUserRow[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const list = useAdminList<AdminUserRow>('/v1/admin/users');
+  const { items: users, loading } = list;
+  const [actionError, setError] = React.useState<string | null>(null);
+  const error = actionError ?? list.error;
   const [email, setEmail] = React.useState('');
   const [name, setName] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [role, setRole] = React.useState<'owner' | 'editor'>('editor');
 
-  const loadUsers = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await apiFetch<AdminUserRow[]>('/v1/admin/users');
-      setUsers(res.data);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load users.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    void loadUsers();
-  }, [loadUsers]);
+  const loadUsers = list.reload;
 
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
@@ -155,10 +145,13 @@ export default function AdminUsersPage() {
         </div>
       </form>
 
+      <TableSearch value={list.search} onChange={list.setSearch} placeholder="Search name or email…" />
+
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-muted/50 text-xs uppercase text-muted-foreground">
             <tr>
+              <th className="w-14 px-4 py-3 text-right">No.</th>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Role</th>
@@ -170,13 +163,16 @@ export default function AdminUsersPage() {
           <tbody className="divide-y divide-border">
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
                   Loading users...
                 </td>
               </tr>
             ) : (
-              users.map((u) => (
-                <tr key={u.id}>
+              users.map((u, i) => (
+                <tr key={u.id} className="hover:bg-muted/30">
+                  <td className="px-4 py-3 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                    {list.offset + i + 1}
+                  </td>
                   <td className="px-4 py-3 font-medium">{u.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">{u.email}</td>
                   <td className="px-4 py-3">
@@ -202,6 +198,7 @@ export default function AdminUsersPage() {
           </tbody>
         </table>
       </div>
+      <Pager page={list.page} total={list.total} limit={list.limit} onPage={list.setPage} onLimit={list.setLimit} />
     </div>
   );
 }

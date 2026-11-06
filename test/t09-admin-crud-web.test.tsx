@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UserProvider } from '@/components/admin/role-gate';
 import { DataTable } from '@/components/admin/data-table';
+import { pageWindow } from '@/components/admin/pager';
 import { BilingualField } from '@/components/admin/bilingual-field';
 
 describe('T09 · Admin CRUD Web Components', () => {
@@ -9,6 +10,16 @@ describe('T09 · Admin CRUD Web Components', () => {
     const items = [
       { id: '1', titleEn: 'Edge Gateway', category: 'backend', status: 'draft' },
     ];
+    const listProps = {
+      offset: 10,
+      loading: false,
+      status: 'all' as const,
+      onStatus: vi.fn(),
+      search: '',
+      onSearch: vi.fn(),
+      sort: 'default' as const,
+      onSort: vi.fn(),
+    };
 
     const { rerender } = render(
       <UserProvider
@@ -22,6 +33,7 @@ describe('T09 · Admin CRUD Web Components', () => {
       >
         <DataTable
           items={items}
+          {...listProps}
           primaryColumn="titleEn"
           secondaryColumn="category"
           onEdit={vi.fn()}
@@ -33,6 +45,8 @@ describe('T09 · Admin CRUD Web Components', () => {
     );
 
     expect(screen.getByText('Edge Gateway')).toBeTruthy();
+    // Row numbers continue across pages: first row of page 2 (offset 10) is 11.
+    expect(screen.getByText('11')).toBeTruthy();
     expect(screen.queryByText('Publish')).toBeNull();
 
     rerender(
@@ -47,6 +61,7 @@ describe('T09 · Admin CRUD Web Components', () => {
       >
         <DataTable
           items={items}
+          {...listProps}
           primaryColumn="titleEn"
           secondaryColumn="category"
           onEdit={vi.fn()}
@@ -58,6 +73,13 @@ describe('T09 · Admin CRUD Web Components', () => {
     );
 
     expect(screen.getByText('Publish')).toBeTruthy();
+  });
+
+  it('pageWindow shows first, last and neighbours with gaps', () => {
+    expect(pageWindow(1, 1)).toEqual([1]);
+    expect(pageWindow(1, 5)).toEqual([1, 2, 3, 4, 5]);
+    expect(pageWindow(6, 20)).toEqual([1, 'gap', 5, 6, 7, 'gap', 20]);
+    expect(pageWindow(20, 20)).toEqual([1, 'gap', 17, 18, 19, 20]);
   });
 
   it('BilingualField switches between EN and ID tabs properly', () => {
