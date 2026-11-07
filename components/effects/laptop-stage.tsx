@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from 'motion/react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { LaptopCode, LaptopPalette } from '@/components/effects/laptop-scene';
@@ -80,7 +81,8 @@ export function LaptopStage({
   const screenCount = images.length + 1;
 
   useEffect(() => {
-    setWebgl(hasWebGL());
+    // Phones get the flat card instead: the 3D scene is too heavy for mobile GPUs.
+    setWebgl(hasWebGL() && !window.matchMedia('(pointer: coarse)').matches);
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -140,11 +142,43 @@ export function LaptopStage({
             paused={!visible}
           />
         ) : !webgl ? (
-          <div className="absolute inset-[18%_10%] flex flex-col justify-center gap-2 rounded-2xl border border-border bg-foreground p-6 font-mono text-sm text-background shadow-2xl dark:bg-background dark:text-foreground">
-            <span className="text-primary">const engineer = {'{'}</span>
-            <span className="truncate pl-4">name: &apos;{code.name}&apos;,</span>
-            <span className="truncate pl-4">role: &apos;{code.role}&apos;,</span>
-            <span className="text-primary">{'}'};</span>
+          <div className="absolute inset-[10%_4%] overflow-hidden rounded-2xl border border-border bg-foreground shadow-2xl dark:bg-background">
+            {active > 0 && images[active - 1] ? (
+              <Image
+                key={images[active - 1]}
+                src={images[active - 1]!}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 92vw, 640px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full flex-col justify-center gap-1.5 p-5 font-mono text-xs text-background sm:text-sm dark:text-foreground">
+                <span>
+                  <span className="text-primary">const</span> engineer = {'{'}
+                </span>
+                <span className="truncate pl-4">
+                  name: <span className="text-success">&apos;{code.name}&apos;</span>,
+                </span>
+                <span className="truncate pl-4">
+                  role: <span className="text-success">&apos;{code.role}&apos;</span>,
+                </span>
+                {code.stack.length ? (
+                  <span className="line-clamp-2 pl-4">
+                    stack: [
+                    <span className="text-success">
+                      {code.stack.map((s) => `'${s}'`).join(', ')}
+                    </span>
+                    ],
+                  </span>
+                ) : null}
+                <span className="pl-4">
+                  available:{' '}
+                  <span className="text-primary">{String(code.available)}</span>,
+                </span>
+                <span>{'};'}</span>
+              </div>
+            )}
           </div>
         ) : null}
       </div>
