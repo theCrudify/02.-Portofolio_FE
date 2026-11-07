@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 /** Resolved theme colours (rgb() strings) — three.js cannot parse the oklch tokens directly. */
@@ -414,12 +414,14 @@ export default function LaptopScene({
   reducedMotion,
   ...rest
 }: LaptopSceneProps) {
+  // Phones: high-DPR screens make full-res + MSAA far too costly for a mobile GPU.
+  const [touch] = useState(() => window.matchMedia('(pointer: coarse)').matches);
   return (
     <Canvas
-      dpr={[1, 1.75]}
+      dpr={touch ? [1, 1.25] : [1, 1.75]}
       frameloop={paused ? 'never' : reducedMotion ? 'demand' : 'always'}
       camera={{ position: [0, 2.2, 5.7], fov: 34 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
+      gl={{ antialias: !touch, alpha: true, powerPreference: 'low-power' }}
       onCreated={({ camera }) => camera.lookAt(0, 0.75, 0)}
     >
       <ambientLight intensity={0.9} />

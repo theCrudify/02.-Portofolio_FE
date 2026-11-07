@@ -124,7 +124,7 @@ export function LaptopStage({
         {/* Soft floor glow under the laptop */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-[12%] bottom-[14%] h-[18%] rounded-[50%] opacity-60 blur-2xl"
+          className="pointer-events-none absolute inset-x-[12%] bottom-[14%] h-[18%] rounded-[50%] opacity-60"
           style={{
             background:
               'radial-gradient(closest-side, color-mix(in oklab, var(--primary) 45%, transparent), transparent)',

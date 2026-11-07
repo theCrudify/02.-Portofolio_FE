@@ -338,7 +338,7 @@ export function ActivitiesSection({ activities, locale, muted }: ActivitiesSecti
                   {/* Active Station Detail Showcase Card */}
                   <div className="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-card p-6 sm:p-8 shadow-md">
                     {/* Ambient subtle glow */}
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,var(--primary),transparent)] opacity-10" />
 
                     <div className="relative z-10 flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                       <div className="flex-1 space-y-4">

@@ -58,7 +58,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <div className="bg-architectural-grid relative flex h-full w-full items-center justify-center overflow-hidden bg-muted/60">
               <div
                 aria-hidden="true"
-                className="absolute h-44 w-44 rounded-full opacity-30 blur-2xl"
+                className="absolute h-44 w-44 rounded-full opacity-30"
                 style={{
                   background:
                     'radial-gradient(circle, var(--primary) 0%, transparent 70%)',

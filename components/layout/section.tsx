@@ -42,7 +42,7 @@ export function Section({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-28 right-1/4 h-64 w-64 rounded-full opacity-20 blur-3xl"
+        className="pointer-events-none absolute -top-28 right-1/4 h-64 w-64 rounded-full opacity-20"
         style={{
           background:
             'radial-gradient(circle, color-mix(in oklab, var(--primary) 45%, transparent) 0%, transparent 70%)',
@@ -50,7 +50,7 @@ export function Section({
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-28 left-1/4 h-64 w-64 rounded-full opacity-15 blur-3xl"
+        className="pointer-events-none absolute -bottom-28 left-1/4 h-64 w-64 rounded-full opacity-15"
         style={{
           background:
             'radial-gradient(circle, color-mix(in oklab, var(--primary) 35%, transparent) 0%, transparent 70%)',

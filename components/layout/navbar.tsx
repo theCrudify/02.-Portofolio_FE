@@ -93,8 +93,8 @@ export function Navbar({ brandName }: NavbarProps) {
         className={cn(
           'no-print sticky top-0 z-40 w-full border-b transition-all duration-200',
           scrolled
-            ? 'border-border bg-background/90 shadow-sm backdrop-blur-xl'
-            : 'border-border/60 bg-background/75 backdrop-blur-md',
+            ? 'border-border bg-background/95 shadow-sm md:bg-background/90 md:backdrop-blur-xl'
+            : 'border-border/60 bg-background/95 md:bg-background/75 md:backdrop-blur-md',
         )}
       >
         <Container className="flex h-18 items-center justify-between gap-4">
