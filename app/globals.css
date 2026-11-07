@@ -296,6 +296,13 @@ body {
   animation: hero-shine 7s ease-in-out infinite;
 }
 
+/* Animating background-position repaints the whole hero every frame: too heavy for phones. */
+@media (pointer: coarse) {
+  .text-gradient-hero {
+    animation: none;
+  }
+}
+
 .marquee-mask {
   mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
 }
