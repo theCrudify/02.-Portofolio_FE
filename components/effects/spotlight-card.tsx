@@ -60,7 +60,7 @@ export function SpotlightCard({
         transformStyle: interactiveTilt ? 'preserve-3d' : undefined,
       }}
       className={cn(
-        'group/spotlight relative overflow-hidden rounded-2xl border border-border/80 bg-card/90 text-card-foreground shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/50 hover:shadow-2xl dark:bg-card/85 dark:shadow-lg dark:hover:border-primary/60',
+        'group/spotlight relative overflow-hidden rounded-2xl border border-border/80 bg-card/90 text-card-foreground shadow-sm transition-all md:backdrop-blur-md duration-300 hover:border-primary/50 hover:shadow-2xl dark:bg-card/85 dark:shadow-lg dark:hover:border-primary/60',
         className,
       )}
       {...props}

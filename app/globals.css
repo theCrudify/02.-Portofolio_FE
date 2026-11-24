@@ -167,20 +167,33 @@ body {
 .bg-page-canvas {
   background-color: var(--background);
   color: var(--foreground);
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+/* A fixed layer instead of background-attachment: fixed, which repaints on every scroll frame on phones. */
+.bg-page-canvas::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  /* lvh: the layer does not resize when the mobile URL bar collapses */
+  height: 100vh;
+  height: 100lvh;
+  pointer-events: none;
   background-image:
     radial-gradient(ellipse 90% 60% at 50% -15%, color-mix(in oklab, var(--primary) 14%, transparent), transparent),
     radial-gradient(ellipse 60% 50% at 95% 25%, color-mix(in oklab, var(--ring) 10%, transparent), transparent),
     linear-gradient(to right, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in oklab, var(--border) 24%, transparent) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px;
-  background-attachment: fixed;
-  transition:
-    background-color 0.35s ease,
-    color 0.35s ease;
 }
 
-.dark .bg-page-canvas,
-.dark.bg-page-canvas {
+.dark .bg-page-canvas::before,
+.dark.bg-page-canvas::before {
   background-image:
     radial-gradient(ellipse 85% 55% at 50% -12%, color-mix(in oklab, var(--primary) 28%, transparent), transparent),
     radial-gradient(ellipse 60% 45% at 88% 18%, color-mix(in oklab, var(--ring) 18%, transparent), transparent),
@@ -188,7 +201,6 @@ body {
     linear-gradient(to right, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in oklab, var(--border) 45%, transparent) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px;
-  background-attachment: fixed;
 }
 
 .bg-architectural-grid {
@@ -354,6 +366,9 @@ body {
   }
   body {
     background: transparent !important;
+  }
+  .bg-page-canvas::before {
+    display: none;
   }
 }
 

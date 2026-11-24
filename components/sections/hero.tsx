@@ -231,7 +231,9 @@ export function HeroSection({
                         variant: showUploadedCv ? 'outline' : 'default',
                         size: 'lg',
                       }),
-                      'h-12 w-full bg-background/70 px-6 font-semibold backdrop-blur-sm transition-transform active:scale-[0.97] sm:w-auto',
+                      'h-12 w-full px-6 font-semibold transition-transform active:scale-[0.97] sm:w-auto',
+                      // only the outline variant is glassy; on the primary one it hid the label
+                      showUploadedCv && 'bg-background/70 backdrop-blur-sm',
                     )}
                   >
                     <FileText className="h-4 w-4" />

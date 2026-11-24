@@ -83,7 +83,6 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
     offset: ['start 60%', 'end 60%'],
   });
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.4 });
-  const fillHeight = useTransform(smoothProgress, (v) => `${v * 100}%`);
   const guideTop = useTransform(smoothProgress, (v) => `calc(${v * 100}% - ${v * GUIDE_SIZE}px)`);
 
   // --- Walking detection: walk while scrolling, rest when scrolling stops --
@@ -186,7 +185,7 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
       {/* ---------------- Sticky track navigation ---------------- */}
       <aside className="lg:col-span-3">
-        <div className="sticky top-20 z-20 -mx-4 space-y-4 border-b border-border/70 bg-background/85 px-4 py-3 backdrop-blur-md sm:mx-0 sm:rounded-2xl sm:border lg:top-28 lg:border-border/70 lg:bg-card/70 lg:p-5">
+        <div className="sticky top-20 z-20 -mx-4 space-y-4 border-b border-border/70 bg-background/95 px-4 py-3 sm:mx-0 md:bg-background/85 md:backdrop-blur-md sm:rounded-2xl sm:border lg:top-28 lg:border-border/70 lg:bg-card/70 lg:p-5">
           <div className="flex items-center justify-between gap-2">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               {t('jumpToYear')}
@@ -278,8 +277,8 @@ export function CareerTimeline({ experiences, locale }: CareerTimelineProps) {
           {/* Progress fill */}
           <motion.div
             aria-hidden="true"
-            style={{ height: fillHeight }}
-            className="absolute top-0 left-4 w-[3px] -translate-x-px rounded-full bg-gradient-to-b from-primary/40 via-primary to-primary shadow-[0_0_12px_var(--primary)] sm:left-14"
+            style={{ scaleY: smoothProgress }}
+            className="absolute top-0 left-4 h-full w-[3px] origin-top -translate-x-px rounded-full bg-gradient-to-b from-primary/40 via-primary to-primary shadow-[0_0_12px_var(--primary)] sm:left-14"
           />
 
           {/* Walking guide */}
