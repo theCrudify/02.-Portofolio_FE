@@ -346,6 +346,7 @@ export const ADMIN_RESOURCES: Record<AdminResourceKey, AdminResourceMeta> = {
       text('gpaScale', 'GPA scale'),
       bi('description', 'Description', { multiline: true }),
       bullets('activities', 'Activities'),
+      ...attachments('Attachments (diploma, transcript, graduation photos)'),
       sortOrder,
     ],
   },

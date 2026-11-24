@@ -189,7 +189,7 @@ export interface PublicExperience extends PublicPortfolioExtras {
   projects: PublicProjectRef[];
 }
 
-export interface PublicEducation {
+export interface PublicEducation extends Pick<PublicPortfolioExtras, 'links' | 'attachments'> {
   id: string;
   organization: PublicOrganization | null;
   degree: string | null;

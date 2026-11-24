@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import { SpotlightCard } from '@/components/effects/spotlight-card';
 import { Section } from '@/components/layout/section';
 import { OrgMark } from '@/components/sections/org-mark';
+import { DetailLink } from '@/components/sections/portfolio-detail';
 import type { PublicEducation, SupportedLocale } from '@/lib/api/types';
 import { formatDuration, formatMonthYear } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -124,6 +125,8 @@ export function EducationSection({ education, locale, muted }: EducationSectionP
                   </dl>
                 </div>
               </div>
+              {/* Optional chain: tolerates an API that predates education attachments. */}
+              {edu.attachments?.length || edu.links?.length ? <DetailLink href={`/education/${edu.id}`} /> : null}
             </SpotlightCard>
           );
         })}
