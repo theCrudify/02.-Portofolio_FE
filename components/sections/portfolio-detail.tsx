@@ -149,20 +149,28 @@ export function PortfolioDetailPage({
     });
   }
   if (projects.length) {
+    // Full cards only pay off when there is something to show; without covers they are five empty frames.
+    const withMedia = projectCards.some((p) => p.cover || p.clip || p.images?.length);
     blocks.push({
       key: 'projects',
-      wide: true,
+      wide: withMedia,
       title: projectsTitle ?? t('projects'),
-      body:
-        projectCards.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {projectCards.map((p) => (
-              <ProjectCard key={p.slug} project={p} />
-            ))}
-          </div>
-        ) : (
-          <DetailRowList rows={projects.map((p) => ({ key: p.slug, href: `/projects/${p.slug}`, title: p.title }))} />
-        ),
+      body: withMedia ? (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {projectCards.map((p) => (
+            <ProjectCard key={p.slug} project={p} />
+          ))}
+        </div>
+      ) : (
+        <DetailRowList
+          rows={projects.map((p) => ({
+            key: p.slug,
+            href: `/projects/${p.slug}`,
+            title: p.title,
+            meta: projectCards.find((c) => c.slug === p.slug)?.client?.name,
+          }))}
+        />
+      ),
     });
   }
   if (relatedCertifications.length) {

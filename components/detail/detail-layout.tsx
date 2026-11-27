@@ -184,7 +184,7 @@ export function DetailHeader({
                 </dt>
                 <dd
                   className={cn(
-                    'mt-1.5 font-heading text-xl font-bold leading-tight md:text-2xl',
+                    'mt-1.5 text-balance font-heading text-lg font-bold leading-snug md:text-xl',
                     i === 0 && 'text-primary',
                     f.mono && 'truncate font-mono text-sm font-medium md:text-sm',
                   )}
@@ -274,7 +274,7 @@ export function DetailSection({
           !wide && 'lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]',
         )}
       >
-        <div className={cn('flex items-baseline gap-3', !wide && 'lg:sticky lg:top-24 lg:flex-col lg:gap-2 lg:self-start')}>
+        <div className={cn('flex flex-col gap-2', !wide && 'lg:sticky lg:top-24 lg:self-start')}>
           <span aria-hidden="true" className="font-mono text-sm font-bold text-primary">
             {String(index + 1).padStart(2, '0')}
           </span>
@@ -294,13 +294,16 @@ export function DetailProse({ children }: { children: ReactNode }) {
   );
 }
 
-/** Check items in two columns, same marks as the career timeline. */
+/** Check items. CSS columns (not a grid) so a short item never leaves a gap beside a long one. */
 export function DetailBulletList({ items }: { items: string[] }) {
   return (
-    <ul className="grid grid-cols-1 gap-x-12 gap-y-5 lg:grid-cols-2">
+    <ul className={cn('gap-x-12', items.length > 3 && 'xl:columns-2')}>
       {items.map((item, i) => (
-        <li key={i} className="flex items-start gap-3.5 text-base leading-relaxed text-foreground">
-          <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <li
+          key={i}
+          className="mb-5 flex max-w-[70ch] break-inside-avoid items-start gap-3.5 text-base leading-relaxed text-foreground/90"
+        >
+          <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
             <CheckCircle2 className="h-4 w-4" />
           </span>
           <span>{item}</span>
@@ -310,32 +313,21 @@ export function DetailBulletList({ items }: { items: string[] }) {
   );
 }
 
-/** Outcomes as bento cards: big faint number, accent rule on top. */
+/** Outcomes as cards with one quiet numeral each. */
 export function DetailNumberedList({ items }: { items: string[] }) {
   return (
-    <ol className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {items.map((item, i) => {
-        const n = String(i + 1).padStart(2, '0');
-        return (
-          <li
-            key={i}
-            className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 pt-7 shadow-xs transition-colors hover:border-primary/50"
-          >
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-primary/60 to-transparent"
-            />
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-1 -top-3 font-heading text-7xl font-bold text-primary/10"
-            >
-              {n}
-            </span>
-            <span className="relative font-mono text-xs font-bold text-primary">{n}</span>
-            <p className="relative mt-3 text-[15px] leading-relaxed text-foreground">{item}</p>
-          </li>
-        );
-      })}
+    <ol className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {items.map((item, i) => (
+        <li
+          key={i}
+          className="rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors hover:border-primary/50 md:p-6"
+        >
+          <span aria-hidden="true" className="font-heading text-3xl font-bold leading-none text-primary/30">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <p className="mt-3 text-[15px] leading-relaxed text-foreground">{item}</p>
+        </li>
+      ))}
     </ol>
   );
 }
