@@ -63,6 +63,8 @@
   --muted: oklch(0.21 0.01 265);
   --muted-foreground: oklch(0.71 0.013 286);
   --bronze: oklch(0.72 0.11 50);
+  /* The light value is too dim to read as text on a dark surface. */
+  --success: oklch(0.74 0.15 150);
   --card: oklch(0.165 0.009 265);
   --card-foreground: oklch(0.97 0 0);
   --popover: oklch(0.165 0.009 265);

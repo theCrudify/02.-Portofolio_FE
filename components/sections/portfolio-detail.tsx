@@ -3,13 +3,13 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import {
   DetailBulletList,
+  DetailCover,
   DetailHeader,
   DetailNumberedList,
   DetailPager,
   DetailProse,
   DetailRowList,
   DetailSection,
-  DetailStatPanel,
   DetailTechList,
   type DetailChip,
   type DetailFact,
@@ -55,7 +55,7 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   badges?: (string | null | undefined)[];
   /** Mono line above the title (period, date). */
   kicker?: string | null;
-  /** Status chips in the hero panel (active, expired…). */
+  /** Status pills in the hero (active, expired…). */
   chips?: DetailChip[];
   backHref: string;
   backLabel: string;
@@ -64,7 +64,7 @@ export interface PortfolioDetailPageProps extends Partial<PublicPortfolioExtras>
   cover?: PublicImage | null;
   /** Certificates and scans are shown whole instead of cropped. */
   coverFit?: 'cover' | 'contain';
-  /** Stat tiles in the hero panel; the first one is accented. Empty values are skipped. */
+  /** Stat strip under the hero; the first one is accented. Empty values are skipped. */
   facts?: DetailFact[];
   organization?: PublicOrganization | null;
   description?: string | null;
@@ -129,8 +129,8 @@ export function PortfolioDetailPage({
       </>
     ) : null;
 
-  // Each block becomes a full-width Section; backgrounds alternate like the home page.
-  const blocks: { key: string; title: string; body: ReactNode }[] = [];
+  // `wide` blocks (card grids, galleries) take the full width instead of the label + content row.
+  const blocks: { key: string; title: string; body: ReactNode; wide?: boolean }[] = [];
   if (description) {
     blocks.push({ key: 'description', title: t('description'), body: <DetailProse>{description}</DetailProse> });
   }
@@ -151,6 +151,7 @@ export function PortfolioDetailPage({
   if (projects.length) {
     blocks.push({
       key: 'projects',
+      wide: true,
       title: projectsTitle ?? t('projects'),
       body:
         projectCards.length > 0 ? (
@@ -167,6 +168,7 @@ export function PortfolioDetailPage({
   if (relatedCertifications.length) {
     blocks.push({
       key: 'certifications',
+      wide: true,
       title: t('relatedCertifications'),
       body: (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -196,6 +198,7 @@ export function PortfolioDetailPage({
   if (images.length) {
     blocks.push({
       key: 'gallery',
+      wide: true,
       title: t('gallery'),
       body: (
         <MultiImageShowcase
@@ -241,23 +244,23 @@ export function PortfolioDetailPage({
         backHref={backHref}
         backLabel={backLabel}
         eyebrow={badges}
+        chips={chips}
         kicker={kicker}
         title={title}
         organization={organization}
         byline={subtitle}
         actions={headerActions}
-        aside={
-          <DetailStatPanel image={cover} imageFit={coverFit} imageAlt={title} chips={chips} facts={facts} />
-        }
+        facts={facts}
+        aside={cover ? <DetailCover image={cover} imageFit={coverFit} imageAlt={title} /> : undefined}
       />
 
       {blocks.map((b, i) => (
-        <DetailSection key={b.key} title={b.title} muted={i % 2 === 0}>
+        <DetailSection key={b.key} title={b.title} index={i} wide={b.wide}>
           {b.body}
         </DetailSection>
       ))}
       {blocks.length === 0 ? (
-        <DetailSection title={t('description')} muted>
+        <DetailSection title={t('description')} index={0}>
           <p className="text-muted-foreground">{t('empty')}</p>
         </DetailSection>
       ) : null}

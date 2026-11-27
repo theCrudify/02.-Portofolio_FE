@@ -13,7 +13,6 @@ import {
   DetailProse,
   DetailRowList,
   DetailSection,
-  DetailStatPanel,
 } from '@/components/detail/detail-layout';
 import { getEmbedIframeUrl, VideoEmbed } from '@/components/media/video-embed';
 import { MetricBadgeGrid } from '@/components/project/metric-badge';
@@ -28,7 +27,7 @@ import {
 } from '@/components/seo/json-ld';
 import { fetchProjectDetail, fetchProjectsList, fetchSiteData } from '@/lib/api/server';
 import type { SupportedLocale } from '@/lib/api/types';
-import { formatPeriod } from '@/lib/format';
+import { formatDuration, formatPeriod } from '@/lib/format';
 import { buildMetadata, getSiteUrl } from '@/lib/seo';
 
 export async function generateStaticParams() {
@@ -110,11 +109,12 @@ export default async function ProjectDetailPage({
     { name: project.title, url: `${siteUrl}/projects/${project.slug}` },
   ]);
 
-  // Each block becomes a full-width Section; backgrounds alternate like the home page.
-  const blocks: { key: string; title: string; body: ReactNode }[] = [];
+  // `wide` blocks (video, diagrams, galleries) take the full width instead of the label + content row.
+  const blocks: { key: string; title: string; body: ReactNode; wide?: boolean }[] = [];
   if (demoVideo) {
     blocks.push({
       key: 'demo',
+      wide: true,
       title: demoVideo.title ?? project.title,
       body: (
         <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
@@ -135,10 +135,11 @@ export default async function ProjectDetailPage({
       key: 'problem-solution',
       title: [project.problem && t('problem'), project.solution && t('solution')].filter(Boolean).join(' & '),
       body: (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        // Stacked: the two texts are rarely the same length, side by side one card ends up half empty.
+        <div className="space-y-8">
           {project.problem ? (
-            <div className="rounded-2xl border border-destructive/25 bg-card p-6 shadow-xs md:p-8">
-              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-destructive">
+            <div className="border-l-2 border-destructive/60 pl-5 md:pl-6">
+              <p className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-destructive">
                 <CircleAlert className="h-4 w-4" />
                 {t('problem')}
               </p>
@@ -146,8 +147,8 @@ export default async function ProjectDetailPage({
             </div>
           ) : null}
           {project.solution ? (
-            <div className="rounded-2xl border border-primary/30 bg-card p-6 shadow-xs md:p-8">
-              <p className="mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
+            <div className="border-l-2 border-primary pl-5 md:pl-6">
+              <p className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
                 <Lightbulb className="h-4 w-4" />
                 {t('solution')}
               </p>
@@ -195,6 +196,7 @@ export default async function ProjectDetailPage({
     const arch = project.architecture;
     blocks.push({
       key: 'architecture',
+      wide: true,
       title: t('architecture'),
       body: (
         <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -210,7 +212,7 @@ export default async function ProjectDetailPage({
     });
   }
   if (galleryItems.length > 0) {
-    blocks.push({ key: 'gallery', title: t('gallery'), body: <ProjectGallery items={galleryItems} /> });
+    blocks.push({ key: 'gallery', title: t('gallery'), wide: true, body: <ProjectGallery items={galleryItems} /> });
   }
   if (techGroups.length > 0) {
     blocks.push({ key: 'tech', title: t('techStack'), body: <TechStackGroup technologies={techGroups} /> });
@@ -283,22 +285,26 @@ export default async function ProjectDetailPage({
             <ProjectLinks links={project.links} projectSlug={project.slug} privateLabel={t('privateRepo')} />
           ) : null
         }
+        facts={[
+          { label: t('role'), value: project.role },
+          { label: t('teamSize'), value: project.teamSize },
+          {
+            label: t('period'),
+            value: project.periodStart
+              ? formatDuration(project.periodStart, project.periodEnd, typedLocale)
+              : null,
+          },
+          { label: t('techStack'), value: project.technologies.reduce((n, g) => n + g.items.length, 0) || null },
+        ]}
         aside={
-          <div className="space-y-3">
+          project.cover ? (
             <DetailBrowserFrame path={`/${project.slug}`} image={project.cover} title={project.title} />
-            <DetailStatPanel
-              imageAlt={project.title}
-              facts={[
-                { label: t('role'), value: project.role },
-                { label: t('teamSize'), value: project.teamSize },
-              ]}
-            />
-          </div>
+          ) : undefined
         }
       />
 
       {blocks.map((b, i) => (
-        <DetailSection key={b.key} title={b.title} muted={i % 2 === 0}>
+        <DetailSection key={b.key} title={b.title} index={i} wide={b.wide}>
           {b.body}
         </DetailSection>
       ))}

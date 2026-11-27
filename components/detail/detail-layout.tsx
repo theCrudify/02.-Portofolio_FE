@@ -1,8 +1,7 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, FileText, Layers, Video } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, FileText, Video } from 'lucide-react';
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { Container } from '@/components/layout/container';
-import { Section, SectionEyebrow } from '@/components/layout/section';
 import { BrowserChrome } from '@/components/project/project-card';
 import { TechLogo } from '@/components/project/tech-logo';
 import { OrgMark } from '@/components/sections/org-mark';
@@ -13,111 +12,14 @@ import { cn } from '@/lib/utils';
 
 /*
  * Building blocks shared by every detail page (projects, experience, certificates, activities,
- * awards). The page reads like the home page: a hero Section, then one full-width Section per
- * block with the pill eyebrow, alternating the muted background.
+ * awards): a dark hero band with the key facts, then one numbered editorial row per block.
  */
-
-export interface DetailHeaderProps {
-  backHref: string;
-  backLabel: string;
-  /** Kind of entry (e.g. "Bootcamp", "Full-time"), shown as the pill above the title. */
-  eyebrow?: (string | null | undefined)[];
-  title: string;
-  /** Mono line above the title (period, date). */
-  kicker?: string | null;
-  lede?: string | null;
-  organization?: PublicOrganization | null;
-  /** Free-form line under the organization (event name…). */
-  byline?: ReactNode;
-  actions?: ReactNode;
-  /** Right-hand panel: stat tiles or product preview. */
-  aside?: ReactNode;
-}
-
-export function DetailHeader({
-  backHref,
-  backLabel,
-  eyebrow = [],
-  title,
-  kicker,
-  lede,
-  organization,
-  byline,
-  actions,
-  aside,
-}: DetailHeaderProps) {
-  const kinds = eyebrow.filter(Boolean);
-  const orgDetail = organization
-    ? [organization.type?.label, organization.location].filter(Boolean).join(' · ')
-    : '';
-  return (
-    <Section className="pt-6 md:pt-8 lg:pt-10">
-      <Link
-        href={backHref}
-        className="-ml-1 inline-flex min-h-11 items-center gap-2 rounded-md px-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {backLabel}
-      </Link>
-
-      <div
-        className={cn(
-          'mt-6 grid grid-cols-1 items-center gap-10 md:mt-8',
-          aside && 'lg:grid-cols-[minmax(0,1fr)_460px] xl:gap-16',
-        )}
-      >
-        <div className="min-w-0">
-          {kinds.length > 0 ? <SectionEyebrow className="mb-5">{kinds.join(' · ')}</SectionEyebrow> : null}
-          {kicker ? <p className="font-mono text-sm font-medium text-primary">{kicker}</p> : null}
-          <h1
-            className={cn(
-              'text-balance font-heading text-[34px] font-bold leading-[1.05] tracking-tight text-foreground md:text-[52px]',
-              kicker && 'mt-3',
-            )}
-          >
-            {title}
-          </h1>
-
-          {organization ? (
-            <div className="mt-6 flex items-center gap-3">
-              <OrgMark organization={organization} className="h-12 w-12 shadow-sm" />
-              <div className="flex min-w-0 flex-col leading-snug">
-                {organization.websiteUrl ? (
-                  <a
-                    href={organization.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-lg font-semibold text-primary hover:underline"
-                  >
-                    {organization.name}
-                    <ArrowUpRight className="h-4 w-4" />
-                  </a>
-                ) : (
-                  <span className="text-lg font-semibold text-primary">{organization.name}</span>
-                )}
-                {orgDetail ? <span className="text-sm text-muted-foreground">{orgDetail}</span> : null}
-              </div>
-            </div>
-          ) : null}
-          {byline ? <p className="mt-3 text-base font-medium text-foreground/80">{byline}</p> : null}
-
-          {lede ? (
-            <p className="mt-6 max-w-[62ch] text-pretty text-lg leading-relaxed text-muted-foreground">{lede}</p>
-          ) : null}
-          {actions ? <div className="mt-7 flex flex-wrap items-center gap-3">{actions}</div> : null}
-        </div>
-
-        {aside ? <div className="min-w-0">{aside}</div> : null}
-      </div>
-    </Section>
-  );
-}
 
 export interface DetailFact {
   label: string;
   value: ReactNode;
   mono?: boolean;
-  /** Spans both columns (long values like a credential id). */
+  /** Spans two cells (long values like a credential id). */
   wide?: boolean;
 }
 
@@ -133,160 +35,260 @@ const CHIP_TONE: Record<NonNullable<DetailChip['tone']>, string> = {
   danger: 'border-destructive/30 bg-destructive/10 text-destructive',
 };
 
-/**
- * Hero side panel: optional image, status chips and the key facts as stat tiles. The first tile
- * carries the accent so the panel has one focal point. Empty values are skipped.
- */
-export function DetailStatPanel({
-  image,
-  imageFit = 'cover',
-  imageAlt,
-  chips = [],
-  facts = [],
-}: {
-  image?: PublicImage | null;
-  imageFit?: 'cover' | 'contain';
-  imageAlt: string;
+const PILL = 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold';
+
+export interface DetailHeaderProps {
+  backHref: string;
+  backLabel: string;
+  /** Kind of entry (e.g. "Bootcamp", "Full-time"), shown as the pill above the title. */
+  eyebrow?: (string | null | undefined)[];
+  /** Status pills next to the eyebrow (active, expired…). */
   chips?: DetailChip[];
+  title: string;
+  /** Mono line above the title (period, date). */
+  kicker?: string | null;
+  lede?: string | null;
+  organization?: PublicOrganization | null;
+  /** Free-form line under the organization (event name…). */
+  byline?: ReactNode;
+  actions?: ReactNode;
+  /** Key facts as a stat strip under the hero; the first one is accented. Empty values are skipped. */
   facts?: DetailFact[];
-}) {
+  /** Right-hand media (cover, product preview). Pass nothing when there is no image. */
+  aside?: ReactNode;
+}
+
+/** Always-dark hero band, so every detail page opens on one strong focal block in both themes. */
+export function DetailHeader({
+  backHref,
+  backLabel,
+  eyebrow = [],
+  chips = [],
+  title,
+  kicker,
+  lede,
+  organization,
+  byline,
+  actions,
+  facts = [],
+  aside,
+}: DetailHeaderProps) {
+  const kinds = eyebrow.filter(Boolean);
   const shown = facts.filter((f) => f.value !== null && f.value !== undefined && f.value !== '');
-  if (!image && shown.length === 0 && chips.length === 0) return null;
+  const orgDetail = organization
+    ? [organization.type?.label, organization.location].filter(Boolean).join(' · ')
+    : '';
   return (
-    <div className="space-y-3">
-      {image ? (
-        <a
-          href={image.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative block aspect-4/3 overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
+    <header className="dark relative isolate overflow-hidden border-b border-border bg-background text-foreground">
+      <div
+        aria-hidden="true"
+        className="bg-architectural-grid pointer-events-none absolute inset-0 -z-10 opacity-50 [mask-image:radial-gradient(ellipse_80%_90%_at_85%_0%,black,transparent_75%)]"
+      />
+      {/* Gradients only (no blur filter): cheap to paint on phones. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(ellipse 60% 80% at 90% -10%, color-mix(in oklab, var(--primary) 42%, transparent), transparent 70%), radial-gradient(ellipse 45% 60% at 0% 110%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%)',
+        }}
+      />
+
+      <Container className="pb-10 pt-6 md:pb-14 md:pt-8">
+        <Link
+          href={backHref}
+          className="-ml-1 inline-flex min-h-11 items-center gap-2 rounded-md px-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <Image
-            src={image.url}
-            alt={image.alt || imageAlt}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 460px"
-            className={imageFit === 'contain' ? 'object-contain p-4' : 'object-cover'}
-          />
-        </a>
-      ) : null}
-      {chips.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {chips.map((c) => (
-            <span
-              key={c.label}
+          <ArrowLeft className="h-4 w-4" />
+          {backLabel}
+        </Link>
+
+        <div
+          className={cn(
+            'mt-6 grid grid-cols-1 items-center gap-10 md:mt-10',
+            aside && 'lg:grid-cols-[minmax(0,1fr)_440px] xl:gap-16',
+          )}
+        >
+          <div className="min-w-0">
+            {kinds.length > 0 || chips.length > 0 || kicker ? (
+              <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                {kinds.length > 0 ? (
+                  <span className={cn(PILL, 'border-primary/40 bg-primary/15 uppercase tracking-[0.12em] text-primary')}>
+                    {kinds.join(' · ')}
+                  </span>
+                ) : null}
+                {chips.map((c) => (
+                  <span key={c.label} className={cn(PILL, CHIP_TONE[c.tone ?? 'neutral'])}>
+                    {c.tone && c.tone !== 'neutral' ? <span className="h-1.5 w-1.5 rounded-full bg-current" /> : null}
+                    {c.label}
+                  </span>
+                ))}
+                {kicker ? <p className="font-mono text-sm text-muted-foreground">{kicker}</p> : null}
+              </div>
+            ) : null}
+            <h1
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold',
-                CHIP_TONE[c.tone ?? 'neutral'],
+                'text-balance font-heading text-[32px] font-bold leading-[1.05] tracking-tight text-foreground md:text-[44px]',
+                !aside && 'max-w-5xl lg:text-[56px]',
               )}
             >
-              {c.tone && c.tone !== 'neutral' ? <span className="h-1.5 w-1.5 rounded-full bg-current" /> : null}
-              {c.label}
-            </span>
-          ))}
+              {title}
+            </h1>
+
+            {organization ? (
+              <div className="mt-6 flex items-center gap-3">
+                <OrgMark organization={organization} className="h-12 w-12 shadow-sm" />
+                <div className="flex min-w-0 flex-col leading-snug">
+                  {organization.websiteUrl ? (
+                    <a
+                      href={organization.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-lg font-semibold text-primary hover:underline"
+                    >
+                      {organization.name}
+                      <ArrowUpRight className="h-4 w-4" />
+                    </a>
+                  ) : (
+                    <span className="text-lg font-semibold text-primary">{organization.name}</span>
+                  )}
+                  {orgDetail ? <span className="text-sm text-muted-foreground">{orgDetail}</span> : null}
+                </div>
+              </div>
+            ) : null}
+            {byline ? <p className="mt-3 text-base font-medium text-foreground/80">{byline}</p> : null}
+
+            {lede ? (
+              <p className="mt-6 max-w-[62ch] text-pretty text-lg leading-relaxed text-foreground/75">{lede}</p>
+            ) : null}
+            {actions ? <div className="mt-7 flex flex-wrap items-center gap-3">{actions}</div> : null}
+          </div>
+
+          {aside ? <div className="min-w-0">{aside}</div> : null}
         </div>
-      ) : null}
-      {shown.length > 0 ? (
-        <dl className="grid grid-cols-2 gap-3">
-          {shown.map((f, i) => (
-            <div
-              key={f.label}
-              className={cn(
-                'relative min-w-0 overflow-hidden rounded-2xl border p-5 shadow-sm',
-                (f.wide || shown.length === 1) && 'col-span-2',
-                i === 0
-                  ? 'border-primary/40 bg-linear-to-br from-primary to-primary/80 text-primary-foreground'
-                  : 'border-border bg-card/90 backdrop-blur',
-              )}
-            >
-              {i === 0 ? <div aria-hidden="true" className="bg-dot-matrix absolute inset-0 opacity-25" /> : null}
-              <dt
+
+        {/* A single fact is not a strip, and the kicker usually says it already. */}
+        {shown.length > 1 ? (
+          // gap-px over a border-coloured box draws the hairlines between cells.
+          <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:mt-12 md:grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
+            {shown.map((f, i) => (
+              <div
+                key={f.label}
                 className={cn(
-                  'relative text-[11px] font-semibold uppercase tracking-[0.14em]',
-                  i === 0 ? 'text-primary-foreground/80' : 'text-muted-foreground',
+                  'min-w-0 bg-card/90 px-5 py-4 md:px-6 md:py-5',
+                  (f.wide || (i === shown.length - 1 && i % 2 === 0)) && 'col-span-2 md:col-span-1',
                 )}
               >
-                {f.label}
-              </dt>
-              <dd
-                className={cn(
-                  'relative mt-2 font-heading text-xl font-bold leading-tight md:text-2xl',
-                  f.mono && 'truncate font-mono text-sm md:text-base',
-                )}
-              >
-                {f.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-    </div>
+                <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  {f.label}
+                </dt>
+                <dd
+                  className={cn(
+                    'mt-1.5 font-heading text-xl font-bold leading-tight md:text-2xl',
+                    i === 0 && 'text-primary',
+                    f.mono && 'truncate font-mono text-sm font-medium md:text-sm',
+                  )}
+                >
+                  {f.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
+      </Container>
+    </header>
   );
 }
 
-/** Product preview in the same window chrome as the project cards. */
-export function DetailBrowserFrame({
-  path,
+/** Hero cover image; opens the full file. Render only when there is an image. */
+export function DetailCover({
   image,
-  title,
+  imageFit = 'cover',
+  imageAlt,
 }: {
-  path: string;
-  image?: PublicImage | null;
-  title: string;
+  image: PublicImage;
+  imageFit?: 'cover' | 'contain';
+  imageAlt: string;
 }) {
+  return (
+    <a
+      href={image.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative block aspect-4/3 overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
+    >
+      <Image
+        src={image.url}
+        alt={image.alt || imageAlt}
+        fill
+        priority
+        sizes="(max-width: 1024px) 100vw, 440px"
+        className={imageFit === 'contain' ? 'object-contain p-4' : 'object-cover'}
+      />
+    </a>
+  );
+}
+
+/** Product preview in the same window chrome as the project cards. Render only when there is a cover. */
+export function DetailBrowserFrame({ path, image, title }: { path: string; image: PublicImage; title: string }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
       <BrowserChrome path={path} />
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
-        {image ? (
-          <Image
-            src={image.url}
-            alt={image.alt || title}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 640px"
-            className="object-cover"
-          />
-        ) : (
-          <div className="bg-architectural-grid relative flex h-full w-full items-center justify-center bg-muted/60">
-            <div
-              aria-hidden="true"
-              className="absolute h-44 w-44 rounded-full opacity-30 blur-2xl"
-              style={{ background: 'radial-gradient(circle, var(--primary) 0%, transparent 70%)' }}
-            />
-            <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/35 bg-background/90 shadow-md">
-              <Layers className="h-6 w-6 text-primary" />
-            </span>
-          </div>
-        )}
+        <Image
+          src={image.url}
+          alt={image.alt || title}
+          fill
+          priority
+          sizes="(max-width: 1024px) 100vw, 640px"
+          className="object-cover"
+        />
       </div>
     </div>
   );
 }
 
-/** One body block: a full-width home-page Section with its big title; alternate `muted`. */
+/**
+ * One body block. Editorial row: numbered label on the left (sticky on desktop), content on the
+ * right. `wide` stacks them so grids, galleries and video get the full width.
+ */
 export function DetailSection({
   title,
   children,
-  muted,
+  index,
+  wide,
   id,
 }: {
   title: string;
   children: ReactNode;
-  muted?: boolean;
+  /** Zero-based position, shown as 01, 02… */
+  index: number;
+  wide?: boolean;
   id?: string;
 }) {
   return (
-    <Section id={id} title={title} muted={muted}>
-      {children}
-    </Section>
+    <section id={id} className="border-b border-border/70">
+      <Container
+        className={cn(
+          'grid grid-cols-1 gap-x-12 gap-y-6 py-10 md:py-14',
+          !wide && 'lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]',
+        )}
+      >
+        <div className={cn('flex items-baseline gap-3', !wide && 'lg:sticky lg:top-24 lg:flex-col lg:gap-2 lg:self-start')}>
+          <span aria-hidden="true" className="font-mono text-sm font-bold text-primary">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <h2 className="font-heading text-2xl font-bold leading-tight tracking-tight text-foreground">{title}</h2>
+        </div>
+        <div className="min-w-0">{children}</div>
+      </Container>
+    </section>
   );
 }
 
 export function DetailProse({ children }: { children: ReactNode }) {
   return (
-    <p className="max-w-[75ch] whitespace-pre-line text-pretty text-lg leading-[1.8] text-foreground/80">
+    <p className="max-w-[70ch] whitespace-pre-line text-pretty text-base leading-[1.75] text-foreground/85 md:text-[17px]">
       {children}
     </p>
   );

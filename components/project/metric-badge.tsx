@@ -12,12 +12,12 @@ export function MetricBadgeGrid({ metrics }: MetricBadgeProps) {
       {metrics.map((metric, idx) => (
         <div
           key={`${metric.label}-${idx}`}
-          className="rounded-md border border-border bg-card p-5"
+          className="rounded-2xl border border-primary/25 bg-primary/5 p-5 md:p-6"
         >
-          <p className="font-heading text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          <p className="font-heading text-4xl font-bold tracking-tight text-primary md:text-5xl">
             {metric.value}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">{metric.label}</p>
+          <p className="mt-2 text-sm font-medium text-foreground/80">{metric.label}</p>
         </div>
       ))}
     </div>
