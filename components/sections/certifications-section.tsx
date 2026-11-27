@@ -264,7 +264,7 @@ export function CertificationsSection({
           {viewMode === 'slide' && totalPages > 1 ? (
             <span className="hidden items-center gap-1 font-mono text-[11px] text-primary sm:inline-flex">
               <Sparkles className="h-3 w-3" />
-              <span>Gunakan tombol panah keyboard ← → untuk menggeser</span>
+              <span>{t('arrowHint')}</span>
             </span>
           ) : null}
         </div>

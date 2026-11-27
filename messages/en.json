@@ -143,6 +143,7 @@
       "next": "Next",
       "perPage": "Per page",
       "showing": "Showing {start}–{end} of {total} credentials",
+      "arrowHint": "Use the ← → arrow keys to slide",
       "emptyFilter": "No credentials found in this category"
     },
     "activities": {

@@ -143,6 +143,7 @@
       "next": "Berikutnya",
       "perPage": "Per tampilan",
       "showing": "Menampilkan {start}–{end} dari {total} sertifikat",
+      "arrowHint": "Gunakan tombol panah ← → untuk menggeser",
       "emptyFilter": "Tidak ada sertifikat dalam kategori ini"
     },
     "activities": {

@@ -155,6 +155,13 @@
   --font-code: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
+/* The pair's variables are set on a wrapper below <body>, so body's own font-family cannot see them. */
+.font-pair-geist,
+.font-pair-inter,
+.font-pair-serif-accent {
+  font-family: var(--font-body);
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);

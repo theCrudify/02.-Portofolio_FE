@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://res.cloudinary.com https://cdn.simpleicons.org https://i.ytimg.com https://i.vimeocdn.com https://cdn.loom.com",
       "media-src 'self' https://res.cloudinary.com",
-      "frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.loom.com https://challenges.cloudflare.com",
+      "frame-src 'self' https://www.youtube-nocookie.com https://player.vimeo.com https://www.loom.com https://drive.google.com https://challenges.cloudflare.com",
       "connect-src 'self' https://api.cloudinary.com https://challenges.cloudflare.com https://*.ingest.sentry.io",
       "font-src 'self' data:",
       "object-src 'none'",

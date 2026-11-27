@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <NextIntlClientProvider locale="en" messages={enMessages}>
-      <div className="min-h-screen bg-background text-foreground">{children}</div>
+      <div className="font-pair-geist min-h-screen bg-background text-foreground">{children}</div>
     </NextIntlClientProvider>
   );
 }

@@ -257,7 +257,7 @@ export function MediaPicker({
             <TabsList>
               <TabsTrigger value="library">Library</TabsTrigger>
               <TabsTrigger value="upload">Direct Upload</TabsTrigger>
-              <TabsTrigger value="embed">Video Link (YouTube/Vimeo/Loom)</TabsTrigger>
+              <TabsTrigger value="embed">Video Link (YouTube/Vimeo/Loom/Drive)</TabsTrigger>
             </TabsList>
 
             <TabsContent value="library">

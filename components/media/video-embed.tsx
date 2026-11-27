@@ -29,6 +29,9 @@ export function getEmbedIframeUrl(
   if (provider === 'loom' && embedId) {
     return `https://www.loom.com/embed/${encodeURIComponent(embedId)}?autoplay=1`;
   }
+  if (provider === 'google_drive' && embedId) {
+    return `https://drive.google.com/file/d/${encodeURIComponent(embedId)}/preview`;
+  }
   return fallbackUrl;
 }
 

@@ -91,7 +91,7 @@ export default function AdminMediaPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Media Library</h1>
         <p className="text-sm text-muted-foreground">
-          Manage Cloudinary images, short video clips, PDF documents, and YouTube/Vimeo/Loom embeds.
+          Manage Cloudinary images, short video clips, PDF documents, and YouTube/Vimeo/Loom/Google Drive embeds.
         </p>
       </div>
 
@@ -122,7 +122,7 @@ export default function AdminMediaPage() {
         className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-3"
       >
         <div>
-          <Label htmlFor="embed-url">Video URL (YouTube / Vimeo / Loom)</Label>
+          <Label htmlFor="embed-url">Video URL (YouTube / Vimeo / Loom / Google Drive)</Label>
           <Input
             id="embed-url"
             value={embedUrl}
