@@ -58,7 +58,7 @@ export interface DetailHeaderProps {
   aside?: ReactNode;
 }
 
-/** Always-dark hero band, so every detail page opens on one strong focal block in both themes. */
+/** Hero band in the page theme: tinted surface, primary glow and grid, with the key facts as a strip. */
 export function DetailHeader({
   backHref,
   backLabel,
@@ -79,7 +79,7 @@ export function DetailHeader({
     ? [organization.type?.label, organization.location].filter(Boolean).join(' · ')
     : '';
   return (
-    <header className="dark relative isolate overflow-hidden border-b border-border bg-background text-foreground">
+    <header className="relative isolate overflow-hidden border-b border-border bg-primary/[0.04] text-foreground dark:bg-transparent">
       <div
         aria-hidden="true"
         className="bg-architectural-grid pointer-events-none absolute inset-0 -z-10 opacity-50 [mask-image:radial-gradient(ellipse_80%_90%_at_85%_0%,black,transparent_75%)]"
@@ -87,7 +87,7 @@ export function DetailHeader({
       {/* Gradients only (no blur filter): cheap to paint on phones. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-100"
         style={{
           background:
             'radial-gradient(ellipse 60% 80% at 90% -10%, color-mix(in oklab, var(--primary) 42%, transparent), transparent 70%), radial-gradient(ellipse 45% 60% at 0% 110%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%)',
@@ -175,7 +175,7 @@ export function DetailHeader({
               <div
                 key={f.label}
                 className={cn(
-                  'min-w-0 bg-card/90 px-5 py-4 md:px-6 md:py-5',
+                  'min-w-0 bg-card px-5 py-4 md:px-6 md:py-5',
                   (f.wide || (i === shown.length - 1 && i % 2 === 0)) && 'col-span-2 md:col-span-1',
                 )}
               >
