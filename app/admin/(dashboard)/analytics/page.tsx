@@ -52,7 +52,7 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="Total Views" value={data?.totals.views ?? 0} />
         <StatCard label="Unique Visitors" value={data?.totals.uniqueVisitors ?? 0} />
         <StatCard label="CV Downloads" value={data?.totals.cvDownloads ?? 0} />
@@ -64,12 +64,24 @@ export default function AdminAnalyticsPage() {
       <div className="rounded-lg border border-border bg-card p-5">
         <h2 className="text-sm font-semibold">Top Visited Paths</h2>
         <div className="mt-3 divide-y divide-border text-sm">
-          {data?.topPaths.map((p) => (
-            <div key={p.path} className="flex items-center justify-between py-2">
-              <span className="font-mono text-xs">{p.path}</span>
-              <span className="font-medium">{p.count} views</span>
-            </div>
-          )) ?? <p className="py-2 text-xs text-muted-foreground">No path stats yet.</p>}
+          {data?.topPaths.length ? (
+            data.topPaths.map((p) => (
+              <div key={p.path} className="py-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="truncate font-mono text-xs">{p.path}</span>
+                  <span className="shrink-0 font-medium">{p.count.toLocaleString()} views</span>
+                </div>
+                <div className="mt-1 h-1.5 rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary/70"
+                    style={{ width: `${(p.count / (data.topPaths[0]?.count ?? 1)) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="py-2 text-xs text-muted-foreground">No path stats yet.</p>
+          )}
         </div>
       </div>
     </div>

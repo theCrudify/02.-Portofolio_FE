@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ConfirmProvider } from '@/components/admin/confirm-dialog';
 import { UserProvider } from '@/components/admin/role-gate';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
@@ -50,38 +50,80 @@ interface NavItem {
   minRole: AdminRole;
 }
 
-const ADMIN_NAV_ITEMS: NavItem[] = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, minRole: 'viewer' },
-  { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, minRole: 'viewer' },
-  { href: '/admin/messages', label: 'Messages', icon: Mail, minRole: 'viewer' },
-  { href: '/admin/profile', label: 'Profile', icon: UserCircle, minRole: 'editor' },
-  { href: '/admin/content/organizations', label: 'Organizations', icon: Building2, minRole: 'editor' },
-  { href: '/admin/content/experiences', label: 'Experience', icon: Briefcase, minRole: 'editor' },
-  { href: '/admin/content/projects', label: 'Projects', icon: FolderKanban, minRole: 'editor' },
-  { href: '/admin/content/technologies', label: 'Technologies', icon: Wrench, minRole: 'editor' },
-  { href: '/admin/content/education', label: 'Education', icon: GraduationCap, minRole: 'editor' },
-  { href: '/admin/content/certifications', label: 'Certifications', icon: BadgeCheck, minRole: 'editor' },
-  { href: '/admin/content/activities', label: 'Activities', icon: Users2, minRole: 'editor' },
-  { href: '/admin/content/achievements', label: 'Achievements', icon: Trophy, minRole: 'editor' },
-  { href: '/admin/content/publications', label: 'Publications', icon: BookOpen, minRole: 'editor' },
-  { href: '/admin/content/testimonials', label: 'Testimonials', icon: Quote, minRole: 'editor' },
-  { href: '/admin/master-data', label: 'Master Data', icon: ListTree, minRole: 'editor' },
-  { href: '/admin/media', label: 'Media Library', icon: ImageIcon, minRole: 'editor' },
-  { href: '/admin/documents', label: 'CV & Share Links', icon: FileText, minRole: 'editor' },
-  { href: '/admin/appearance', label: 'Appearance', icon: Palette, minRole: 'owner' },
-  { href: '/admin/seo', label: 'SEO Global', icon: Globe, minRole: 'owner' },
-  { href: '/admin/users', label: 'Users', icon: Users, minRole: 'owner' },
-  { href: '/admin/settings', label: 'Settings & Backup', icon: Settings, minRole: 'viewer' },
+/** Sidebar sections; a section with no visible item for the user's role is hidden. */
+const ADMIN_NAV_GROUPS: { title: string; items: NavItem[] }[] = [
+  {
+    title: 'Overview',
+    items: [
+      { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, minRole: 'viewer' },
+      { href: '/admin/analytics', label: 'Analytics', icon: BarChart3, minRole: 'viewer' },
+      { href: '/admin/messages', label: 'Messages', icon: Mail, minRole: 'viewer' },
+    ],
+  },
+  {
+    title: 'Career',
+    items: [
+      { href: '/admin/profile', label: 'Profile', icon: UserCircle, minRole: 'editor' },
+      { href: '/admin/content/organizations', label: 'Organizations', icon: Building2, minRole: 'editor' },
+      { href: '/admin/content/experiences', label: 'Experience', icon: Briefcase, minRole: 'editor' },
+      { href: '/admin/content/projects', label: 'Projects', icon: FolderKanban, minRole: 'editor' },
+      { href: '/admin/content/technologies', label: 'Technologies', icon: Wrench, minRole: 'editor' },
+      { href: '/admin/content/education', label: 'Education', icon: GraduationCap, minRole: 'editor' },
+    ],
+  },
+  {
+    title: 'Credentials',
+    items: [
+      { href: '/admin/content/certifications', label: 'Certifications', icon: BadgeCheck, minRole: 'editor' },
+      { href: '/admin/content/activities', label: 'Activities', icon: Users2, minRole: 'editor' },
+      { href: '/admin/content/achievements', label: 'Achievements', icon: Trophy, minRole: 'editor' },
+      { href: '/admin/content/publications', label: 'Publications', icon: BookOpen, minRole: 'editor' },
+      { href: '/admin/content/testimonials', label: 'Testimonials', icon: Quote, minRole: 'editor' },
+    ],
+  },
+  {
+    title: 'Assets',
+    items: [
+      { href: '/admin/media', label: 'Media Library', icon: ImageIcon, minRole: 'editor' },
+      { href: '/admin/documents', label: 'CV & Share Links', icon: FileText, minRole: 'editor' },
+      { href: '/admin/master-data', label: 'Master Data', icon: ListTree, minRole: 'editor' },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      { href: '/admin/appearance', label: 'Appearance', icon: Palette, minRole: 'owner' },
+      { href: '/admin/seo', label: 'SEO Global', icon: Globe, minRole: 'owner' },
+      { href: '/admin/users', label: 'Users', icon: Users, minRole: 'owner' },
+      { href: '/admin/settings', label: 'Settings & Backup', icon: Settings, minRole: 'viewer' },
+    ],
+  },
 ];
+
+const isActiveHref = (pathname: string, href: string) =>
+  href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
 
 export function AdminShell({ user, children }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const visibleItems = ADMIN_NAV_ITEMS.filter((item) =>
-    hasRole(user.role, item.minRole),
-  );
+  const [unread, setUnread] = useState(0);
+
+  const visibleGroups = ADMIN_NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => hasRole(user.role, item.minRole)),
+  })).filter((group) => group.items.length > 0);
+  const currentLabel = ADMIN_NAV_GROUPS.flatMap((g) => g.items).find((item) =>
+    isActiveHref(pathname, item.href),
+  )?.label;
+
+  // Re-check on every navigation so the badge clears after reading messages.
+  useEffect(() => {
+    api<{ counts: { unreadMessages: number } }>('/v1/admin/dashboard')
+      .then((res) => setUnread(res.data.counts.unreadMessages))
+      .catch(() => null);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -99,7 +141,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
         <aside
           aria-label="Admin sidebar"
           className={cn(
-            'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-card transition-transform md:static md:translate-x-0',
+            'fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-card transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0',
             sidebarOpen ? 'translate-x-0' : '-translate-x-full',
           )}
         >
@@ -119,31 +161,52 @@ export function AdminShell({ user, children }: AdminShellProps) {
             </Button>
           </div>
 
-          <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-            {visibleItems.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                item.href === '/admin'
-                  ? pathname === '/admin'
-                  : pathname.startsWith(item.href);
+          <nav className="flex-1 space-y-5 overflow-y-auto p-3">
+            {visibleGroups.map((group) => (
+              <div key={group.title}>
+                <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  {group.title}
+                </p>
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = isActiveHref(pathname, item.href);
+                    const count = item.href === '/admin/messages' ? unread : 0;
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={cn(
-                    'flex min-h-11 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={isActive ? 'page' : undefined}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          'flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                          isActive
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                        )}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="flex-1">{item.label}</span>
+                        {count > 0 && (
+                          <span
+                            className={cn(
+                              'rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                              isActive
+                                ? 'bg-primary-foreground text-primary'
+                                : 'bg-primary text-primary-foreground',
+                            )}
+                            aria-label={`${count} unread`}
+                          >
+                            {count}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
           <div className="border-t border-border p-4">
@@ -159,7 +222,7 @@ export function AdminShell({ user, children }: AdminShellProps) {
           </div>
         </aside>
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur-sm md:px-6">
             <div className="flex items-center gap-3">
               <Button
@@ -172,12 +235,15 @@ export function AdminShell({ user, children }: AdminShellProps) {
               >
                 <Menu className="h-5 w-5" />
               </Button>
+              {currentLabel && (
+                <span className="text-sm font-semibold">{currentLabel}</span>
+              )}
               <Link
                 href="/"
                 target="_blank"
-                className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                className="rounded-md border border-border px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
               >
-                View Public Site ↗
+                View site ↗
               </Link>
             </div>
 
