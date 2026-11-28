@@ -63,3 +63,41 @@ export const label = (key: string) => LABELS[key] ?? key;
 
 export const pathsAsItems = (paths: AnalyticsPayload['topPaths']): BreakdownItem[] =>
   paths.map((p) => ({ key: p.path, count: p.count }));
+
+type LegacyTotals = Partial<AnalyticsTotals> & { uniqueVisitors?: number; contactSubmissions?: number };
+
+/**
+ * Fills fields an older API version does not send, so the admin never crashes when the
+ * frontend and the API are deployed at different times.
+ */
+export function normalizeAnalytics(
+  raw: Partial<Omit<AnalyticsPayload, 'totals'>> & { totals?: LegacyTotals },
+): AnalyticsPayload {
+  const t: LegacyTotals = raw.totals ?? {};
+  const series = Array.isArray(raw.series) ? raw.series : [];
+  const list = <T,>(v: T[] | undefined) => (Array.isArray(v) ? v : []);
+  return {
+    range: raw.range ?? '30d',
+    since: raw.since ?? series[0]?.date ?? '',
+    totals: {
+      views: t.views ?? 0,
+      visitors: t.visitors ?? t.uniqueVisitors ?? 0,
+      cvDownloads: t.cvDownloads ?? 0,
+      linkClicks: t.linkClicks ?? 0,
+      shareOpens: t.shareOpens ?? 0,
+      videoPlays: t.videoPlays ?? 0,
+      messages: t.messages ?? t.contactSubmissions ?? 0,
+    },
+    previous: raw.previous ?? null,
+    series,
+    topPaths: list(raw.topPaths),
+    topProjects: list(raw.topProjects),
+    referrers: list(raw.referrers),
+    countries: list(raw.countries),
+    devices: list(raw.devices),
+    locales: list(raw.locales),
+    campaigns: list(raw.campaigns),
+    clicks: list(raw.clicks),
+    eventTypes: list(raw.eventTypes),
+  };
+}

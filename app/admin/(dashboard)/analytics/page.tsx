@@ -11,6 +11,7 @@ import { ViewsChart } from '@/components/admin/views-chart';
 import {
   countryName,
   label,
+  normalizeAnalytics,
   pathsAsItems,
   RANGE_DAYS,
   type AnalyticsPayload,
@@ -29,7 +30,7 @@ export default function AdminAnalyticsPage() {
     apiFetch<AnalyticsPayload>(`/v1/admin/analytics?range=${range}`)
       .then((res) => {
         if (!alive) return;
-        setData(res.data);
+        setData(normalizeAnalytics(res.data));
         setError(null);
       })
       .catch((err) => alive && setError(err instanceof ApiError ? err.message : 'Failed to load analytics.'))
@@ -51,7 +52,7 @@ export default function AdminAnalyticsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
           <p className="text-sm text-muted-foreground">
-            Cookie-free visitor analytics{data ? ` since ${data.since} (UTC), including today` : ''}.
+            Cookie-free visitor analytics{data?.since ? ` since ${data.since} (UTC), including today` : ''}.
             Bots and admin sessions are excluded.
           </p>
         </div>

@@ -18,7 +18,7 @@ import { ViewsChart } from '@/components/admin/views-chart';
 import { StatCard } from '@/components/admin/stat-card';
 import { BreakdownList } from '@/components/admin/breakdown-list';
 import { ADMIN_RESOURCES, type AdminResourceKey } from '@/lib/admin/resources';
-import { countryName, pathsAsItems, type AnalyticsPayload } from '@/lib/admin/analytics';
+import { countryName, normalizeAnalytics, pathsAsItems, type AnalyticsPayload } from '@/lib/admin/analytics';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -114,8 +114,14 @@ export default function AdminDashboardPage() {
   React.useEffect(() => {
     // Each panel degrades on its own; only the core summary failing is reported.
     Promise.allSettled([
-      apiFetch<DashboardSummary>('/v1/admin/dashboard').then((r) => setSummary(r.data)),
-      apiFetch<AnalyticsPayload>('/v1/admin/analytics?range=7d').then((r) => setAnalytics(r.data)),
+      apiFetch<DashboardSummary>('/v1/admin/dashboard').then((r) =>
+        setSummary({
+          ...r.data,
+          expiringCertifications: r.data.expiringCertifications ?? [],
+          recentAuditLogs: r.data.recentAuditLogs ?? [],
+        }),
+      ),
+      apiFetch<AnalyticsPayload>('/v1/admin/analytics?range=7d').then((r) => setAnalytics(normalizeAnalytics(r.data))),
       apiFetch<MessageRow[]>('/v1/admin/messages?page=1&limit=5&isRead=false').then((r) =>
         setMessages(r.data),
       ),
