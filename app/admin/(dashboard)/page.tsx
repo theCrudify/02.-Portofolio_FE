@@ -11,11 +11,14 @@ import {
   FolderCheck,
   Mail,
   Users,
-  type LucideIcon,
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api/client';
 import { useUser } from '@/components/admin/role-gate';
-import { ViewsChart, type DailySeriesPoint } from '@/components/admin/views-chart';
+import { ViewsChart } from '@/components/admin/views-chart';
+import { StatCard } from '@/components/admin/stat-card';
+import { BreakdownList } from '@/components/admin/breakdown-list';
+import { ADMIN_RESOURCES, type AdminResourceKey } from '@/lib/admin/resources';
+import { countryName, pathsAsItems, type AnalyticsPayload } from '@/lib/admin/analytics';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -33,11 +36,7 @@ interface DashboardSummary {
     summary: string | null;
     createdAt: string;
   }[];
-}
-
-interface AnalyticsSummary {
-  totals: { views: number; uniqueVisitors: number; cvDownloads: number; contactSubmissions: number };
-  series: DailySeriesPoint[];
+  content?: { resource: string; published: number; draft: number; archived: number }[];
 }
 
 interface MessageRow {
@@ -75,40 +74,6 @@ function greeting() {
   return h < 11 ? 'Good morning' : h < 15 ? 'Good afternoon' : h < 19 ? 'Good evening' : 'Good night';
 }
 
-function Stat({
-  label,
-  value,
-  hint,
-  icon: Icon,
-  href,
-  loading,
-}: {
-  label: string;
-  value: number;
-  hint: string;
-  icon: LucideIcon;
-  href: string;
-  loading: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        {label}
-        <Icon className="h-4 w-4 group-hover:text-primary" />
-      </div>
-      {loading ? (
-        <Skeleton className="mt-2 h-8 w-16" />
-      ) : (
-        <div className="mt-2 font-mono text-3xl font-bold">{value.toLocaleString()}</div>
-      )}
-      <div className="mt-1 text-xs text-muted-foreground">{hint}</div>
-    </Link>
-  );
-}
-
 function Panel({
   title,
   href,
@@ -141,7 +106,7 @@ function Panel({
 export default function AdminDashboardPage() {
   const user = useUser();
   const [summary, setSummary] = React.useState<DashboardSummary | null>(null);
-  const [analytics, setAnalytics] = React.useState<AnalyticsSummary | null>(null);
+  const [analytics, setAnalytics] = React.useState<AnalyticsPayload | null>(null);
   const [messages, setMessages] = React.useState<MessageRow[] | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [failed, setFailed] = React.useState(false);
@@ -150,7 +115,7 @@ export default function AdminDashboardPage() {
     // Each panel degrades on its own; only the core summary failing is reported.
     Promise.allSettled([
       apiFetch<DashboardSummary>('/v1/admin/dashboard').then((r) => setSummary(r.data)),
-      apiFetch<AnalyticsSummary>('/v1/admin/analytics?range=7d').then((r) => setAnalytics(r.data)),
+      apiFetch<AnalyticsPayload>('/v1/admin/analytics?range=7d').then((r) => setAnalytics(r.data)),
       apiFetch<MessageRow[]>('/v1/admin/messages?page=1&limit=5&isRead=false').then((r) =>
         setMessages(r.data),
       ),
@@ -161,13 +126,18 @@ export default function AdminDashboardPage() {
   }, []);
 
   const counts = summary?.counts;
+  const t = analytics?.totals;
+  const prev = analytics?.previous;
   const todo = [
     counts?.unreadMessages
       ? { text: `${counts.unreadMessages} unread message(s) waiting for a reply`, href: '/admin/messages' }
       : null,
-    counts?.projectsDraft
-      ? { text: `${counts.projectsDraft} project draft(s) not yet published`, href: '/admin/content/projects' }
-      : null,
+    ...(summary?.content ?? [])
+      .filter((c) => c.draft > 0)
+      .map((c) => ({
+        text: `${c.draft} ${ADMIN_RESOURCES[c.resource as AdminResourceKey]?.title ?? c.resource} draft(s) not yet published`,
+        href: `/admin/content/${c.resource}`,
+      })),
     ...(summary?.expiringCertifications ?? []).map((c) => ({
       text: `${c.nameEn ?? c.name} expires in ${daysUntil(c.expiryDate)} day(s) (${c.expiryDate})`,
       href: '/admin/content/certifications',
@@ -196,17 +166,17 @@ export default function AdminDashboardPage() {
       )}
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
-        <Stat label="Views" value={analytics?.totals.views ?? 0} hint="Last 7 days" icon={Eye} href="/admin/analytics" loading={loading} />
-        <Stat label="Visitors" value={analytics?.totals.uniqueVisitors ?? 0} hint="Unique, last 7 days" icon={Users} href="/admin/analytics" loading={loading} />
-        <Stat label="CV Downloads" value={analytics?.totals.cvDownloads ?? 0} hint="Last 7 days" icon={Download} href="/admin/documents" loading={loading} />
-        <Stat label="Unread" value={counts?.unreadMessages ?? 0} hint="Inbox messages" icon={Mail} href="/admin/messages" loading={loading} />
-        <Stat label="Published" value={counts?.projectsPublished ?? 0} hint="Live projects" icon={FolderCheck} href="/admin/content/projects" loading={loading} />
-        <Stat label="Drafts" value={counts?.projectsDraft ?? 0} hint="Projects in draft" icon={FileEdit} href="/admin/content/projects" loading={loading} />
+        <StatCard label="Views" value={t?.views ?? 0} previous={prev?.views} previousLabel="vs prev. 7d" icon={Eye} href="/admin/analytics" loading={loading} />
+        <StatCard label="Visitors" value={t?.visitors ?? 0} previous={prev?.visitors} previousLabel="vs prev. 7d" icon={Users} href="/admin/analytics" loading={loading} />
+        <StatCard label="CV Downloads" value={t?.cvDownloads ?? 0} previous={prev?.cvDownloads} previousLabel="vs prev. 7d" icon={Download} href="/admin/analytics" loading={loading} />
+        <StatCard label="Unread" value={counts?.unreadMessages ?? 0} subtext="Inbox messages" icon={Mail} href="/admin/messages" loading={loading} />
+        <StatCard label="Published" value={counts?.projectsPublished ?? 0} subtext="Live projects" icon={FolderCheck} href="/admin/content/projects" loading={loading} />
+        <StatCard label="Drafts" value={counts?.projectsDraft ?? 0} subtext="Projects in draft" icon={FileEdit} href="/admin/content/projects" loading={loading} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          {loading ? <Skeleton className="h-64 w-full" /> : <ViewsChart series={analytics?.series ?? []} />}
+          {loading ? <Skeleton className="h-64 w-full" /> : <ViewsChart title="Last 7 Days" series={analytics?.series ?? []} />}
         </div>
 
         <Panel title="Needs Attention">
@@ -228,6 +198,52 @@ export default function AdminDashboardPage() {
           )}
         </Panel>
       </div>
+
+      {analytics && (
+        <div className="grid gap-4 md:grid-cols-3">
+          <BreakdownList title="Top Pages · 7 days" items={pathsAsItems(analytics.topPaths)} limit={5} />
+          <BreakdownList title="Traffic Sources · 7 days" items={analytics.referrers} limit={5} />
+          <BreakdownList title="Countries · 7 days" items={analytics.countries} formatKey={countryName} limit={5} />
+        </div>
+      )}
+
+      {summary?.content && (
+        <Panel title="Content Overview">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                  <th className="py-2 pr-3 font-medium">Section</th>
+                  <th className="px-3 py-2 text-right font-medium">Published</th>
+                  <th className="px-3 py-2 text-right font-medium">Draft</th>
+                  <th className="px-3 py-2 text-right font-medium">Archived</th>
+                  <th className="py-2 pl-3 text-right font-medium">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {summary.content.map((c) => {
+                  const meta = ADMIN_RESOURCES[c.resource as AdminResourceKey];
+                  const total = c.published + c.draft + c.archived;
+                  return (
+                    <tr key={c.resource}>
+                      <td className="py-2 pr-3">
+                        <Link href={`/admin/content/${c.resource}`} className="font-medium hover:text-primary hover:underline">
+                          {meta?.title ?? c.resource}
+                        </Link>
+                        {total === 0 && <span className="ml-2 text-xs text-warning">empty</span>}
+                      </td>
+                      <td className="px-3 py-2 text-right tabular-nums">{c.published}</td>
+                      <td className={`px-3 py-2 text-right tabular-nums ${c.draft ? 'font-semibold text-warning' : 'text-muted-foreground'}`}>{c.draft}</td>
+                      <td className="px-3 py-2 text-right tabular-nums text-muted-foreground">{c.archived}</td>
+                      <td className="py-2 pl-3 text-right font-medium tabular-nums">{total}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Panel title="Latest Unread Messages" href="/admin/messages" linkLabel="Open inbox">
